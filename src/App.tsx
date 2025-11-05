@@ -452,28 +452,7 @@ const App: React.FC = () => {
     default:
       content = <HomePage navigate={navigate} />;
   }
-
-  // --- STYLING INJECTION (Workaround for CodeSandbox/Netlify) ---
-  const TailwindStyles = () => (
-    <style
-      dangerouslySetInnerHTML={{
-        __html: `
-          /* This injects the core Tailwind directives */
-          @tailwind base;
-          @tailwind components;
-          @tailwind utilities;
-
-          /* Custom body font and background */
-          body {
-            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
-            background-color: #f7f7f7;
-          }
-        `,
-      }}
-    />
-  );
-  // --- END STYLING INJECTION ---
-
+  
   return (
     <div className="min-h-screen flex flex-col">
       <TailwindStyles />
