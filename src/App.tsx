@@ -455,7 +455,6 @@ const App: React.FC = () => {
   
   return (
     <div className="min-h-screen flex flex-col">
-      <TailwindStyles />
       <Header navigate={navigate} currentPage={currentPage} />
       <main className="flex-grow">{content}</main>
       <Footer />
