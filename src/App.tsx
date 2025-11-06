@@ -21,7 +21,6 @@ interface HeaderProps {
   currentPage: string;
 }
 
-// FIX: Add 'type' property to ButtonProps
 interface ButtonProps {
   children: React.ReactNode;
   onClick?: () => void;
@@ -128,10 +127,10 @@ const Button: React.FC<ButtonProps> = ({ children, onClick, color = "bg-red-600"
   </button>
 );
 
-// 2. Header and Navigation (UPDATED with Contact Us link)
+// 2. Header and Navigation (FIXED ALIGNMENT)
 const Header: React.FC<HeaderProps> = ({ navigate, currentPage }) => (
   <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm shadow-md">
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16"> {/* ADDED justify-between */}
       <div onClick={() => navigate("home")} className="flex items-center cursor-pointer space-x-2">
         {/* IHI Logo Icon */}
         <div className="flex items-center">
@@ -144,7 +143,6 @@ const Header: React.FC<HeaderProps> = ({ navigate, currentPage }) => (
         </span>
       </div>
       <nav className="hidden sm:flex space-x-6">
-        {/* Added 'contact' to the navigation map */}
         {[{ path: "listings", label: "Find a Place with Headroom" }, { path: "standard", label: "Our Standard" }, { path: "contact", label: "Contact Us" }]
           .map(({ path, label }) => (
             <button
@@ -167,8 +165,8 @@ const Header: React.FC<HeaderProps> = ({ navigate, currentPage }) => (
 
 // 3. Footer Component
 const Footer: React.FC = () => (
-  <footer className="bg-gray-800 text-white mt-12">
-    <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 text-center">
+  <footer className="bg-gray-800 text-white mt-8">
+    <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 text-center">
       <p>&copy; {new Date().getFullYear()} Headroom Havens. All rights reserved. </p>
       <p className="mt-2 text-xs text-gray-400">
         All bookings are processed via our verified affiliate partners. Commission is paid after guest stay.
@@ -194,7 +192,7 @@ const MaxHeightDisplay: React.FC<{ clearanceCM: number }> = ({ clearanceCM }) =>
 
 // --- PAGES ---
 
-// 5. Home Page (UPDATED TEXT/FORMATTING)
+// 5. Home Page (Spacing Reduced & Cards Aligned)
 const HomePage: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) => (
   <div>
     {/* Hero Section */}
@@ -207,18 +205,19 @@ const HomePage: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) 
         <p className="mt-4 text-xl md:text-2xl text-white/90 drop-shadow-md">
           Verified head clearance and bed length. Standing up for tall travelers.
         </p>
-        <Button onClick={() => navigate("listings")} className="mt-8">
+        <Button onClick={() => navigate("listings")} className="mt-6">
           <Search size={20} className="inline mr-2" /> Find a Place with Headroom
         </Button>
       </div>
     </div>
 
-    {/* Value Proposition Section (UPDATED TEXT) */}
-    <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
-      <h2 className="text-3xl font-bold text-gray-800 mb-10 text-center">
+    {/* Value Proposition Section */}
+    <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+      <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">
         The Headroom Havens Standard
       </h2>
-      <div className="grid md:grid-cols-3 gap-10">
+      <div className="grid md:grid-cols-3 gap-8">
+        {/* Cards are flex-col, but adding text-center to parent container helps align everything */}
         <div className="flex flex-col items-center text-center p-6 bg-white rounded-xl shadow-lg border-t-4 border-red-600">
           <Maximize size={48} className="text-red-600 mb-4" />
           <h3 className="text-xl font-semibold mb-2">Verified Clearance</h3>
@@ -241,7 +240,7 @@ const HomePage: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) 
           </p>
         </div>
       </div>
-      <div className="text-center mt-10">
+      <div className="text-center mt-8">
         <Button onClick={() => navigate("standard")} color="bg-gray-700 hover:bg-gray-800">
           Learn How We Certify Properties
         </Button>
@@ -249,7 +248,7 @@ const HomePage: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) 
     </div>
 
     {/* Featured Havens Teaser */}
-    <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
+    <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <h2 className="text-3xl font-bold text-gray-800 mb-6">Featured Havens</h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {MOCK_PROPERTIES.slice(0, 3).map(property => (
@@ -260,7 +259,7 @@ const HomePage: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) 
   </div>
 );
 
-// 6. Listings Page (Filterable Gallery)
+// 6. Listings Page (Spacing Reduced)
 const ListingsPage: React.FC<{ navigate: (path: string, propertyId: number) => void }> = ({ navigate }) => {
   const [maxHeightFilter, setMaxHeightFilter] = useState<number>(0);
   const [priceFilter, setPriceFilter] = useState<number>(0);
@@ -270,23 +269,19 @@ const ListingsPage: React.FC<{ navigate: (path: string, propertyId: number) => v
 
   const filteredProperties = useMemo(() => {
     return MOCK_PROPERTIES.filter(property => {
-      // 1. Max Height Filter: Check if the property's safe height meets the selected filter height.
       const propertySafeHeightCM = property.maxHeightCM - SAFETY_BUFFER_CM;
       const heightPass = maxHeightFilter === 0 || propertySafeHeightCM >= maxHeightFilter;
-
-      // 2. Price Filter
       const pricePass = priceFilter === 0 || property.priceRange >= priceFilter;
-
       return heightPass && pricePass;
     });
   }, [maxHeightFilter, priceFilter]);
 
   return (
     <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">Find Your Headroom Haven</h1>
+      <h1 className="text-3xl font-bold text-gray-800 mb-5">Find Your Headroom Haven</h1>
 
       {/* Filters Section */}
-      <div className="bg-gray-100 p-6 rounded-xl shadow-md mb-8 grid md:grid-cols-3 gap-4">
+      <div className="bg-gray-100 p-5 rounded-xl shadow-md mb-6 grid md:grid-cols-3 gap-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Minimum Headroom Required:
@@ -322,12 +317,11 @@ const ListingsPage: React.FC<{ navigate: (path: string, propertyId: number) => v
             ))}
           </select>
         </div>
-        
       </div>
 
       {/* Listings Grid */}
       {filteredProperties.length > 0 ? (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredProperties.map(property => (
             <PropertyCard key={property.id} property={property} navigate={navigate} />
           ))}
@@ -342,10 +336,9 @@ const ListingsPage: React.FC<{ navigate: (path: string, propertyId: number) => v
   );
 };
 
-// 7. Property Card Component (UPDATED Bed Length display)
+// 7. Property Card Component (Retained)
 const PropertyCard: React.FC<{ property: Property, navigate: (path: string, propertyId: number) => void }> = ({ property, navigate }) => (
   <div className="bg-white rounded-xl shadow-lg overflow-hidden transition-transform duration-300 hover:shadow-2xl hover:-translate-y-1">
-    {/* Use the FIRST image for the card preview */}
     <img src={property.images[0]} alt={property.name} className="w-full h-48 object-cover" /> 
     <div className="p-5">
       <h3 className="text-xl font-bold text-gray-800">{property.name}</h3>
@@ -358,7 +351,6 @@ const PropertyCard: React.FC<{ property: Property, navigate: (path: string, prop
         <MaxHeightDisplay clearanceCM={property.maxHeightCM} />
         <div className="flex items-center text-gray-600 space-x-1">
           <Bed size={18} />
-          {/* UPDATED Bed Length Display */}
           <span>
             Usable Bed Length: {cmToFeetInches(property.mattressLengthCM)} ({property.mattressLengthCM} cm) - 2 Beds 
           </span>
@@ -376,12 +368,11 @@ const PropertyCard: React.FC<{ property: Property, navigate: (path: string, prop
   </div>
 );
 
-// 8. Property Detail Page (UPDATED Layout and Styling)
+// 8. Property Detail Page (Spacing Reduced & Alignment Check)
 const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0); 
   
   const handleBookNow = () => {
-    // Affiliate Tracking Logic
     console.log(`Tracking affiliate click for property ID: ${property.id}`);
     window.location.href = property.affiliateLink;
   };
@@ -389,27 +380,24 @@ const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
   const totalImages = property.images.length;
   const currentImage = property.images[currentImageIndex];
 
-  // Logic to cycle images
   const goToNext = () => setCurrentImageIndex((prev) => (prev + 1) % totalImages);
   const goToPrev = () => setCurrentImageIndex((prev) => (prev - 1 + totalImages) % totalImages);
 
   return (
     <div className="max-w-5xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
       <h1 className="text-4xl font-bold text-gray-800 mb-2">{property.name}</h1>
-      <p className="text-xl text-gray-500 mb-6">{property.location}</p>
+      <p className="text-xl text-gray-500 mb-4">{property.location}</p>
 
-      {/* Image Carousel (UPDATED: 16:9 ratio, full width of content below) */}
-      <div className="relative w-full aspect-video rounded-xl shadow-lg overflow-hidden mb-8">
+      {/* Image Carousel */}
+      <div className="relative w-full aspect-video rounded-xl shadow-lg overflow-hidden mb-6">
         <img 
           src={currentImage} 
           alt={`${property.name} photo ${currentImageIndex + 1}`} 
           className="w-full h-full object-cover transition-opacity duration-300" 
         />
         
-        {/* Gallery Controls (Only show if multiple images exist) */}
         {totalImages > 1 && (
           <>
-            {/* Previous Button */}
             <button 
               onClick={goToPrev}
               className="absolute left-3 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/80 transition-colors z-10"
@@ -417,7 +405,6 @@ const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
             >
               <ChevronLeft size={24} />
             </button>
-            {/* Next Button */}
             <button 
               onClick={goToNext}
               className="absolute right-3 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/80 transition-colors z-10"
@@ -425,23 +412,22 @@ const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
             >
               <ChevronRight size={24} />
             </button>
-            {/* Image Counter */}
             <div className="absolute bottom-3 right-3 text-white bg-black/50 text-xs px-3 py-1 rounded-full z-10">
               {currentImageIndex + 1} / {totalImages}
             </div>
           </>
         )}
-      </div>
+    </div>
 
       {/* Details - Headroom Certified Dimensions */}
-      <div className="bg-white p-6 rounded-xl shadow-lg mb-8">
+      <div className="bg-white p-6 rounded-xl shadow-lg mb-6">
         <h2 className="text-2xl font-bold text-red-600 mb-4 flex items-center">
           <Maximize size={24} className="mr-2" /> Headroom Certified Dimensions
         </h2>
         
         <p className="text-gray-700 mb-4">{property.description}</p>
 
-        <div className="grid sm:grid-cols-3 gap-4 text-lg">
+        <div className="grid sm:grid-cols-3 gap-y-2 gap-x-4 text-lg">
             <div className="font-semibold">Max Height Rating:</div>
             <div className="col-span-2">
                 <MaxHeightDisplay clearanceCM={property.maxHeightCM} />
@@ -453,22 +439,22 @@ const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
         </div>
       </div>
 
-      {/* Google Map Placeholder (NEW POSITION/WIDTH) */}
-      <div className="bg-gray-200 h-[400px] w-full flex items-center justify-center rounded-xl shadow-lg mb-8">
+      {/* Google Map Placeholder (Retained position/width) */}
+      <div className="bg-gray-200 h-[400px] w-full flex items-center justify-center rounded-xl shadow-lg mb-6">
         <p className="text-gray-600">Google Map Embed Placeholder</p>
       </div>
 
       {/* Member Rating & Booking */}
-      <div className="grid md:grid-cols-3 gap-6">
-        <div className="md:col-span-2 bg-gray-50 p-6 rounded-xl border border-gray-200">
-          <h3 className="text-xl font-semibold mb-4">Member Comfort Rating</h3>
+      <div className="grid md:grid-cols-3 gap-4">
+        <div className="md:col-span-2 bg-gray-50 p-5 rounded-xl border border-gray-200">
+          <h3 className="text-xl font-semibold mb-3">Member Comfort Rating</h3>
           <p className="text-4xl font-bold text-green-600">{property.ratingMember.toFixed(1)} / 5.0</p>
           <p className="text-sm text-gray-500 mt-2">
             Based on feedback from verified tall guests. All ratings are admin-approved for integrity.
           </p>
           <button className="text-red-600 mt-3 text-sm underline hover:text-red-700">Submit Your Rating</button>
         </div>
-        <div className="md:col-span-1 flex flex-col justify-center items-center p-6 bg-red-100 rounded-xl shadow-inner">
+        <div className="md:col-span-1 flex flex-col justify-center items-center p-5 bg-red-100 rounded-xl shadow-inner">
           <p className="text-sm text-gray-700 mb-3">Ready to book your stress-free stay?</p>
           <Button onClick={handleBookNow} className="w-full text-center">
             <CheckCircle size={20} className="inline mr-2" /> Book Now via Partner
@@ -480,21 +466,22 @@ const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
   );
 };
 
-// 9. Headroom Standard Page (UPDATED TEXT)
+// 9. Headroom Standard Page (Spacing Reduced & Centered)
 const StandardPage: React.FC = () => (
-  <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-    <h1 className="text-4xl font-bold text-gray-800 mb-6">Our Standard: Why We Certify</h1>
-    <p className="text-xl text-gray-600 mb-8">
+  <div className="max-w-4xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+    {/* Ensure all content within max-w-4xl is aligned */}
+    <h1 className="text-4xl font-bold text-gray-800 mb-5 text-center sm:text-left">Our Standard: Why We Certify</h1>
+    <p className="text-xl text-gray-600 mb-6 text-center sm:text-left">
       We eliminate the anxiety of travel for tall guests by applying a stringent, verifiable certification process to every property.
     </p>
 
     {/* Section: The Safety Buffer */}
-    <div className="mb-10 p-6 bg-red-50 rounded-xl border border-red-200">
+    <div className="mb-8 p-5 bg-red-50 rounded-xl border border-red-200 text-left">
         <h2 className="text-2xl font-semibold text-red-600 mb-3">1. The Safety Buffer (The 5 cm Rule)</h2>
-        <p className="mb-4 text-gray-700">
+        <p className="mb-3 text-gray-700">
           A property must have a minimum measured clearance of <strong>6 ft 7 in (201 cm)</strong> for a guest to be rated at <strong>6 ft 5 in (196 cm)</strong>. Why?
         </p>
-        <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
+        <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
             <li><strong>Dynamic Movement:</strong> When you walk, your body slightly lifts off the ground at the push-off point of your stride. This requires approximately 5 cm or 2 in of vertical clearance.</li>
             <li><strong>Our Guarantee:</strong> We subtract a mandatory <strong>5 cm (2 in) safety buffer</strong> from the lowest measured point (door, beam, ceiling) to determine the property's true <strong>Max Height Rating</strong>.</li>
             <li><strong>No Surprises:</strong> A property rated at <strong>6 ft 6 in (198 cm)</strong> means a 6 ft 6 in guest can walk, stretch, and jump without fear of injury.</li>
@@ -502,8 +489,8 @@ const StandardPage: React.FC = () => (
     </div>
     
     {/* Section: The Certification Process */}
-    <h2 className="text-2xl font-semibold text-gray-800 mt-12 mb-4">2. The Certification Process: Photo Proof</h2>
-    <div className="space-y-6">
+    <h2 className="text-2xl font-semibold text-gray-800 mt-10 mb-4 text-left">2. The Certification Process: Photo Proof</h2>
+    <div className="space-y-4">
         <div className="flex items-start space-x-4">
             <Maximize size={32} className="text-gray-700 flex-shrink-0" />
             <div>
@@ -529,23 +516,22 @@ const StandardPage: React.FC = () => (
   </div>
 );
 
-// 10. Contact Page (NETLIFY FORM)
+// 10. Contact Page (Spacing Reduced & WIDER CONTAINER)
 const ContactPage: React.FC = () => {
     return (
-        <div className="max-w-xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-            <h1 className="text-4xl font-bold text-gray-800 mb-6">Contact Us</h1>
-            <p className="text-xl text-gray-600 mb-8">We're standing up for tall travelers. Get in touch with our team.</p>
+        <div className="max-w-2xl mx-auto py-10 px-4 sm:px-6 lg:px-8"> {/* INCREASED max-w-xl to max-w-2xl */}
+            <h1 className="text-4xl font-bold text-gray-800 mb-5 text-center">Contact Us</h1>
+            <p className="text-xl text-gray-600 mb-6 text-center">We're standing up for tall travelers. Get in touch with our team.</p>
 
-            {/* CRITICAL: Netlify form setup */}
             <form 
                 name="contact" 
                 method="POST" 
                 data-netlify="true" 
-                className="space-y-6 p-6 bg-white rounded-xl shadow-lg border-t-4 border-red-600"
+                className="space-y-4 p-6 bg-white rounded-xl shadow-lg border-t-4 border-red-600" {/* Increased p-5 to p-6 */}
             >
                 <input type="hidden" name="form-name" value="contact" />
 
-                <div>
+                <div className="space-y-1">
                     <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
                     <input
                         type="text"
@@ -556,7 +542,7 @@ const ContactPage: React.FC = () => {
                     />
                 </div>
 
-                <div>
+                <div className="space-y-1">
                     <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email Address</label>
                     <input
                         type="email"
@@ -567,7 +553,7 @@ const ContactPage: React.FC = () => {
                     />
                 </div>
 
-                <div>
+                <div className="space-y-1">
                     <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Phone Number</label>
                     <input
                         type="tel"
@@ -577,7 +563,7 @@ const ContactPage: React.FC = () => {
                     />
                 </div>
 
-                <div>
+                <div className="space-y-1">
                     <label htmlFor="comment" className="block text-sm font-medium text-gray-700">Comment</label>
                     <textarea
                         name="comment"
@@ -588,7 +574,7 @@ const ContactPage: React.FC = () => {
                     ></textarea>
                 </div>
 
-                <Button type="submit" className="w-full">
+                <Button type="submit" className="w-full mt-6"> {/* Increased vertical space to separate from fields */}
                     Submit
                 </Button>
             </form>
@@ -598,48 +584,33 @@ const ContactPage: React.FC = () => {
 };
 
 
-// 11. Router and Main App Component
+// 11. Router and Main App Component (Retained Navigation Fix)
 const App: React.FC = () => {
-  // We now use an object for location state to hold both path and ID
   const [location, setLocation] = useState<{ path: string, propertyId: number | null }>({ path: "home", propertyId: null });
-
-  // Use location state for rendering
   const currentPage = location.path;
   const selectedPropertyId = location.propertyId;
 
-  // Function to handle navigation and PUSH a new state to history
   const navigate = (path: string, propertyId: number | null = null) => {
-    // 1. Create a new state object
     const newState = { path, propertyId };
-
-    // 2. Update the URL and push a new history entry
     const url = path === "detail" && propertyId !== null ? `/${path}/${propertyId}` : `/${path}`;
     window.history.pushState(newState, "", url);
-
-    // 3. Update component state
     setLocation(newState);
-    window.scrollTo(0, 0); // Scroll to top on navigation
+    window.scrollTo(0, 0);
   };
 
-  // useEffect to handle the browser's back/forward buttons (popstate)
   React.useEffect(() => {
     const handlePopState = (event: PopStateEvent) => {
-      // If the state exists, use it to update component location
       if (event.state) {
         setLocation(event.state as { path: string, propertyId: number | null });
       } else {
-        // Fallback to home if no state is found (e.g., initial load, or pop past first entry)
         setLocation({ path: "home", propertyId: null });
       }
     };
 
-    // Listen for browser navigation (back/forward)
     window.addEventListener('popstate', handlePopState);
 
-    // Initial check: if user loads deep link (e.g., /listings)
     const initialPath = window.location.pathname.slice(1).split('/');
     if (initialPath[0] && initialPath[0] !== '') {
-        // Set initial state without pushing (to avoid double entry)
         setLocation({ 
             path: initialPath[0], 
             propertyId: initialPath[1] ? Number(initialPath[1]) : null 
@@ -647,11 +618,10 @@ const App: React.FC = () => {
     }
 
 
-    // Clean up the event listener on component unmount
     return () => {
       window.removeEventListener('popstate', handlePopState);
     };
-  }, []); // Run only once on mount
+  }, []);
 
   const selectedProperty = useMemo(() => {
     const prop = MOCK_PROPERTIES.find(p => p.id === selectedPropertyId);
@@ -670,7 +640,6 @@ const App: React.FC = () => {
       content = <ContactPage />;
       break;
     case "detail":
-      // Only render DetailPage if a property is selected
       content = selectedPropertyId !== null ? <DetailPage property={selectedProperty} /> : <HomePage navigate={navigate} />;
       break;
     case "home":
