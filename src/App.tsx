@@ -306,7 +306,7 @@ const ListingsPage: React.FC<{ navigate: (path: string, propertyId: number) => v
           <select
             value={maxHeightFilter}
             onChange={(e) => setMaxHeightFilter(Number(e.target.value))}
-            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500" {/* Reduced p-3 to p-2 */}
+            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500" // REMOVED JSX comment
           >
             <option value={0}>Any Height</option>
             {MAX_HEIGHT_OPTIONS.map(cm => (
@@ -324,7 +324,7 @@ const ListingsPage: React.FC<{ navigate: (path: string, propertyId: number) => v
           <select
             value={priceFilter}
             onChange={(e) => setPriceFilter(Number(e.target.value))}
-            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500"
+            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500" // REMOVED JSX comment
           >
             <option value={0}>Any Price</option>
             {PRICE_OPTIONS.map(p => (
@@ -402,6 +402,10 @@ const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
   // NEW: Get Price Label for Detail Page
   const priceLabel = priceRangeToLabel(property.priceRange);
 
+  // Calculate Max Safe Height Imperial for display
+  const maxSafeHeightCM = property.maxHeightCM - SAFETY_BUFFER_CM;
+  const maxSafeHeightImperial = cmToFeetInches(maxSafeHeightCM);
+
   return (
     <div className="max-w-5xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
       <h1 className="text-4xl font-bold text-gray-800 mb-2 text-left">{property.name}</h1>
@@ -447,14 +451,19 @@ const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
         <p className="text-gray-700 mb-3">{property.description}</p> {/* Reduced mb-4 to mb-3 */}
 
         <div className="grid sm:grid-cols-3 gap-y-1 gap-x-4 text-lg"> {/* Reduced gap-y-2 to gap-y-1 */}
-            {/* REMOVED MaxHeightDisplay component and the text 'Max Height Rating:' as requested */}
+            
+            {/* The Actual Lowest Clearance line acts as the main heading, matching the image example */}
             <div className="font-semibold">Actual Lowest Clearance:</div>
             <div className="col-span-2">{cmToFeetInches(property.maxHeightCM)} ({property.maxHeightCM} cm)</div>
+            
+            {/* Updated Usable Bed Length as requested */}
             <div className="font-semibold">Usable Bed Length:</div>
             <div className="col-span-2">{cmToFeetInches(property.mattressLengthCM)} ({property.mattressLengthCM} cm) - 2 Beds (1 footboard)</div> {/* CHANGED: Added (1 footboard) */}
+        
+            {/* Re-added the Max Height Rating section but using raw text/data for visual confirmation, as the component's internal red Maximize icon was requested to be removed from this section's header. */}
             <div className="font-semibold text-red-600">Max Height Rating:</div>
-            <div className="col-span-2">
-                <MaxHeightDisplay clearanceCM={property.maxHeightCM} />
+            <div className="col-span-2 text-red-600">
+                {maxSafeHeightImperial} ({Math.round(maxSafeHeightCM)} cm)
             </div>
         </div>
       </div>
@@ -462,6 +471,7 @@ const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
       {/* Google Map Placeholder (Retained position/width) */}
       <div className="bg-gray-200 h-[400px] w-full flex items-center justify-center rounded-xl shadow-lg mb-5"> {/* Reduced mb-6 to mb-5 */}
         <p className="text-gray-600">Google Map Embed Placeholder</p>
+        
       </div>
 
       {/* Member Rating & Booking */}
