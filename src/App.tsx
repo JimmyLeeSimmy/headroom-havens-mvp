@@ -227,9 +227,9 @@ const HomePage: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) 
       </div>
     </div>
 
-    {/* Value Proposition Section */}
-    <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">  {/* Reduced from py-10 to py-8 */}
-      <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center"> 
+    {/* Value Proposition Section - REDUCED py- from 10 to 6 */}
+    <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">  
+      <h2 className="text-3xl font-bold text-gray-800 mb-4 text-center">  {/* Reduced mb- from 6 to 4 */}
         The Headroom Havens Standard
       </h2>
       <div className="grid md:grid-cols-3 gap-6"> 
@@ -255,16 +255,16 @@ const HomePage: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) 
           </p>
         </div>
       </div>
-      <div className="text-center mt-6"> 
+      <div className="text-center mt-5"> {/* Reduced mt- from 6 to 5 */}
         <Button onClick={() => navigate("standard")} color="bg-gray-700 hover:bg-gray-800">
           Learn How We Certify Properties
         </Button>
       </div>
     </div>
 
-    {/* Featured Havens Teaser */}
-    <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">  {/* Reduced from py-10 to py-8 */}
-        <h2 className="text-3xl font-bold text-gray-800 mb-6">Featured Havens</h2>
+    {/* Featured Havens Teaser - REDUCED py- from 10 to 6 */}
+    <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">  
+        <h2 className="text-3xl font-bold text-gray-800 mb-4">Featured Havens</h2> {/* Reduced mb- from 6 to 4 */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {MOCK_PROPERTIES.slice(0, 3).map(property => (
                 <PropertyCard key={property.id} property={property} navigate={navigate} />
@@ -292,11 +292,12 @@ const ListingsPage: React.FC<{ navigate: (path: string, propertyId: number) => v
   }, [maxHeightFilter, priceFilter]);
 
   return (
-    <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8"> {/* Reduced from py-8 to py-6 */}
-      <h1 className="text-3xl font-bold text-gray-800 mb-4">Find Your Headroom Haven</h1> 
+    // REDUCED py- from 8 to 4 for tighter fit with the header
+    <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8"> 
+      <h1 className="text-3xl font-bold text-gray-800 mb-3">Find Your Headroom Haven</h1>  {/* Reduced mb- from 4 to 3 */}
 
-      {/* Filters Section */}
-      <div className="bg-gray-100 p-4 rounded-xl shadow-md mb-5 grid md:grid-cols-3 gap-4"> 
+      {/* Filters Section - Reduced mb- from 5 to 4 */}
+      <div className="bg-gray-100 p-4 rounded-xl shadow-md mb-4 grid md:grid-cols-3 gap-4"> 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1"> 
             Minimum Headroom Required:
@@ -404,12 +405,13 @@ const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
   const priceLabel = priceRangeToLabel(property.priceRange);
 
   return (
-    <div className="max-w-5xl mx-auto py-6 px-4 sm:px-6 lg:px-8"> {/* Reduced from py-8 to py-6 */}
+    // REDUCED py- from 8 to 4 for tighter fit with the header
+    <div className="max-w-5xl mx-auto py-4 px-4 sm:px-6 lg:px-8"> 
       <h1 className="text-4xl font-bold text-gray-800 mb-2 text-left">{property.name}</h1>
-      <p className="text-xl text-gray-500 mb-3 text-left">{property.location}</p> 
+      <p className="text-xl text-gray-500 mb-4 text-left">{property.location}</p>  {/* Increased mb- from 3 to 4 for better title/subtitle separation */}
 
       {/* Image Carousel - Full Width and Centered */}
-      <div className="relative w-full aspect-video rounded-xl shadow-lg overflow-hidden mb-5"> 
+      <div className="relative w-full aspect-video rounded-xl shadow-lg overflow-hidden mb-4">  {/* Reduced mb- from 5 to 4 */}
         <img 
           src={currentImage} 
           alt={`${property.name} photo ${currentImageIndex + 1}`} 
@@ -439,8 +441,8 @@ const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
         )}
     </div>
 
-      {/* Details - Headroom Certified Dimensions */}
-      <div className="bg-white p-5 rounded-xl shadow-lg mb-5"> 
+      {/* Details - Headroom Certified Dimensions - Reduced mb- from 5 to 4 */}
+      <div className="bg-white p-5 rounded-xl shadow-lg mb-4"> 
         <h2 className="text-2xl font-bold text-red-600 mb-3 flex items-center"> 
           <Maximize size={24} className="mr-2" /> Headroom Certified Dimensions
         </h2>
@@ -463,8 +465,8 @@ const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
         </div>
       </div>
 
-      {/* Google Map Placeholder (Retained position/width) */}
-      <div className="bg-gray-200 h-[400px] w-full flex items-center justify-center rounded-xl shadow-lg mb-5"> 
+      {/* Google Map Placeholder (Retained position/width) - Reduced mb- from 5 to 4 */}
+      <div className="bg-gray-200 h-[400px] w-full flex items-center justify-center rounded-xl shadow-lg mb-4"> 
         <p className="text-gray-600">Google Map Embed Placeholder</p>
       </div>
 
@@ -493,14 +495,15 @@ const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
 
 // 9. Headroom Standard Page (Spacing Tightened)
 const StandardPage: React.FC = () => (
-  <div className="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8"> {/* Reduced from py-10 to py-8 */}
-    <h1 className="text-4xl font-bold text-gray-800 mb-5 text-left">Our Standard: Why We Certify</h1> 
-    <p className="text-xl text-gray-600 mb-6 text-left"> 
+  // REDUCED py- from 10 to 6
+  <div className="max-w-4xl mx-auto py-6 px-4 sm:px-6 lg:px-8"> 
+    <h1 className="text-4xl font-bold text-gray-800 mb-4 text-left">Our Standard: Why We Certify</h1> {/* Reduced mb- from 5 to 4 */}
+    <p className="text-xl text-gray-600 mb-5 text-left"> {/* Reduced mb- from 6 to 5 */}
       We eliminate the anxiety of travel for tall guests by applying a stringent, verifiable certification process to every property.
     </p>
 
-    {/* Section: The Safety Buffer */}
-    <div className="mb-6 p-5 bg-red-50 rounded-xl border border-red-200 text-left"> 
+    {/* Section: The Safety Buffer - Reduced mb- from 6 to 5 */}
+    <div className="mb-5 p-5 bg-red-50 rounded-xl border border-red-200 text-left"> 
         <h2 className="text-2xl font-semibold text-red-600 mb-3">1. The Safety Buffer (The 5 cm Rule)</h2>
         <p className="mb-3 text-gray-700">
           A property must have a minimum measured clearance of <strong>6 ft 7 in (201 cm)</strong> for a guest to be rated at <strong>6 ft 5 in (196 cm)</strong>. Why?
@@ -512,8 +515,8 @@ const StandardPage: React.FC = () => (
         </ul>
     </div>
     
-    {/* Section: The Certification Process */}
-    <h2 className="text-2xl font-semibold text-gray-800 mt-8 mb-4 text-left">2. The Certification Process: Photo Proof</h2> 
+    {/* Section: The Certification Process - Reduced mt- from 8 to 5 and mb- from 4 to 3 */}
+    <h2 className="text-2xl font-semibold text-gray-800 mt-5 mb-3 text-left">2. The Certification Process: Photo Proof</h2> 
     <div className="space-y-3"> 
         <div className="flex items-start space-x-4">
             <Maximize size={32} className="text-gray-700 flex-shrink-0" />
@@ -528,6 +531,7 @@ const StandardPage: React.FC = () => (
                 <h3 className="text-xl font-semibold">The Photo Verification</h3>
                 <p className="text-gray-600">The most important step: The owner must submit <strong>photo evidence</strong> showing a tape measure clearly documenting the full height of the low points. We require branded Headroom Havens tape (or a recognizable ruler) to verify the data's integrity.</p>
             </div>
+            {/* Image of tape measure verification example (to be added by the user) */}
         </div>
         <div className="flex items-start space-x-4">
             <Bed size={32} className="text-gray-700 flex-shrink-0" />
@@ -543,14 +547,16 @@ const StandardPage: React.FC = () => (
 // 10. Contact Page (Spacing Tightened)
 const ContactPage: React.FC = () => {
     return (
-        <div className="max-w-2xl mx-auto py-8 px-4 sm:px-6 lg:px-8"> {/* Reduced from py-10 to py-8 */}
-            <h1 className="text-4xl font-bold text-gray-800 mb-5 text-center">Contact Us</h1>
-            <p className="text-xl text-gray-600 mb-6 text-center">We're standing up for tall travelers. Get in touch with our team.</p>
+        // REDUCED py- from 10 to 6
+        <div className="max-w-2xl mx-auto py-6 px-4 sm:px-6 lg:px-8"> 
+            <h1 className="text-4xl font-bold text-gray-800 mb-4 text-center">Contact Us</h1> {/* Reduced mb- from 5 to 4 */}
+            <p className="text-xl text-gray-600 mb-5 text-center">We're standing up for tall travelers. Get in touch with our team.</p> {/* Reduced mb- from 6 to 5 */}
 
             <form 
                 name="contact" 
                 method="POST" 
                 data-netlify="true"
+                // Reduced vertical spacing inside the form by using space-y-3
                 className="space-y-3 p-5 bg-white rounded-xl shadow-lg border-t-4 border-red-600 mx-auto" 
             >
                 <input type="hidden" name="form-name" value="contact" />
