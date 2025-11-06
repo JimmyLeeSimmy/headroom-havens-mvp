@@ -199,7 +199,7 @@ const HomePage: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) 
       <img src={HERO_IMAGE_URL} alt="Photorealistic Cottage Doorway with Tall Man" className="w-full h-[500px] object-cover" />
       <div className="absolute inset-0 bg-black bg-opacity-30 flex flex-col justify-center items-center text-center p-4">
         <h1 className="text-5xl md:text-7xl font-bold text-white tracking-tight drop-shadow-lg">
-          Holiday Cottages with Headroom
+            Holiday Cottages <span className="text-red-600">with Headroom</span>
         </h1>
         <p className="mt-4 text-xl md:text-2xl text-white/90 drop-shadow-md">
           Guaranteed comfort and verified clearance for travelers 6 ft 0 in (183 cm) and taller. Stop the Stoop. Start the Holiday.
