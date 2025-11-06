@@ -129,7 +129,6 @@ const Button: React.FC<ButtonProps> = ({ children, onClick, color = "bg-red-600"
 // 2. Header and Navigation
 const Header: React.FC<HeaderProps> = ({ navigate, currentPage }) => (
   <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm shadow-md">
-    {/* The container already uses mx-auto and max-w-7xl for centering */}
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
       <div onClick={() => navigate("home")} className="flex items-center cursor-pointer space-x-2">
         <div className="flex items-center">
@@ -191,7 +190,7 @@ const MaxHeightDisplay: React.FC<{ clearanceCM: number }> = ({ clearanceCM }) =>
 
 // --- PAGES ---
 
-// 5. Home Page (FIXED Card Alignment)
+// 5. Home Page (Spacing Optimized)
 const HomePage: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) => (
   <div>
     {/* Hero Section */}
@@ -211,35 +210,34 @@ const HomePage: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) 
     </div>
 
     {/* Value Proposition Section */}
-    <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-      <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">
+    <div className="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8"> {/* Reduced py-12 to py-10 */}
+      <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center"> {/* Reduced mb-8 to mb-6 */}
         The Headroom Havens Standard
       </h2>
-      {/* The grid itself is now fully contained and centered */}
-      <div className="grid md:grid-cols-3 gap-8">
-        <div className="flex flex-col items-center text-center p-6 bg-white rounded-xl shadow-lg border-t-4 border-red-600">
-          <Maximize size={48} className="text-red-600 mb-4" />
-          <h3 className="text-xl font-semibold mb-2">Verified Clearance</h3>
+      <div className="grid md:grid-cols-3 gap-6"> {/* Reduced gap-8 to gap-6 */}
+        <div className="flex flex-col items-center text-center p-5 bg-white rounded-xl shadow-lg border-t-4 border-red-600"> {/* Reduced p-6 to p-5 */}
+          <Maximize size={48} className="text-red-600 mb-3" /> {/* Reduced mb-4 to mb-3 */}
+          <h3 className="text-xl font-semibold mb-1">Verified Clearance</h3> {/* Reduced mb-2 to mb-1 */}
           <p className="text-gray-600">
             Every door frame, ceiling, and beam is measured and confirmed against our safety buffer of 5 cm (2 in).
           </p>
         </div>
-        <div className="flex flex-col items-center text-center p-6 bg-white rounded-xl shadow-lg border-t-4 border-red-600">
-          <Bed size={48} className="text-red-600 mb-4" />
-          <h3 className="text-xl font-semibold mb-2">Extra-Long Beds</h3>
+        <div className="flex flex-col items-center text-center p-5 bg-white rounded-xl shadow-lg border-t-4 border-red-600">
+          <Bed size={48} className="text-red-600 mb-3" />
+          <h3 className="text-xl font-semibold mb-1">Extra-Long Beds</h3>
           <p className="text-gray-600">
             No more feet dangling. We only list properties with mattresses of 200 cm (6 ft 6 in) or longer, plus open footboards.
           </p>
         </div>
-        <div className="flex flex-col items-center text-center p-6 bg-white rounded-xl shadow-lg border-t-4 border-red-600">
-          <CheckCircle size={48} className="text-red-600 mb-4" />
-          <h3 className="text-xl font-semibold mb-2">High-End Curation</h3>
+        <div className="flex flex-col items-center text-center p-5 bg-white rounded-xl shadow-lg border-t-4 border-red-600">
+          <CheckCircle size={48} className="text-red-600 mb-3" />
+          <h3 className="text-xl font-semibold mb-1">High-End Curation</h3>
           <p className="text-gray-600">
             A collection of boutique cottages and luxury retreats across the UK and Europe, chosen for style and verified space.
           </p>
         </div>
       </div>
-      <div className="text-center mt-8">
+      <div className="text-center mt-6"> {/* Reduced mt-8 to mt-6 */}
         <Button onClick={() => navigate("standard")} color="bg-gray-700 hover:bg-gray-800">
           Learn How We Certify Properties
         </Button>
@@ -247,7 +245,7 @@ const HomePage: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) 
     </div>
 
     {/* Featured Havens Teaser */}
-    <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+    <div className="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8"> {/* Reduced py-12 to py-10 */}
         <h2 className="text-3xl font-bold text-gray-800 mb-6">Featured Havens</h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {MOCK_PROPERTIES.slice(0, 3).map(property => (
@@ -258,7 +256,7 @@ const HomePage: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) 
   </div>
 );
 
-// 6. Listings Page (Centered)
+// 6. Listings Page (Spacing Optimized)
 const ListingsPage: React.FC<{ navigate: (path: string, propertyId: number) => void }> = ({ navigate }) => {
   const [maxHeightFilter, setMaxHeightFilter] = useState<number>(0);
   const [priceFilter, setPriceFilter] = useState<number>(0);
@@ -277,18 +275,18 @@ const ListingsPage: React.FC<{ navigate: (path: string, propertyId: number) => v
 
   return (
     <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-      <h1 className="text-3xl font-bold text-gray-800 mb-5">Find Your Headroom Haven</h1>
+      <h1 className="text-3xl font-bold text-gray-800 mb-4">Find Your Headroom Haven</h1> {/* Reduced mb-5 to mb-4 */}
 
       {/* Filters Section */}
-      <div className="bg-gray-100 p-5 rounded-xl shadow-md mb-6 grid md:grid-cols-3 gap-4">
+      <div className="bg-gray-100 p-4 rounded-xl shadow-md mb-5 grid md:grid-cols-3 gap-4"> {/* Reduced p-5/mb-6 to p-4/mb-5 */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 mb-1"> {/* Reduced mb-2 to mb-1 */}
             Minimum Headroom Required:
           </label>
           <select
             value={maxHeightFilter}
             onChange={(e) => setMaxHeightFilter(Number(e.target.value))}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500"
+            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500" {/* Reduced p-3 to p-2 */}
           >
             <option value={0}>Any Height</option>
             {MAX_HEIGHT_OPTIONS.map(cm => (
@@ -300,13 +298,13 @@ const ListingsPage: React.FC<{ navigate: (path: string, propertyId: number) => v
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
             Minimum Price Range:
           </label>
           <select
             value={priceFilter}
             onChange={(e) => setPriceFilter(Number(e.target.value))}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500"
+            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500"
           >
             <option value={0}>Any Price</option>
             {PRICE_OPTIONS.map(p => (
@@ -339,13 +337,13 @@ const ListingsPage: React.FC<{ navigate: (path: string, propertyId: number) => v
 const PropertyCard: React.FC<{ property: Property, navigate: (path: string, propertyId: number) => void }> = ({ property, navigate }) => (
   <div className="bg-white rounded-xl shadow-lg overflow-hidden transition-transform duration-300 hover:shadow-2xl hover:-translate-y-1">
     <img src={property.images[0]} alt={property.name} className="w-full h-48 object-cover" /> 
-    <div className="p-5">
+    <div className="p-4"> {/* Reduced p-5 to p-4 */}
       <h3 className="text-xl font-bold text-gray-800">{property.name}</h3>
-      <p className="text-sm text-gray-500 flex items-center mb-3">
+      <p className="text-sm text-gray-500 flex items-center mb-2"> {/* Reduced mb-3 to mb-2 */}
         <Compass size={16} className="mr-1" /> {property.location}
       </p>
 
-      <div className="space-y-1 mb-4 text-sm">
+      <div className="space-y-1 mb-3 text-sm"> {/* Reduced mb-4 to mb-3 */}
         <MaxHeightDisplay clearanceCM={property.maxHeightCM} />
         <div className="flex items-center text-gray-600 space-x-1">
           <Bed size={18} />
@@ -366,7 +364,7 @@ const PropertyCard: React.FC<{ property: Property, navigate: (path: string, prop
   </div>
 );
 
-// 8. Property Detail Page (FIXED Center Alignment)
+// 8. Property Detail Page (Spacing Optimized)
 const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0); 
   
@@ -383,12 +381,11 @@ const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
 
   return (
     <div className="max-w-5xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-      {/* Explicitly ensure titles and body text align left within the container */}
       <h1 className="text-4xl font-bold text-gray-800 mb-2 text-left">{property.name}</h1>
-      <p className="text-xl text-gray-500 mb-4 text-left">{property.location}</p>
+      <p className="text-xl text-gray-500 mb-3 text-left">{property.location}</p> {/* Reduced mb-4 to mb-3 */}
 
       {/* Image Carousel - Full Width and Centered */}
-      <div className="relative w-full aspect-video rounded-xl shadow-lg overflow-hidden mb-6">
+      <div className="relative w-full aspect-video rounded-xl shadow-lg overflow-hidden mb-5"> {/* Reduced mb-6 to mb-5 */}
         <img 
           src={currentImage} 
           alt={`${property.name} photo ${currentImageIndex + 1}`} 
@@ -419,14 +416,14 @@ const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
     </div>
 
       {/* Details - Headroom Certified Dimensions */}
-      <div className="bg-white p-6 rounded-xl shadow-lg mb-6">
-        <h2 className="text-2xl font-bold text-red-600 mb-4 flex items-center">
+      <div className="bg-white p-5 rounded-xl shadow-lg mb-5"> {/* Reduced p-6/mb-6 to p-5/mb-5 */}
+        <h2 className="text-2xl font-bold text-red-600 mb-3 flex items-center"> {/* Reduced mb-4 to mb-3 */}
           <Maximize size={24} className="mr-2" /> Headroom Certified Dimensions
         </h2>
         
-        <p className="text-gray-700 mb-4">{property.description}</p>
+        <p className="text-gray-700 mb-3">{property.description}</p> {/* Reduced mb-4 to mb-3 */}
 
-        <div className="grid sm:grid-cols-3 gap-y-2 gap-x-4 text-lg">
+        <div className="grid sm:grid-cols-3 gap-y-1 gap-x-4 text-lg"> {/* Reduced gap-y-2 to gap-y-1 */}
             <div className="font-semibold">Max Height Rating:</div>
             <div className="col-span-2">
                 <MaxHeightDisplay clearanceCM={property.maxHeightCM} />
@@ -439,7 +436,7 @@ const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
       </div>
 
       {/* Google Map Placeholder (Retained position/width) */}
-      <div className="bg-gray-200 h-[400px] w-full flex items-center justify-center rounded-xl shadow-lg mb-6">
+      <div className="bg-gray-200 h-[400px] w-full flex items-center justify-center rounded-xl shadow-lg mb-5"> {/* Reduced mb-6 to mb-5 */}
         <p className="text-gray-600">Google Map Embed Placeholder</p>
       </div>
 
@@ -465,17 +462,16 @@ const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
   );
 };
 
-// 9. Headroom Standard Page (FIXED Center Alignment)
+// 9. Headroom Standard Page (Spacing Optimized & Alignment Check)
 const StandardPage: React.FC = () => (
   <div className="max-w-4xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
-    {/* Explicitly using text-center on mobile, text-left on sm+ */}
-    <h1 className="text-4xl font-bold text-gray-800 mb-5 text-center sm:text-left">Our Standard: Why We Certify</h1>
-    <p className="text-xl text-gray-600 mb-6 text-center sm:text-left">
+    <h1 className="text-4xl font-bold text-gray-800 mb-5 text-left">Our Standard: Why We Certify</h1> {/* Removed explicit center on mobile */}
+    <p className="text-xl text-gray-600 mb-6 text-left"> {/* Removed explicit center on mobile */}
       We eliminate the anxiety of travel for tall guests by applying a stringent, verifiable certification process to every property.
     </p>
 
-    {/* Section: The Safety Buffer - Inner content is forced left */}
-    <div className="mb-8 p-5 bg-red-50 rounded-xl border border-red-200 text-left">
+    {/* Section: The Safety Buffer */}
+    <div className="mb-6 p-5 bg-red-50 rounded-xl border border-red-200 text-left"> {/* Reduced mb-8 to mb-6 */}
         <h2 className="text-2xl font-semibold text-red-600 mb-3">1. The Safety Buffer (The 5 cm Rule)</h2>
         <p className="mb-3 text-gray-700">
           A property must have a minimum measured clearance of <strong>6 ft 7 in (201 cm)</strong> for a guest to be rated at <strong>6 ft 5 in (196 cm)</strong>. Why?
@@ -488,8 +484,8 @@ const StandardPage: React.FC = () => (
     </div>
     
     {/* Section: The Certification Process */}
-    <h2 className="text-2xl font-semibold text-gray-800 mt-10 mb-4 text-left">2. The Certification Process: Photo Proof</h2>
-    <div className="space-y-4">
+    <h2 className="text-2xl font-semibold text-gray-800 mt-8 mb-4 text-left">2. The Certification Process: Photo Proof</h2> {/* Reduced mt-10 to mt-8 */}
+    <div className="space-y-3"> {/* Reduced space-y-4 to space-y-3 */}
         <div className="flex items-start space-x-4">
             <Maximize size={32} className="text-gray-700 flex-shrink-0" />
             <div>
@@ -515,7 +511,7 @@ const StandardPage: React.FC = () => (
   </div>
 );
 
-// 10. Contact Page (FIXED Center Alignment)
+// 10. Contact Page (Spacing Optimized & Alignment Check)
 const ContactPage: React.FC = () => {
     return (
         <div className="max-w-2xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
@@ -526,7 +522,7 @@ const ContactPage: React.FC = () => {
                 name="contact" 
                 method="POST" 
                 data-netlify="true" 
-                className="space-y-4 p-6 bg-white rounded-xl shadow-lg border-t-4 border-red-600 mx-auto"
+                className="space-y-3 p-5 bg-white rounded-xl shadow-lg border-t-4 border-red-600 mx-auto" /* Reduced space-y-4/p-6 to space-y-3/p-5 */
             >
                 <input type="hidden" name="form-name" value="contact" />
 
@@ -573,7 +569,7 @@ const ContactPage: React.FC = () => {
                     ></textarea>
                 </div>
 
-                <Button type="submit" className="w-full mt-6">
+                <Button type="submit" className="w-full mt-4"> {/* Reduced mt-6 to mt-4 */}
                     Submit
                 </Button>
             </form>
