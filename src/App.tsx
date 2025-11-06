@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Search, Bed, Maximize, Compass, DollarSign, CheckCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 
-// --- INTERFACES AND TYPE DEFINITIONS (UPDATED) ---
+// --- INTERFACES AND TYPE DEFINITIONS ---
 interface Property {
   id: number;
   name: string;
@@ -11,8 +11,7 @@ interface Property {
   mattressLengthCM: number;
   ratingMember: number; 
   affiliateLink: string;
-  // image: string; // <-- REMOVED
-  images: string[]; // <-- ADDED: Now an array of URLs
+  images: string[];
   description: string;
   amenities: string[];
 }
@@ -32,7 +31,7 @@ interface ButtonProps {
 // --- GLOBAL CONFIGURATION AND DATA ---
 
 const SAFETY_BUFFER_CM = 5; 
-const HERO_IMAGE_URL = "/images/cottage-hero.png";
+const HERO_IMAGE_URL = "/images/whisk-hero.png"; 
 const AFFILIATE_BASE_LINK = "https://partner-booking-site.com/?aid=HHAVENS123&prop=";
 
 // Conversion helper function (now fully safe)
@@ -40,10 +39,11 @@ const cmToFeetInches = (cm: number): string => {
   const totalInches = cm / 2.54;
   const feet = Math.floor(totalInches / 12);
   const inches = Math.round(totalInches % 12);
+  // Ensure the output format is consistent: e.g., 7 ft 1 in
   return `${feet} ft ${inches} in`;
 };
 
-// Mock Property Data (UPDATED)
+// Mock Property Data (No functional changes, placeholder 'beds' logic added below)
 const MOCK_PROPERTIES: Property[] = [
   { 
     id: 1, 
@@ -54,7 +54,7 @@ const MOCK_PROPERTIES: Property[] = [
     mattressLengthCM: 215, 
     ratingMember: 4.8, 
     affiliateLink: AFFILIATE_BASE_LINK + "Lodge1", 
-    images: [ // Multi-images for gallery
+    images: [
       "https://placehold.co/600x400/2E8B57/FFFFFF?text=Barn+Lodge+Exterior",
       "https://placehold.co/600x400/2E8B57/FFFFFF?text=Vaulted+Ceilings",
       "https://placehold.co/600x400/2E8B57/FFFFFF?text=Extra-Long+Bed",
@@ -71,7 +71,7 @@ const MOCK_PROPERTIES: Property[] = [
     mattressLengthCM: 205, 
     ratingMember: 3.5, 
     affiliateLink: AFFILIATE_BASE_LINK + "Cottage2", 
-    images: [ // Multi-images for gallery
+    images: [
       "https://placehold.co/600x400/6B8E23/FFFFFF?text=Stone+Cottage+Exterior",
       "https://placehold.co/600x400/6B8E23/FFFFFF?text=Living+Room+Beam+195cm",
       "https://placehold.co/600x400/6B8E23/FFFFFF?text=Kitchen+Low+Point",
@@ -125,24 +125,24 @@ const Button: React.FC<ButtonProps> = ({ children, onClick, color = "bg-red-600"
   </button>
 );
 
-// 2. Header and Navigation
+// 2. Header and Navigation (UPDATED with Contact Us link)
 const Header: React.FC<HeaderProps> = ({ navigate, currentPage }) => (
   <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm shadow-md">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
       <div onClick={() => navigate("home")} className="flex items-center cursor-pointer space-x-2">
-        {/* IHI Logo Icon (UPDATED TO MATCH REQUEST) */}
+        {/* IHI Logo Icon */}
         <div className="flex items-center">
           <span className="h-6 w-0.5 bg-black" />
           <span className="text-2xl font-black text-red-600 mx-1">H</span>
           <span className="h-6 w-0.5 bg-black" />
         </div>
         <span className="text-lg font-bold text-gray-800 tracking-wider uppercase font-serif"> 
-          {/* Added font-serif for a more stylish font effect, assuming Tailwind is configured */}
           Headroom Havens
         </span>
       </div>
       <nav className="hidden sm:flex space-x-6">
-        {[{ path: "listings", label: "Find a Place with Headroom" }, { path: "standard", label: "Our Standard" }]
+        {/* Added 'contact' to the navigation map */}
+        {[{ path: "listings", label: "Find a Place with Headroom" }, { path: "standard", label: "Our Standard" }, { path: "contact", label: "Contact Us" }]
           .map(({ path, label }) => (
             <button
               key={path}
@@ -183,7 +183,7 @@ const MaxHeightDisplay: React.FC<{ clearanceCM: number }> = ({ clearanceCM }) =>
     <div className="flex items-center text-red-600 font-semibold space-x-2">
       <Maximize size={20} className="text-red-600" />
       <span>
-        Max Height Rating: **{maxSafeHeightImperial}** ({Math.round(maxSafeHeightCM)} cm)
+        Max Height Rating: {maxSafeHeightImperial} ({Math.round(maxSafeHeightCM)} cm)
       </span>
     </div>
   );
@@ -191,7 +191,7 @@ const MaxHeightDisplay: React.FC<{ clearanceCM: number }> = ({ clearanceCM }) =>
 
 // --- PAGES ---
 
-// 5. Home Page
+// 5. Home Page (UPDATED TEXT/FORMATTING)
 const HomePage: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) => (
   <div>
     {/* Hero Section */}
@@ -199,10 +199,10 @@ const HomePage: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) 
       <img src={HERO_IMAGE_URL} alt="Photorealistic Cottage Doorway with Tall Man" className="w-full h-[500px] object-cover" />
       <div className="absolute inset-0 bg-black bg-opacity-30 flex flex-col justify-center items-center text-center p-4">
         <h1 className="text-5xl md:text-7xl font-bold text-white tracking-tight drop-shadow-lg">
-            Holiday Cottages <span className="text-red-600">with Headroom</span>
+          Holiday Cottages <span className="text-red-600">with Headroom</span> {/* TEXT COLOR CHANGE */}
         </h1>
         <p className="mt-4 text-xl md:text-2xl text-white/90 drop-shadow-md">
-          Guaranteed comfort and verified clearance for travelers 6 ft 0 in (183 cm) and taller. Stop the Stoop. Start the Holiday.
+          Verified head clearance and bed length. Standing up for tall travelers. {/* UPDATED TEXT */}
         </p>
         <Button onClick={() => navigate("listings")} className="mt-8">
           <Search size={20} className="inline mr-2" /> Find a Place with Headroom
@@ -210,10 +210,10 @@ const HomePage: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) 
       </div>
     </div>
 
-    {/* Value Proposition Section */}
+    {/* Value Proposition Section (UPDATED TEXT) */}
     <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
       <h2 className="text-3xl font-bold text-gray-800 mb-10 text-center">
-        The Headroom Standard: Guaranteed Comfort
+        The Headroom Havens Standard {/* UPDATED HEADING */}
       </h2>
       <div className="grid md:grid-cols-3 gap-10">
         <div className="flex flex-col items-center text-center p-6 bg-white rounded-xl shadow-lg border-t-4 border-red-600">
@@ -227,14 +227,14 @@ const HomePage: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) 
           <Bed size={48} className="text-red-600 mb-4" />
           <h3 className="text-xl font-semibold mb-2">Extra-Long Beds</h3>
           <p className="text-gray-600">
-            No more feet dangling. We only list properties with mattresses of 205 cm or longer, plus open footboards.
+            No more feet dangling. We only list properties with mattresses of 200 cm (6 ft 6 in) or longer, plus open footboards. {/* UPDATED LENGTH */}
           </p>
         </div>
         <div className="flex flex-col items-center text-center p-6 bg-white rounded-xl shadow-lg border-t-4 border-red-600">
           <CheckCircle size={48} className="text-red-600 mb-4" />
           <h3 className="text-xl font-semibold mb-2">High-End Curation</h3>
           <p className="text-gray-600">
-            A collection of boutique cottages and luxury retreats across the UK, chosen for style and verified space.
+            A collection of boutique cottages and luxury retreats across the UK and Europe, chosen for style and verified space. {/* UPDATED LOCATION */}
           </p>
         </div>
       </div>
@@ -338,7 +338,7 @@ const ListingsPage: React.FC<{ navigate: (path: string, propertyId: number) => v
   );
 };
 
-// 7. Property Card Component (UPDATED to use the first image in the array)
+// 7. Property Card Component (UPDATED Bed Length display)
 const PropertyCard: React.FC<{ property: Property, navigate: (path: string, propertyId: number) => void }> = ({ property, navigate }) => (
   <div className="bg-white rounded-xl shadow-lg overflow-hidden transition-transform duration-300 hover:shadow-2xl hover:-translate-y-1">
     {/* Use the FIRST image for the card preview */}
@@ -354,7 +354,10 @@ const PropertyCard: React.FC<{ property: Property, navigate: (path: string, prop
         <MaxHeightDisplay clearanceCM={property.maxHeightCM} />
         <div className="flex items-center text-gray-600 space-x-1">
           <Bed size={18} />
-          <span>Bed Length: {property.mattressLengthCM} cm</span>
+          {/* UPDATED Bed Length Display */}
+          <span>
+            Usable Bed Length: {cmToFeetInches(property.mattressLengthCM)} ({property.mattressLengthCM} cm) - 2 Beds 
+          </span>
         </div>
         <div className="flex items-center text-gray-600 space-x-1">
           <DollarSign size={18} />
@@ -369,9 +372,9 @@ const PropertyCard: React.FC<{ property: Property, navigate: (path: string, prop
   </div>
 );
 
-// 8. Property Detail Page (UPDATED with image gallery)
+// 8. Property Detail Page (UPDATED Layout and Styling)
 const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0); // <-- NEW STATE
+  const [currentImageIndex, setCurrentImageIndex] = useState(0); 
   
   const handleBookNow = () => {
     // Affiliate Tracking Logic
@@ -391,51 +394,42 @@ const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
       <h1 className="text-4xl font-bold text-gray-800 mb-2">{property.name}</h1>
       <p className="text-xl text-gray-500 mb-6">{property.location}</p>
 
-      {/* Images and Map (UPDATED GALLERY) */}
-      <div className="grid md:grid-cols-2 gap-6 mb-8">
+      {/* Image Carousel (UPDATED: 16:9 ratio, full width of content below) */}
+      <div className="relative w-full aspect-video rounded-xl shadow-lg overflow-hidden mb-8">
+        <img 
+          src={currentImage} 
+          alt={`${property.name} photo ${currentImageIndex + 1}`} 
+          className="w-full h-full object-cover transition-opacity duration-300" 
+        />
         
-        {/* Image Gallery Column */}
-        <div className="relative h-[400px] rounded-xl shadow-lg overflow-hidden">
-          <img 
-            src={currentImage} 
-            alt={`${property.name} photo ${currentImageIndex + 1}`} 
-            className="w-full h-full object-cover transition-opacity duration-300" 
-          />
-          
-          {/* Gallery Controls (Only show if multiple images exist) */}
-          {totalImages > 1 && (
-            <>
-              {/* Previous Button */}
-              <button 
-                onClick={goToPrev}
-                className="absolute left-3 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/80 transition-colors z-10"
-                aria-label="Previous image"
-              >
-                <ChevronLeft size={24} />
-              </button>
-              {/* Next Button */}
-              <button 
-                onClick={goToNext}
-                className="absolute right-3 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/80 transition-colors z-10"
-                aria-label="Next image"
-              >
-                <ChevronRight size={24} />
-              </button>
-              {/* Image Counter */}
-              <div className="absolute bottom-3 right-3 text-white bg-black/50 text-xs px-3 py-1 rounded-full z-10">
-                {currentImageIndex + 1} / {totalImages}
-              </div>
-            </>
-          )}
-        </div>
-        
-        {/* Map Column (Unchanged) */}
-        <div className="bg-gray-200 h-[400px] flex items-center justify-center rounded-xl shadow-lg">
-          <p className="text-gray-600">Google Map Embed Placeholder</p>
-        </div>
+        {/* Gallery Controls (Only show if multiple images exist) */}
+        {totalImages > 1 && (
+          <>
+            {/* Previous Button */}
+            <button 
+              onClick={goToPrev}
+              className="absolute left-3 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/80 transition-colors z-10"
+              aria-label="Previous image"
+            >
+              <ChevronLeft size={24} />
+            </button>
+            {/* Next Button */}
+            <button 
+              onClick={goToNext}
+              className="absolute right-3 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/80 transition-colors z-10"
+              aria-label="Next image"
+            >
+              <ChevronRight size={24} />
+            </button>
+            {/* Image Counter */}
+            <div className="absolute bottom-3 right-3 text-white bg-black/50 text-xs px-3 py-1 rounded-full z-10">
+              {currentImageIndex + 1} / {totalImages}
+            </div>
+          </>
+        )}
       </div>
 
-      {/* Details */}
+      {/* Details - Headroom Certified Dimensions */}
       <div className="bg-white p-6 rounded-xl shadow-lg mb-8">
         <h2 className="text-2xl font-bold text-red-600 mb-4 flex items-center">
           <Maximize size={24} className="mr-2" /> Headroom Certified Dimensions
@@ -446,13 +440,20 @@ const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
         <div className="grid sm:grid-cols-3 gap-4 text-lg">
             <div className="font-semibold">Max Height Rating:</div>
             <div className="col-span-2">
+                {/* Removed asterisks around imperial measurement */}
                 <MaxHeightDisplay clearanceCM={property.maxHeightCM} />
             </div>
             <div className="font-semibold">Actual Lowest Clearance:</div>
             <div className="col-span-2">{cmToFeetInches(property.maxHeightCM)} ({property.maxHeightCM} cm)</div>
             <div className="font-semibold">Usable Bed Length:</div>
-            <div className="col-span-2">{property.mattressLengthCM} cm</div>
+            {/* Added imperial to usable bed length and placeholder beds */}
+            <div className="col-span-2">{cmToFeetInches(property.mattressLengthCM)} ({property.mattressLengthCM} cm) - 2 Beds</div>
         </div>
+      </div>
+
+      {/* Google Map Placeholder (NEW POSITION/WIDTH) */}
+      <div className="bg-gray-200 h-[400px] w-full flex items-center justify-center rounded-xl shadow-lg mb-8">
+        <p className="text-gray-600">Google Map Embed Placeholder</p>
       </div>
 
       {/* Member Rating & Booking */}
@@ -463,7 +464,8 @@ const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
           <p className="text-sm text-gray-500 mt-2">
             Based on feedback from verified tall guests. All ratings are admin-approved for integrity.
           </p>
-          <button className="text-red-600 mt-3 text-sm underline hover:text-red-700">Submit Your Rating (Coming Soon)</button>
+          {/* Removed bracketed text */}
+          <button className="text-red-600 mt-3 text-sm underline hover:text-red-700">Submit Your Rating</button>
         </div>
         <div className="md:col-span-1 flex flex-col justify-center items-center p-6 bg-red-100 rounded-xl shadow-inner">
           <p className="text-sm text-gray-700 mb-3">Ready to book your stress-free stay?</p>
@@ -477,7 +479,7 @@ const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
   );
 };
 
-// 9. Headroom Standard Page
+// 9. Headroom Standard Page (UPDATED TEXT)
 const StandardPage: React.FC = () => (
   <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
     <h1 className="text-4xl font-bold text-gray-800 mb-6">Our Standard: Why We Certify</h1>
@@ -489,12 +491,12 @@ const StandardPage: React.FC = () => (
     <div className="mb-10 p-6 bg-red-50 rounded-xl border border-red-200">
         <h2 className="text-2xl font-semibold text-red-600 mb-3">1. The Safety Buffer (The 5 cm Rule)</h2>
         <p className="mb-4 text-gray-700">
-          A property must have a minimum measured clearance of **6 ft 7 in (201 cm)** for a guest to be rated at **6 ft 5 in (196 cm)**. Why?
+          A property must have a minimum measured clearance of <strong>6 ft 7 in (201 cm)</strong> for a guest to be rated at <strong>6 ft 5 in (196 cm)</strong>. Why?
         </p>
         <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
-            <li>**Dynamic Movement:** When you walk, your body slightly lifts off the ground at the push-off point of your stride. This requires approximately 5 cm or 2 in of vertical clearance.</li>
-            <li>**Our Guarantee:** We subtract a mandatory **5 cm (2 in) safety buffer** from the lowest measured point (door, beam, ceiling) to determine the property's true **Max Height Rating**.</li>
-            <li>**No Surprises:** A property rated at **6 ft 6 in (198 cm)** means a 6 ft 6 in guest can walk, stretch, and jump without fear of injury.</li>
+            <li><strong>Dynamic Movement:</strong> When you walk, your body slightly lifts off the ground at the push-off point of your stride. This requires approximately 5 cm or 2 in of vertical clearance.</li>
+            <li><strong>Our Guarantee:</strong> We subtract a mandatory <strong>5 cm (2 in) safety buffer</strong> from the lowest measured point (door, beam, ceiling) to determine the property's true <strong>Max Height Rating</strong>.</li>
+            <li><strong>No Surprises:</strong> A property rated at <strong>6 ft 6 in (198 cm)</strong> means a 6 ft 6 in guest can walk, stretch, and jump without fear of injury.</li>
         </ul>
     </div>
     
@@ -512,35 +514,155 @@ const StandardPage: React.FC = () => (
             <Search size={32} className="text-gray-700 flex-shrink-0" />
             <div>
                 <h3 className="text-xl font-semibold">The Photo Verification</h3>
-                <p className="text-gray-600">The most important step: The owner must submit **photo evidence** showing a tape measure clearly documenting the full height of the low points. We require branded Headroom Havens tape (or a recognizable ruler) to verify the data's integrity.</p>
+                <p className="text-gray-600">The most important step: The owner must submit <strong>photo evidence</strong> showing a tape measure clearly documenting the full height of the low points. We require branded Headroom Havens tape (or a recognizable ruler) to verify the data's integrity.</p>
             </div>
         </div>
         <div className="flex items-start space-x-4">
             <Bed size={32} className="text-gray-700 flex-shrink-0" />
             <div>
                 <h3 className="text-xl font-semibold">Bed Length Verification</h3>
-                <p className="text-gray-600">We verify the **usable mattress length** (excluding frames/footboards). Only mattresses over **205 cm (6 ft 8 in)** qualify for listing on our site.</p>
+                {/* UPDATED BED LENGTH TEXT */}
+                <p className="text-gray-600">We verify usable mattress length (excluding frames/footboards). Only mattresses over <strong>200 cm (6 ft 6 in)</strong> or longer qualify for listing on our site.</p>
             </div>
         </div>
     </div>
   </div>
 );
 
-// 10. Router and Main App Component
-const App: React.FC = () => {
-  const [currentPage, setCurrentPage] = useState<string>("home");
-  const [selectedPropertyId, setSelectedPropertyId] = useState<number | null>(null);
+// 10. Contact Page (UPDATED FOR NETLIFY FORMS)
+const ContactPage: React.FC = () => {
 
+    // Note: The form submission is now handled by Netlify's built-in processing.
+    // The browser will automatically redirect to a success page (or the current page).
+    // The 'name' attribute on the <form> tag is CRITICAL for Netlify to recognize it.
+    
+    // We remove the old JS handler entirely and let the browser/Netlify handle submission.
+
+    return (
+        <div className="max-w-xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+            <h1 className="text-4xl font-bold text-gray-800 mb-6">Contact Us</h1>
+            <p className="text-xl text-gray-600 mb-8">We're standing up for tall travelers. Get in touch with our team.</p>
+
+            {/* CRITICAL: Added data-netlify attribute and 'contact' name */}
+            <form 
+                name="contact" 
+                method="POST" 
+                data-netlify="true" 
+                className="space-y-6 p-6 bg-white rounded-xl shadow-lg border-t-4 border-red-600"
+            >
+                {/* Netlify requires this hidden field for spam filtering (optional, but good practice) */}
+                <input type="hidden" name="form-name" value="contact" />
+
+                <div>
+                    <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
+                    <input
+                        type="text"
+                        name="name"
+                        id="name"
+                        required
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500"
+                    />
+                </div>
+
+                <div>
+                    <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email Address</label>
+                    <input
+                        type="email"
+                        name="email"
+                        id="email"
+                        required
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500"
+                    />
+                </div>
+
+                <div>
+                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Phone Number</label>
+                    <input
+                        type="tel"
+                        name="phone"
+                        id="phone"
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500"
+                    />
+                </div>
+
+                <div>
+                    <label htmlFor="comment" className="block text-sm font-medium text-gray-700">Comment</label>
+                    <textarea
+                        name="comment"
+                        id="comment"
+                        rows={4}
+                        required
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500"
+                    ></textarea>
+                </div>
+
+                <Button type="submit" className="w-full">
+                    Submit
+                </Button>
+            </form>
+            <p className="text-xs text-gray-500 text-center mt-3">Submissions are processed securely by Netlify Forms.</p>
+        </div>
+    );
+};
+
+
+// 11. Router and Main App Component
+const App: React.FC = () => {
+  // We now use an object for location state to hold both path and ID
+  const [location, setLocation] = useState<{ path: string, propertyId: number | null }>({ path: "home", propertyId: null });
+
+  // Use location state for rendering
+  const currentPage = location.path;
+  const selectedPropertyId = location.propertyId;
+
+  // Function to handle navigation and PUSH a new state to history
   const navigate = (path: string, propertyId: number | null = null) => {
-    setCurrentPage(path);
-    setSelectedPropertyId(propertyId);
+    // 1. Create a new state object
+    const newState = { path, propertyId };
+
+    // 2. Update the URL and push a new history entry
+    const url = path === "detail" && propertyId !== null ? `/${path}/${propertyId}` : `/${path}`;
+    window.history.pushState(newState, "", url);
+
+    // 3. Update component state
+    setLocation(newState);
     window.scrollTo(0, 0); // Scroll to top on navigation
   };
 
+  // useEffect to handle the browser's back/forward buttons (popstate)
+  React.useEffect(() => {
+    const handlePopState = (event: PopStateEvent) => {
+      // If the state exists, use it to update component location
+      if (event.state) {
+        setLocation(event.state as { path: string, propertyId: number | null });
+      } else {
+        // Fallback to home if no state is found (e.g., initial load, or pop past first entry)
+        setLocation({ path: "home", propertyId: null });
+      }
+    };
+
+    // Listen for browser navigation (back/forward)
+    window.addEventListener('popstate', handlePopState);
+
+    // Initial check: if user loads deep link (e.g., /listings)
+    const initialPath = window.location.pathname.slice(1).split('/');
+    if (initialPath[0] && initialPath[0] !== '') {
+        // Set initial state without pushing (to avoid double entry)
+        setLocation({ 
+            path: initialPath[0], 
+            propertyId: initialPath[1] ? Number(initialPath[1]) : null 
+        });
+    }
+
+
+    // Clean up the event listener on component unmount
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, []); // Run only once on mount
+
   const selectedProperty = useMemo(() => {
-    // Ensure this safely handles the case where selectedPropertyId is null
     const prop = MOCK_PROPERTIES.find(p => p.id === selectedPropertyId);
-    // Use a placeholder property if ID is invalid, or the first one if null
     return prop || MOCK_PROPERTIES[0]; 
   }, [selectedPropertyId]);
 
@@ -552,8 +674,12 @@ const App: React.FC = () => {
     case "standard":
       content = <StandardPage />;
       break;
+    case "contact":
+      content = <ContactPage />;
+      break;
     case "detail":
-      content = <DetailPage property={selectedProperty} />;
+      // Only render DetailPage if a property is selected
+      content = selectedPropertyId !== null ? <DetailPage property={selectedProperty} /> : <HomePage navigate={navigate} />;
       break;
     case "home":
     default:
