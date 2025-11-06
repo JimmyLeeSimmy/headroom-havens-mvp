@@ -305,7 +305,7 @@ const ListingsPage: React.FC<{ navigate: (path: string, propertyId: number) => v
           <select
             value={maxHeightFilter}
             onChange={(e) => setMaxHeightFilter(Number(e.target.value))}
-            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500" {/* TIGHTENED: p-2 */}
+            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500" 
           >
             <option value={0}>Any Height</option>
             {MAX_HEIGHT_OPTIONS.map(cm => (
@@ -323,7 +323,7 @@ const ListingsPage: React.FC<{ navigate: (path: string, propertyId: number) => v
           <select
             value={priceFilter}
             onChange={(e) => setPriceFilter(Number(e.target.value))}
-            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500" {/* TIGHTENED: p-2 */}
+            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500" 
           >
             <option value={0}>Any Price</option>
             {PRICE_OPTIONS.map(p => (
@@ -348,7 +348,7 @@ const ListingsPage: React.FC<{ navigate: (path: string, propertyId: number) => v
           <p className="text-gray-500 mt-2">Try adjusting your minimum height or price range.</p>
         </div>
       )}
-      </div>
+    </div>
   );
 };
 
@@ -476,7 +476,7 @@ const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
           <h3 className="text-xl font-semibold mb-3">Member Comfort Rating</h3>
           <p className="text-4xl font-bold text-green-600">{property.ratingMember.toFixed(1)} / 5.0</p>
           <p className="text-sm text-gray-500 mt-2">
-            Price Rating: <span className='font-bold text-gray-800'>{priceLabel}</span> | Based on feedback from verified tall guests. All ratings are admin-approved for integrity. 
+            Price Rating: <span className='font-bold text-gray-800'>{priceRangeToLabel(property.priceRange)}</span> | Based on feedback from verified tall guests. All ratings are admin-approved for integrity. 
           </p>
           <button className="text-red-600 mt-3 text-sm underline hover:text-red-700">Submit Your Rating</button>
         </div>
@@ -492,7 +492,7 @@ const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
   );
 };
 
-// 9. Headroom Standard Page (Spacing is correct in original code)
+// 9. Headroom Standard Page
 const StandardPage: React.FC = () => (
   <div className="max-w-4xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
     <h1 className="text-4xl font-bold text-gray-800 mb-5 text-left">Our Standard: Why We Certify</h1> 
@@ -541,7 +541,7 @@ const StandardPage: React.FC = () => (
   </div>
 );
 
-// 10. Contact Page (Spacing is correct in original code)
+// 10. Contact Page
 const ContactPage: React.FC = () => {
     return (
         <div className="max-w-2xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
