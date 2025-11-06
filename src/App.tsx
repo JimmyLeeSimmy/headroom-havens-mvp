@@ -187,6 +187,7 @@ const Footer: React.FC = () => (
       <p className="mt-2 text-xs text-gray-400">
         All bookings are processed via our verified affiliate partners. Commission is paid after guest stay.
       </p>
+        
     </div>
   </footer>
 );
@@ -259,7 +260,6 @@ const HomePage: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) 
         <Button onClick={() => navigate("standard")} color="bg-gray-700 hover:bg-gray-800">
           Learn How We Certify Properties
         </Button>
-        
       </div>
     </div>
 
@@ -449,18 +449,14 @@ const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
         <p className="text-gray-700 mb-3">{property.description}</p> 
 
         <div className="grid sm:grid-cols-3 gap-y-1 gap-x-4 text-lg"> 
-            {/* The original black Max Height Rating row is REMOVED to meet the requirement. */}
 
             <div className="font-semibold">Actual Lowest Clearance:</div>
             <div className="col-span-2">{cmToFeetInches(property.maxHeightCM)} ({property.maxHeightCM} cm)</div>
-
-            {/* The red 'Max Height Rating' row is REMOVED on the detail page as requested */}
-            {/*
-            <div className="font-semibold text-red-600">Max Height Rating:</div>
-            <div className="col-span-2 text-red-600">
+            
+            <div className="font-semibold">Max Height Rating:</div>
+            <div className="col-span-2">
               {maxSafeHeightImperial} ({Math.round(maxSafeHeightCM)} cm)
             </div>
-            */}
             
             <div className="font-semibold">Usable Bed Length:</div>
             {/* CHANGED: Added (1 footboard) to the text */}
@@ -542,9 +538,8 @@ const StandardPage: React.FC = () => (
             </div>
         </div>
     </div>
-    </div>
-  );
-};
+  </div>
+);
 
 // 10. Contact Page (Original Spacing Retained)
 const ContactPage: React.FC = () => {
