@@ -26,13 +26,13 @@ interface ButtonProps {
   onClick?: () => void;
   color?: string;
   className?: string;
-  type?: 'submit' | 'button' | 'reset';
+  type?: 'submit' | 'button' | 'reset';
 }
 
 // --- GLOBAL CONFIGURATION AND DATA ---
 
 const SAFETY_BUFFER_CM = 5; 
-const HERO_IMAGE_URL = process.env.PUBLIC_URL + "/images/cottage-hero.png"; 
+const HERO_IMAGE_URL = process.env.PUBLIC_URL + "/images/cottage-hero.png"; 
 const AFFILIATE_BASE_LINK = "https://partner-booking-site.com/?aid=HHAVENS123&prop=";
 
 // Conversion helper function (now fully safe)
@@ -42,6 +42,25 @@ const cmToFeetInches = (cm: number): string => {
   const inches = Math.round(totalInches % 12);
   return `${feet} ft ${inches} in`;
 };
+
+// NEW: Helper function to convert price range number to a readable label
+const priceRangeToLabel = (price: number): string => {
+  switch (price) {
+    case 1:
+      return 'Low';
+    case 2:
+      return 'Medium';
+    case 3:
+      return 'High';
+    case 4:
+      return 'Very High';
+    case 5: // Assuming 5 is also Very High, as per the original PRICE_OPTIONS length
+      return 'Very High'; 
+    default:
+      return 'Unrated';
+  }
+};
+
 
 // Mock Property Data (Retained for functionality)
 const MOCK_PROPERTIES: Property[] = [
@@ -119,7 +138,7 @@ const MOCK_PROPERTIES: Property[] = [
 const Button: React.FC<ButtonProps> = ({ children, onClick, color = "bg-red-600", className = "", type = "button" }) => (
   <button
     onClick={onClick}
-    type={type} 
+    type={type} 
     className={`px-6 py-3 font-semibold text-white transition-colors duration-200 ${color} rounded-lg shadow-md hover:bg-red-700 disabled:opacity-50 ${className}`}
   >
     {children}
@@ -241,7 +260,7 @@ const HomePage: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) 
         <Button onClick={() => navigate("standard")} color="bg-gray-700 hover:bg-gray-800">
           Learn How We Certify Properties
         </Button>
-      </div>
+        </div>
     </div>
 
     {/* Featured Havens Teaser */}
@@ -262,7 +281,8 @@ const ListingsPage: React.FC<{ navigate: (path: string, propertyId: number) => v
   const [priceFilter, setPriceFilter] = useState<number>(0);
 
   const MAX_HEIGHT_OPTIONS = [193, 198, 203, 208, 213, 218];
-  const PRICE_OPTIONS = [1, 2, 3, 4, 5];
+  // Retained PRICE_OPTIONS as numbers 1-5 for logic, but will use priceRangeToLabel for display
+  const PRICE_OPTIONS = [1, 2, 3, 4, 5]; 
 
   const filteredProperties = useMemo(() => {
     return MOCK_PROPERTIES.filter(property => {
@@ -299,7 +319,7 @@ const ListingsPage: React.FC<{ navigate: (path: string, propertyId: number) => v
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Minimum Price Range:
+            Price Range: {/* CHANGED: Minimum Price Range -> Price Range */}
           </label>
           <select
             value={priceFilter}
@@ -309,7 +329,7 @@ const ListingsPage: React.FC<{ navigate: (path: string, propertyId: number) => v
             <option value={0}>Any Price</option>
             {PRICE_OPTIONS.map(p => (
               <option key={p} value={p}>
-                {'£'.repeat(p)}
+                {priceRangeToLabel(p)} {/* CHANGED: £.repeat(p) -> Price Label */}
               </option>
             ))}
           </select>
@@ -353,7 +373,7 @@ const PropertyCard: React.FC<{ property: Property, navigate: (path: string, prop
         </div>
         <div className="flex items-center text-gray-600 space-x-1">
           <DollarSign size={18} />
-          <span>Price Rating: {'£'.repeat(property.priceRange)}</span>
+          <span>Price Rating: {priceRangeToLabel(property.priceRange)}</span> {/* CHANGED: Display price label */}
         </div>
       </div>
 
@@ -378,6 +398,9 @@ const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
 
   const goToNext = () => setCurrentImageIndex((prev) => (prev + 1) % totalImages);
   const goToPrev = () => setCurrentImageIndex((prev) => (prev - 1 + totalImages) % totalImages);
+
+  // NEW: Get Price Label for Detail Page
+  const priceLabel = priceRangeToLabel(property.priceRange);
 
   return (
     <div className="max-w-5xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
@@ -424,14 +447,15 @@ const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
         <p className="text-gray-700 mb-3">{property.description}</p> {/* Reduced mb-4 to mb-3 */}
 
         <div className="grid sm:grid-cols-3 gap-y-1 gap-x-4 text-lg"> {/* Reduced gap-y-2 to gap-y-1 */}
-            <div className="font-semibold">Max Height Rating:</div>
-            <div className="col-span-2">
-                <MaxHeightDisplay clearanceCM={property.maxHeightCM} />
-            </div>
+            {/* REMOVED MaxHeightDisplay component and the text 'Max Height Rating:' as requested */}
             <div className="font-semibold">Actual Lowest Clearance:</div>
             <div className="col-span-2">{cmToFeetInches(property.maxHeightCM)} ({property.maxHeightCM} cm)</div>
             <div className="font-semibold">Usable Bed Length:</div>
-            <div className="col-span-2">{cmToFeetInches(property.mattressLengthCM)} ({property.mattressLengthCM} cm) - 2 Beds</div>
+            <div className="col-span-2">{cmToFeetInches(property.mattressLengthCM)} ({property.mattressLengthCM} cm) - 2 Beds (1 footboard)</div> {/* CHANGED: Added (1 footboard) */}
+            <div className="font-semibold text-red-600">Max Height Rating:</div>
+            <div className="col-span-2">
+                <MaxHeightDisplay clearanceCM={property.maxHeightCM} />
+            </div>
         </div>
       </div>
 
@@ -446,7 +470,7 @@ const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
           <h3 className="text-xl font-semibold mb-3">Member Comfort Rating</h3>
           <p className="text-4xl font-bold text-green-600">{property.ratingMember.toFixed(1)} / 5.0</p>
           <p className="text-sm text-gray-500 mt-2">
-            Based on feedback from verified tall guests. All ratings are admin-approved for integrity.
+            Price Rating: <span className='font-bold text-gray-800'>{priceLabel}</span> | Based on feedback from verified tall guests. All ratings are admin-approved for integrity.
           </p>
           <button className="text-red-600 mt-3 text-sm underline hover:text-red-700">Submit Your Rating</button>
         </div>
@@ -465,7 +489,7 @@ const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
 // 9. Headroom Standard Page (Spacing Optimized & Alignment Check)
 const StandardPage: React.FC = () => (
   <div className="max-w-4xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
-    <h1 className="text-4xl font-bold text-gray-800 mb-5 text-left">Our Standard: Why We Certify</h1> {/* Removed explicit center on mobile */}
+    <h1 className="text-4xl font-bold text-gray-800 mb-5 text-left">Our Standard: Why We Certify</h1> {/* Removed explicit center on mobile */}
     <p className="text-xl text-gray-600 mb-6 text-left"> {/* Removed explicit center on mobile */}
       We eliminate the anxiety of travel for tall guests by applying a stringent, verifiable certification process to every property.
     </p>
