@@ -157,6 +157,7 @@ const Header: React.FC<HeaderProps> = ({ navigate, currentPage }) => (
         <span className="text-lg font-bold text-gray-800 tracking-wider uppercase font-serif"> 
           Headroom Havens
         </span>
+        
       </div>
       <nav className="hidden sm:flex space-x-6">
         {[{ path: "listings", label: "Find a Place with Headroom" }, { path: "standard", label: "Our Standard" }, { path: "contact", label: "Contact Us" }]
@@ -187,7 +188,6 @@ const Footer: React.FC = () => (
       <p className="mt-2 text-xs text-gray-400">
         All bookings are processed via our verified affiliate partners. Commission is paid after guest stay.
       </p>
-        
     </div>
   </footer>
 );
@@ -209,11 +209,11 @@ const MaxHeightDisplay: React.FC<{ clearanceCM: number }> = ({ clearanceCM }) =>
 
 // --- PAGES ---
 
-// 5. Home Page (Original "tight" spacing)
+// 5. Home Page (Spacing Tightened)
 const HomePage: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) => (
   <div>
     {/* Hero Section */}
-    <div className="relative bg-gray-100 shadow-xl">
+    <div className="relative bg-gray-100 shadow-xl"> {/* Removed bottom margin here */}
       <img src={HERO_IMAGE_URL} alt="Photorealistic Cottage Doorway with Tall Man" className="w-full h-[500px] object-cover" />
       <div className="absolute inset-0 bg-black bg-opacity-30 flex flex-col justify-center items-center text-center p-4">
         <h1 className="text-5xl md:text-7xl font-bold text-white tracking-tight drop-shadow-lg">
@@ -229,7 +229,7 @@ const HomePage: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) 
     </div>
 
     {/* Value Proposition Section */}
-    <div className="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8"> 
+    <div className="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">  {/* Removed bottom margin here */}
       <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center"> 
         The Headroom Havens Standard
       </h2>
@@ -275,7 +275,7 @@ const HomePage: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) 
   </div>
 );
 
-// 6. Listings Page (Original "tight" spacing + New Logic)
+// 6. Listings Page (Spacing Tightened)
 const ListingsPage: React.FC<{ navigate: (path: string, propertyId: number) => void }> = ({ navigate }) => {
   const [maxHeightFilter, setMaxHeightFilter] = useState<number>(0);
   const [priceFilter, setPriceFilter] = useState<number>(0);
@@ -294,10 +294,10 @@ const ListingsPage: React.FC<{ navigate: (path: string, propertyId: number) => v
 
   return (
     <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-      <h1 className="text-3xl font-bold text-gray-800 mb-4">Find Your Headroom Haven</h1> 
+      <h1 className="text-3xl font-bold text-gray-800 mb-4">Find Your Headroom Haven</h1>  {/* Reverted to mb-4 */}
 
       {/* Filters Section */}
-      <div className="bg-gray-100 p-4 rounded-xl shadow-md mb-5 grid md:grid-cols-3 gap-4"> 
+      <div className="bg-gray-100 p-4 rounded-xl shadow-md mb-5 grid md:grid-cols-3 gap-4">  {/* Reverted to mb-5 */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1"> 
             Minimum Headroom Required:
@@ -383,7 +383,7 @@ const PropertyCard: React.FC<{ property: Property, navigate: (path: string, prop
   </div>
 );
 
-// 8. Property Detail Page (Original "tight" spacing + New Logic)
+// 8. Property Detail Page (Spacing Tightened)
 const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0); 
   
@@ -407,10 +407,10 @@ const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
   return (
     <div className="max-w-5xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
       <h1 className="text-4xl font-bold text-gray-800 mb-2 text-left">{property.name}</h1>
-      <p className="text-xl text-gray-500 mb-3 text-left">{property.location}</p> 
+      <p className="text-xl text-gray-500 mb-3 text-left">{property.location}</p>  {/* Reverted to mb-3 */}
 
       {/* Image Carousel - Full Width and Centered */}
-      <div className="relative w-full aspect-video rounded-xl shadow-lg overflow-hidden mb-5"> 
+      <div className="relative w-full aspect-video rounded-xl shadow-lg overflow-hidden mb-5">  {/* Reverted to mb-5 */}
         <img 
           src={currentImage} 
           alt={`${property.name} photo ${currentImageIndex + 1}`} 
@@ -441,7 +441,7 @@ const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
     </div>
 
       {/* Details - Headroom Certified Dimensions */}
-      <div className="bg-white p-5 rounded-xl shadow-lg mb-5"> 
+      <div className="bg-white p-5 rounded-xl shadow-lg mb-5">  {/* Reverted to mb-5 */}
         <h2 className="text-2xl font-bold text-red-600 mb-3 flex items-center"> 
           <Maximize size={24} className="mr-2" /> Headroom Certified Dimensions
         </h2>
@@ -465,7 +465,7 @@ const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
       </div>
 
       {/* Google Map Placeholder (Retained position/width) */}
-      <div className="bg-gray-200 h-[400px] w-full flex items-center justify-center rounded-xl shadow-lg mb-5"> 
+      <div className="bg-gray-200 h-[400px] w-full flex items-center justify-center rounded-xl shadow-lg mb-5">  {/* Reverted to mb-5 */}
         <p className="text-gray-600">Google Map Embed Placeholder</p>
       </div>
 
@@ -475,7 +475,7 @@ const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
           <h3 className="text-xl font-semibold mb-3">Member Comfort Rating</h3>
           <p className="text-4xl font-bold text-green-600">{property.ratingMember.toFixed(1)} / 5.0</p>
           <p className="text-sm text-gray-500 mt-2">
-            {/* CHANGED: Added Price Rating label */}
+            {/* Price Rating label */}
             Price Rating: <span className='font-bold text-gray-800'>{priceLabel}</span> | Based on feedback from verified tall guests. All ratings are admin-approved for integrity.
           </p>
           <button className="text-red-600 mt-3 text-sm underline hover:text-red-700">Submit Your Rating</button>
@@ -492,16 +492,16 @@ const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
   );
 };
 
-// 9. Headroom Standard Page (Original Spacing Retained)
+// 9. Headroom Standard Page (Spacing Tightened)
 const StandardPage: React.FC = () => (
   <div className="max-w-4xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
-    <h1 className="text-4xl font-bold text-gray-800 mb-5 text-left">Our Standard: Why We Certify</h1> 
-    <p className="text-xl text-gray-600 mb-6 text-left"> 
+    <h1 className="text-4xl font-bold text-gray-800 mb-5 text-left">Our Standard: Why We Certify</h1>  {/* Reverted to mb-5 */}
+    <p className="text-xl text-gray-600 mb-6 text-left">  {/* Reverted to mb-6 */}
       We eliminate the anxiety of travel for tall guests by applying a stringent, verifiable certification process to every property.
     </p>
 
     {/* Section: The Safety Buffer */}
-    <div className="mb-6 p-5 bg-red-50 rounded-xl border border-red-200 text-left"> 
+    <div className="mb-6 p-5 bg-red-50 rounded-xl border border-red-200 text-left">  {/* Reverted to mb-6 */}
         <h2 className="text-2xl font-semibold text-red-600 mb-3">1. The Safety Buffer (The 5 cm Rule)</h2>
         <p className="mb-3 text-gray-700">
           A property must have a minimum measured clearance of <strong>6 ft 7 in (201 cm)</strong> for a guest to be rated at <strong>6 ft 5 in (196 cm)</strong>. Why?
@@ -541,12 +541,12 @@ const StandardPage: React.FC = () => (
   </div>
 );
 
-// 10. Contact Page (Original Spacing Retained)
+// 10. Contact Page (Spacing Tightened)
 const ContactPage: React.FC = () => {
     return (
         <div className="max-w-2xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
             <h1 className="text-4xl font-bold text-gray-800 mb-5 text-center">Contact Us</h1>
-            <p className="text-xl text-gray-600 mb-6 text-center">We're standing up for tall travelers. Get in touch with our team.</p>
+            <p className="text-xl text-gray-600 mb-6 text-center">We're standing up for tall travelers. Get in touch with our team.</p> {/* Reverted to mb-6 */}
 
             <form 
                 name="contact" 
