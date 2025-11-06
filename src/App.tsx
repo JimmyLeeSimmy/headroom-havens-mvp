@@ -32,7 +32,7 @@ interface ButtonProps {
 // --- GLOBAL CONFIGURATION AND DATA ---
 
 const SAFETY_BUFFER_CM = 5; 
-const HERO_IMAGE_URL = "https://placehold.co/1200x500/F8D4CC/333?text=Photorealistic+Cottage+Doorway+%2B+Tall+Man";
+const HERO_IMAGE_URL = "/images/cottage-hero.png";
 const AFFILIATE_BASE_LINK = "https://partner-booking-site.com/?aid=HHAVENS123&prop=";
 
 // Conversion helper function (now fully safe)
