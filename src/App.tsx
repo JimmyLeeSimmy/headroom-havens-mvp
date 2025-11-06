@@ -129,9 +129,9 @@ const Button: React.FC<ButtonProps> = ({ children, onClick, color = "bg-red-600"
 // 2. Header and Navigation
 const Header: React.FC<HeaderProps> = ({ navigate, currentPage }) => (
   <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm shadow-md">
+    {/* The container already uses mx-auto and max-w-7xl for centering */}
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
       <div onClick={() => navigate("home")} className="flex items-center cursor-pointer space-x-2">
-        {/* IHI Logo Icon */}
         <div className="flex items-center">
           <span className="h-6 w-0.5 bg-black" />
           <span className="text-2xl font-black text-red-600 mx-1">H</span>
@@ -191,7 +191,7 @@ const MaxHeightDisplay: React.FC<{ clearanceCM: number }> = ({ clearanceCM }) =>
 
 // --- PAGES ---
 
-// 5. Home Page (Spacing Reduced & Cards Aligned)
+// 5. Home Page (FIXED Card Alignment)
 const HomePage: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) => (
   <div>
     {/* Hero Section */}
@@ -215,6 +215,7 @@ const HomePage: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) 
       <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">
         The Headroom Havens Standard
       </h2>
+      {/* The grid itself is now fully contained and centered */}
       <div className="grid md:grid-cols-3 gap-8">
         <div className="flex flex-col items-center text-center p-6 bg-white rounded-xl shadow-lg border-t-4 border-red-600">
           <Maximize size={48} className="text-red-600 mb-4" />
@@ -257,7 +258,7 @@ const HomePage: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) 
   </div>
 );
 
-// 6. Listings Page (Spacing Reduced)
+// 6. Listings Page (Centered)
 const ListingsPage: React.FC<{ navigate: (path: string, propertyId: number) => void }> = ({ navigate }) => {
   const [maxHeightFilter, setMaxHeightFilter] = useState<number>(0);
   const [priceFilter, setPriceFilter] = useState<number>(0);
@@ -344,7 +345,6 @@ const PropertyCard: React.FC<{ property: Property, navigate: (path: string, prop
         <Compass size={16} className="mr-1" /> {property.location}
       </p>
 
-      {/* Headroom Certified Data */}
       <div className="space-y-1 mb-4 text-sm">
         <MaxHeightDisplay clearanceCM={property.maxHeightCM} />
         <div className="flex items-center text-gray-600 space-x-1">
@@ -366,7 +366,7 @@ const PropertyCard: React.FC<{ property: Property, navigate: (path: string, prop
   </div>
 );
 
-// 8. Property Detail Page (Spacing Reduced & Alignment Check)
+// 8. Property Detail Page (FIXED Center Alignment)
 const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0); 
   
@@ -383,10 +383,11 @@ const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
 
   return (
     <div className="max-w-5xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-      <h1 className="text-4xl font-bold text-gray-800 mb-2">{property.name}</h1>
-      <p className="text-xl text-gray-500 mb-4">{property.location}</p>
+      {/* Explicitly ensure titles and body text align left within the container */}
+      <h1 className="text-4xl font-bold text-gray-800 mb-2 text-left">{property.name}</h1>
+      <p className="text-xl text-gray-500 mb-4 text-left">{property.location}</p>
 
-      {/* Image Carousel */}
+      {/* Image Carousel - Full Width and Centered */}
       <div className="relative w-full aspect-video rounded-xl shadow-lg overflow-hidden mb-6">
         <img 
           src={currentImage} 
@@ -464,15 +465,16 @@ const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
   );
 };
 
-// 9. Headroom Standard Page (Spacing Reduced)
+// 9. Headroom Standard Page (FIXED Center Alignment)
 const StandardPage: React.FC = () => (
   <div className="max-w-4xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+    {/* Explicitly using text-center on mobile, text-left on sm+ */}
     <h1 className="text-4xl font-bold text-gray-800 mb-5 text-center sm:text-left">Our Standard: Why We Certify</h1>
     <p className="text-xl text-gray-600 mb-6 text-center sm:text-left">
       We eliminate the anxiety of travel for tall guests by applying a stringent, verifiable certification process to every property.
     </p>
 
-    {/* Section: The Safety Buffer */}
+    {/* Section: The Safety Buffer - Inner content is forced left */}
     <div className="mb-8 p-5 bg-red-50 rounded-xl border border-red-200 text-left">
         <h2 className="text-2xl font-semibold text-red-600 mb-3">1. The Safety Buffer (The 5 cm Rule)</h2>
         <p className="mb-3 text-gray-700">
@@ -513,7 +515,7 @@ const StandardPage: React.FC = () => (
   </div>
 );
 
-// 10. Contact Page (NETLIFY FORM - FIXED JSX COMMENT)
+// 10. Contact Page (FIXED Center Alignment)
 const ContactPage: React.FC = () => {
     return (
         <div className="max-w-2xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
@@ -524,7 +526,7 @@ const ContactPage: React.FC = () => {
                 name="contact" 
                 method="POST" 
                 data-netlify="true" 
-                className="space-y-4 p-6 bg-white rounded-xl shadow-lg border-t-4 border-red-600" // <--- FIX HERE: Removed the invalid comment
+                className="space-y-4 p-6 bg-white rounded-xl shadow-lg border-t-4 border-red-600 mx-auto"
             >
                 <input type="hidden" name="form-name" value="contact" />
 
