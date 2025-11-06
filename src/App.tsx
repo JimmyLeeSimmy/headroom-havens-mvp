@@ -310,7 +310,7 @@ const ListingsPage: React.FC<{ navigate: (path: string, propertyId: number) => v
             {MAX_HEIGHT_OPTIONS.map(cm => (
               <option key={cm} value={cm}>
                 {cmToFeetInches(cm)} ({cm} cm)
-        _     </option>
+              </option>
             ))}
           </select>
         </div>
@@ -410,7 +410,6 @@ const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
 
       {/* Image Carousel - Full Width and Centered */}
       <div className="relative w-full aspect-video rounded-xl shadow-lg overflow-hidden mb-5"> 
-transform: rotate(360deg);
         <img 
           src={currentImage} 
           alt={`${property.name} photo ${currentImageIndex + 1}`} 
@@ -419,7 +418,7 @@ transform: rotate(360deg);
         
         {totalImages > 1 && (
           <>
-      s     <button 
+            <button 
               onClick={goToPrev}
               className="absolute left-3 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/80 transition-colors z-10"
               aria-label="Previous image"
@@ -427,7 +426,7 @@ transform: rotate(360deg);
               <ChevronLeft size={24} />
             </button>
             <button 
-            A-1-F-11-F-1- onClick={goToNext}
+              onClick={goToNext}
               className="absolute right-3 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/80 transition-colors z-10"
               aria-label="Next image"
             >
@@ -449,73 +448,13 @@ transform: rotate(360deg);
         <p className="text-gray-700 mb-3">{property.description}</p> 
 
         <div className="grid sm:grid-cols-3 gap-y-1 gap-x-4 text-lg"> 
-            
-            {/* CHANGED: This is the row you wanted removed, it's gone. */}
-            {/*             <div className="font-semibold">Max Height Rating:</div>
-            <div className="col-span-2">
-                <MaxHeightDisplay clearanceCM={property.maxHeightCM} />
-            </div> 
-            */}
+            {/* The original black Max Height Rating row is REMOVED to meet the requirement. */}
 
             <div className="font-semibold">Actual Lowest Clearance:</div>
             <div className="col-span-2">{cmToFeetInches(property.maxHeightCM)} ({property.maxHeightCM} cm)</div>
 
-            {/* NEW: Added the red Max Height Rating here, as requested by the image */}
+            {/* NEW: Added the red Max Height Rating row (Text only, as per image request) */}
             <div className="font-semibold text-red-600">Max Height Rating:</div>
-            <div className="col-span-2 text-red-600">
-              {maxSafeHeightImperial} ({Math.round(maxSafeHeightCM)} cm)
-            </div>
-            
-            <div className="font-semibold">Usable Bed Length:</div>
-s           {/* CHANGED: Added footboard text */}
-            <div className="col-span-2">{cmToFeetInches(property.mattressLengthCM)} ({property.mattressLengthCM} cm) - 2 Beds (1 footboard)</div>
-        </div>
-      </div>
-
-      {/* Google Map Placeholder (Retained position/width) */}
-      <div className="bg-gray-200 h-[400px] w-full flex items-center justify-center rounded-xl shadow-lg mb-5"> 
-Click={goToPrev}
-              className="absolute left-3 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/80 transition-colors z-10"
-              aria-label="Previous image"
-            >
-              <ChevronLeft size={24} />
-            </button>
-            <button 
-              onClick={goToNext}
-              className="absolute right-3 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/80 transition-colors z-10"
-              aria-label="Next image"
-            >
-              <ChevronRight size={24} />
-A-1-F-11-F-1-   </button>
-            <div className="absolute bottom-3 right-3 text-white bg-black/50 text-xs px-3 py-1 rounded-full z-10">
-              {currentImageIndex + 1} / {totalImages}
-            </div>
-          </>
-        )}
-    </div>
-
-      {/* Details - Headroom Certified Dimensions */}
-      <div className="bg-white p-5 rounded-xl shadow-lg mb-5"> 
-s       <h2 className="text-2xl font-bold text-red-600 mb-3 flex items-center"> 
-          <Maximize size={24} className="mr-2" /> Headroom Certified Dimensions
-        </h2>
-        
-        <p className="text-gray-700 mb-3">{property.description}</p> 
-
-        <div className="grid sm:grid-cols-3 gap-y-1 gap-x-4 text-lg"> 
-            
-            {/* CHANGED: This is the row you wanted removed, it's gone. */}
-            {/*             <div className="font-semibold">Max Height Rating:</div>
-            <div className="col-span-2">
-                <MaxHeightDisplay clearanceCM={property.maxHeightCM} />
-            </div> 
-            */}
-
-            <div className="font-semibold">Actual Lowest Clearance:</div>
-            <div className="col-span-2">{cmToFeetInches(property.maxHeightCM)} ({property.maxHeightCM} cm)</div>
-
-            {/* NEW: Added the red Max Height Rating here, as requested by the image */}
-    A-1-F-11-F-1-   <div className="font-semibold text-red-600">Max Height Rating:</div>
             <div className="col-span-2 text-red-600">
               {maxSafeHeightImperial} ({Math.round(maxSafeHeightCM)} cm)
             </div>
@@ -536,7 +475,190 @@ s       <h2 className="text-2xl font-bold text-red-600 mb-3 flex items-center
         <div className="md:col-span-2 bg-gray-50 p-5 rounded-xl border border-gray-200">
           <h3 className="text-xl font-semibold mb-3">Member Comfort Rating</h3>
           <p className="text-4xl font-bold text-green-600">{property.ratingMember.toFixed(1)} / 5.0</p>
-  content = <ListingsPage navigate={navigate} />;
+          <p className="text-sm text-gray-500 mt-2">
+            {/* CHANGED: Added Price Rating label */}
+            Price Rating: <span className='font-bold text-gray-800'>{priceLabel}</span> | Based on feedback from verified tall guests. All ratings are admin-approved for integrity.
+          </p>
+          <button className="text-red-600 mt-3 text-sm underline hover:text-red-700">Submit Your Rating</button>
+        </div>
+        <div className="md:col-span-1 flex flex-col justify-center items-center p-5 bg-red-100 rounded-xl shadow-inner">
+          <p className="text-sm text-gray-700 mb-3">Ready to book your stress-free stay?</p>
+          <Button onClick={handleBookNow} className="w-full text-center">
+            <CheckCircle size={20} className="inline mr-2" /> Book Now via Partner
+          </Button>
+          <p className="text-xs mt-2 text-gray-500">Booking handled securely by affiliate partner.</p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// 9. Headroom Standard Page (Original Spacing Retained)
+const StandardPage: React.FC = () => (
+  <div className="max-w-4xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+    <h1 className="text-4xl font-bold text-gray-800 mb-5 text-left">Our Standard: Why We Certify</h1> 
+    <p className="text-xl text-gray-600 mb-6 text-left"> 
+      We eliminate the anxiety of travel for tall guests by applying a stringent, verifiable certification process to every property.
+    </p>
+
+    {/* Section: The Safety Buffer */}
+    <div className="mb-6 p-5 bg-red-50 rounded-xl border border-red-200 text-left"> 
+        <h2 className="text-2xl font-semibold text-red-600 mb-3">1. The Safety Buffer (The 5 cm Rule)</h2>
+        <p className="mb-3 text-gray-700">
+          A property must have a minimum measured clearance of <strong>6 ft 7 in (201 cm)</strong> for a guest to be rated at <strong>6 ft 5 in (196 cm)</strong>. Why?
+        </p>
+        <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
+            <li><strong>Dynamic Movement:</strong> When you walk, your body slightly lifts off the ground at the push-off point of your stride. This requires approximately 5 cm or 2 in of vertical clearance.</li>
+            <li><strong>Our Guarantee:</strong> We subtract a mandatory <strong>5 cm (2 in) safety buffer</strong> from the lowest measured point (door, beam, ceiling) to determine the property's true <strong>Max Height Rating</strong>.</li>
+            <li><strong>No Surprises:</strong> A property rated at <strong>6 ft 6 in (198 cm)</strong> means a 6 ft 6 in guest can walk, stretch, and jump without fear of injury.</li>
+        </ul>
+    </div>
+    
+    {/* Section: The Certification Process */}
+    <h2 className="text-2xl font-semibold text-gray-800 mt-8 mb-4 text-left">2. The Certification Process: Photo Proof</h2> 
+    <div className="space-y-3"> 
+        <div className="flex items-start space-x-4">
+            <Maximize size={32} className="text-gray-700 flex-shrink-0" />
+            <div>
+                <h3 className="text-xl font-semibold">Vetting Measurements</h3>
+                <p className="text-gray-600">Property owners must submit the actual measurement of the lowest possible point for every area: main doors, bathroom entrances, and structural beams.</p>
+            </div>
+        </div>
+        <div className="flex items-start space-x-4">
+            <Search size={32} className="text-gray-700 flex-shrink-0" />
+            <div>
+                <h3 className="text-xl font-semibold">The Photo Verification</h3>
+                <p className="text-gray-600">The most important step: The owner must submit <strong>photo evidence</strong> showing a tape measure clearly documenting the full height of the low points. We require branded Headroom Havens tape (or a recognizable ruler) to verify the data's integrity.</p>
+            </div>
+        </div>
+        <div className="flex items-start space-x-4">
+            <Bed size={32} className="text-gray-700 flex-shrink-0" />
+            <div>
+                <h3 className="text-xl font-semibold">Bed Length Verification</h3>
+                <p className="text-gray-600">We verify usable mattress length (excluding frames/footboards). Only mattresses over <strong>200 cm (6 ft 6 in)</strong> or longer qualify for listing on our site.</p>
+            </div>
+        </div>
+    </div>
+    </div>
+  );
+};
+
+// 10. Contact Page (Original Spacing Retained)
+const ContactPage: React.FC = () => {
+    return (
+        <div className="max-w-2xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+            <h1 className="text-4xl font-bold text-gray-800 mb-5 text-center">Contact Us</h1>
+            <p className="text-xl text-gray-600 mb-6 text-center">We're standing up for tall travelers. Get in touch with our team.</p>
+
+            <form 
+                name="contact" 
+                method="POST" 
+                data-netlify="true"
+                className="space-y-3 p-5 bg-white rounded-xl shadow-lg border-t-4 border-red-600 mx-auto" 
+            >
+                <input type="hidden" name="form-name" value="contact" />
+
+                <div className="space-y-1">
+                    <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
+                    <input
+                        type="text"
+                        name="name"
+                        id="name"
+                        required
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500"
+                    />
+                </div>
+
+                <div className="space-y-1">
+                    <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email Address</label>
+                    <input
+                        type="email"
+                        name="email"
+                        id="email"
+                        required
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500"
+                    />
+                </div>
+
+                <div className="space-y-1">
+                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Phone Number</label>
+                    <input
+                        type="tel"
+                        name="phone"
+                        id="phone"
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500"
+                    />
+                </div>
+
+                <div className="space-y-1">
+                    <label htmlFor="comment" className="block text-sm font-medium text-gray-700">Comment</label>
+                    <textarea
+                        name="comment"
+                        id="comment"
+                        rows={4}
+                        required
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500"
+                    ></textarea>
+                </div>
+
+                <Button type="submit" className="w-full mt-4"> 
+                    Submit
+                </Button>
+            </form>
+            <p className="text-xs text-gray-500 text-center mt-3">Submissions are processed securely by Netlify Forms.</p>
+        </div>
+    );
+};
+
+
+// 11. Router and Main App Component (Retained Navigation Fix)
+const App: React.FC = () => {
+  const [location, setLocation] = useState<{ path: string, propertyId: number | null }>({ path: "home", propertyId: null });
+  const currentPage = location.path;
+  const selectedPropertyId = location.propertyId;
+
+  const navigate = (path: string, propertyId: number | null = null) => {
+    const newState = { path, propertyId };
+    const url = path === "detail" && propertyId !== null ? `/${path}/${propertyId}` : `/${path}`;
+    window.history.pushState(newState, "", url);
+    setLocation(newState);
+    window.scrollTo(0, 0);
+  };
+
+  React.useEffect(() => {
+    const handlePopState = (event: PopStateEvent) => {
+      if (event.state) {
+        setLocation(event.state as { path: string, propertyId: number | null });
+      } else {
+        setLocation({ path: "home", propertyId: null });
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+
+    const initialPath = window.location.pathname.slice(1).split('/');
+    if (initialPath[0] && initialPath[0] !== '') {
+        setLocation({ 
+            path: initialPath[0],
+            propertyId: initialPath[1] ? Number(initialPath[1]) : null 
+        });
+    }
+
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, []);
+
+  const selectedProperty = useMemo(() => {
+    const prop = MOCK_PROPERTIES.find(p => p.id === selectedPropertyId);
+    return prop || MOCK_PROPERTIES[0]; 
+  }, [selectedPropertyId]);
+
+  let content;
+  switch (currentPage) {
+    case "listings":
+      content = <ListingsPage navigate={navigate} />;
       break;
     case "standard":
       content = <StandardPage />;
@@ -546,7 +668,7 @@ s       <h2 className="text-2xl font-bold text-red-600 mb-3 flex items-center
       break;
     case "detail":
       content = selectedPropertyId !== null ? <DetailPage property={selectedProperty} /> : <HomePage navigate={navigate} />;
-Example     break;
+      break;
     case "home":
     default:
       content = <HomePage navigate={navigate} />;
