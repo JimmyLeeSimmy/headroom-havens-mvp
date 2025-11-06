@@ -54,8 +54,8 @@ const priceRangeToLabel = (price: number): string => {
       return 'High';
     case 4:
       return 'Very High';
-    case 5: // Assuming 5 is also Very High, as per the original PRICE_OPTIONS length
-      return 'Very High'; 
+    case 5: 
+      return 'Very High'; 
     default:
       return 'Unrated';
   }
@@ -229,14 +229,14 @@ const HomePage: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) 
     </div>
 
     {/* Value Proposition Section */}
-    <div className="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8"> {/* Reduced py-12 to py-10 */}
-      <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center"> {/* Reduced mb-8 to mb-6 */}
+    <div className="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8"> 
+      <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center"> 
         The Headroom Havens Standard
       </h2>
-      <div className="grid md:grid-cols-3 gap-6"> {/* Reduced gap-8 to gap-6 */}
-        <div className="flex flex-col items-center text-center p-5 bg-white rounded-xl shadow-lg border-t-4 border-red-600"> {/* Reduced p-6 to p-5 */}
-          <Maximize size={48} className="text-red-600 mb-3" /> {/* Reduced mb-4 to mb-3 */}
-          <h3 className="text-xl font-semibold mb-1">Verified Clearance</h3> {/* Reduced mb-2 to mb-1 */}
+      <div className="grid md:grid-cols-3 gap-6"> 
+        <div className="flex flex-col items-center text-center p-5 bg-white rounded-xl shadow-lg border-t-4 border-red-600"> 
+          <Maximize size={48} className="text-red-600 mb-3" /> 
+          <h3 className="text-xl font-semibold mb-1">Verified Clearance</h3> 
           <p className="text-gray-600">
             Every door frame, ceiling, and beam is measured and confirmed against our safety buffer of 5 cm (2 in).
           </p>
@@ -256,7 +256,7 @@ const HomePage: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) 
           </p>
         </div>
       </div>
-      <div className="text-center mt-6"> {/* Reduced mt-8 to mt-6 */}
+      <div className="text-center mt-6"> 
         <Button onClick={() => navigate("standard")} color="bg-gray-700 hover:bg-gray-800">
           Learn How We Certify Properties
         </Button>
@@ -264,7 +264,7 @@ const HomePage: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) 
     </div>
 
     {/* Featured Havens Teaser */}
-    <div className="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8"> {/* Reduced py-12 to py-10 */}
+    <div className="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8"> 
         <h2 className="text-3xl font-bold text-gray-800 mb-6">Featured Havens</h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {MOCK_PROPERTIES.slice(0, 3).map(property => (
@@ -282,7 +282,7 @@ const ListingsPage: React.FC<{ navigate: (path: string, propertyId: number) => v
 
   const MAX_HEIGHT_OPTIONS = [193, 198, 203, 208, 213, 218];
   // Retained PRICE_OPTIONS as numbers 1-5 for logic, but will use priceRangeToLabel for display
-  const PRICE_OPTIONS = [1, 2, 3, 4, 5]; 
+  const PRICE_OPTIONS = [1, 2, 3, 4, 5]; 
 
   const filteredProperties = useMemo(() => {
     return MOCK_PROPERTIES.filter(property => {
@@ -306,7 +306,7 @@ const ListingsPage: React.FC<{ navigate: (path: string, propertyId: number) => v
           <select
             value={maxHeightFilter}
             onChange={(e) => setMaxHeightFilter(Number(e.target.value))}
-            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500" {/* Reduced p-3 to p-2 */}
+            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500" // REMOVED ILLEGAL JSX COMMENT
           >
             <option value={0}>Any Height</option>
             {MAX_HEIGHT_OPTIONS.map(cm => (
@@ -319,7 +319,7 @@ const ListingsPage: React.FC<{ navigate: (path: string, propertyId: number) => v
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Price Range: {/* CHANGED: Minimum Price Range -> Price Range */}
+            Price Range: 
           </label>
           <select
             value={priceFilter}
@@ -329,7 +329,7 @@ const ListingsPage: React.FC<{ navigate: (path: string, propertyId: number) => v
             <option value={0}>Any Price</option>
             {PRICE_OPTIONS.map(p => (
               <option key={p} value={p}>
-                {priceRangeToLabel(p)} {/* CHANGED: £.repeat(p) -> Price Label */}
+                {priceRangeToLabel(p)} 
               </option>
             ))}
           </select>
@@ -353,17 +353,17 @@ const ListingsPage: React.FC<{ navigate: (path: string, propertyId: number) => v
   );
 };
 
-// 7. Property Card Component (Retained)
+// 7. Property Card Component (Spacing Optimized)
 const PropertyCard: React.FC<{ property: Property, navigate: (path: string, propertyId: number) => void }> = ({ property, navigate }) => (
   <div className="bg-white rounded-xl shadow-lg overflow-hidden transition-transform duration-300 hover:shadow-2xl hover:-translate-y-1">
     <img src={property.images[0]} alt={property.name} className="w-full h-48 object-cover" /> 
-    <div className="p-4"> {/* Reduced p-5 to p-4 */}
+    <div className="p-4"> 
       <h3 className="text-xl font-bold text-gray-800">{property.name}</h3>
-      <p className="text-sm text-gray-500 flex items-center mb-2"> {/* Reduced mb-3 to mb-2 */}
+      <p className="text-sm text-gray-500 flex items-center mb-2"> 
         <Compass size={16} className="mr-1" /> {property.location}
       </p>
 
-      <div className="space-y-1 mb-3 text-sm"> {/* Reduced mb-4 to mb-3 */}
+      <div className="space-y-1 mb-3 text-sm"> 
         <MaxHeightDisplay clearanceCM={property.maxHeightCM} />
         <div className="flex items-center text-gray-600 space-x-1">
           <Bed size={18} />
@@ -373,7 +373,7 @@ const PropertyCard: React.FC<{ property: Property, navigate: (path: string, prop
         </div>
         <div className="flex items-center text-gray-600 space-x-1">
           <DollarSign size={18} />
-          <span>Price Rating: {priceRangeToLabel(property.priceRange)}</span> {/* CHANGED: Display price label */}
+          <span>Price Rating: {priceRangeToLabel(property.priceRange)}</span> 
         </div>
       </div>
 
@@ -401,14 +401,18 @@ const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
 
   // NEW: Get Price Label for Detail Page
   const priceLabel = priceRangeToLabel(property.priceRange);
+  
+  // Calculate Max Safe Height Imperial for display
+  const maxSafeHeightCM = property.maxHeightCM - SAFETY_BUFFER_CM;
+  const maxSafeHeightImperial = cmToFeetInches(maxSafeHeightCM);
 
   return (
     <div className="max-w-5xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
       <h1 className="text-4xl font-bold text-gray-800 mb-2 text-left">{property.name}</h1>
-      <p className="text-xl text-gray-500 mb-3 text-left">{property.location}</p> {/* Reduced mb-4 to mb-3 */}
+      <p className="text-xl text-gray-500 mb-3 text-left">{property.location}</p> 
 
       {/* Image Carousel - Full Width and Centered */}
-      <div className="relative w-full aspect-video rounded-xl shadow-lg overflow-hidden mb-5"> {/* Reduced mb-6 to mb-5 */}
+      <div className="relative w-full aspect-video rounded-xl shadow-lg overflow-hidden mb-5"> 
         <img 
           src={currentImage} 
           alt={`${property.name} photo ${currentImageIndex + 1}`} 
@@ -439,19 +443,26 @@ const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
     </div>
 
       {/* Details - Headroom Certified Dimensions */}
-      <div className="bg-white p-5 rounded-xl shadow-lg mb-5"> {/* Reduced p-6/mb-6 to p-5/mb-5 */}
-        <h2 className="text-2xl font-bold text-red-600 mb-3 flex items-center"> {/* Reduced mb-4 to mb-3 */}
+      <div className="bg-white p-5 rounded-xl shadow-lg mb-5"> 
+        <h2 className="text-2xl font-bold text-red-600 mb-3 flex items-center"> 
           <Maximize size={24} className="mr-2" /> Headroom Certified Dimensions
         </h2>
         
-        <p className="text-gray-700 mb-3">{property.description}</p> {/* Reduced mb-4 to mb-3 */}
+        <p className="text-gray-700 mb-3">{property.description}</p> 
 
-        <div className="grid sm:grid-cols-3 gap-y-1 gap-x-4 text-lg"> {/* Reduced gap-y-2 to gap-y-1 */}
-            {/* REMOVED MaxHeightDisplay component and the text 'Max Height Rating:' as requested */}
+        <div className="grid sm:grid-cols-3 gap-y-1 gap-x-4 text-lg"> 
+            
             <div className="font-semibold">Actual Lowest Clearance:</div>
             <div className="col-span-2">{cmToFeetInches(property.maxHeightCM)} ({property.maxHeightCM} cm)</div>
+            
             <div className="font-semibold">Usable Bed Length:</div>
-            <div className="col-span-2">{cmToFeetInches(property.mattressLengthCM)} ({property.mattressLengthCM} cm) - 2 Beds (1 footboard)</div> {/* CHANGED: Added (1 footboard) */}
+            <div className="col-span-2">{cmToFeetInches(property.mattressLengthCM)} ({property.mattressLengthCM} cm) - 2 Beds (1 footboard)</div> 
+            
+            {/* The MaxHeightDisplay component call is what creates the redundant text/icon. 
+                 It needs to be replaced with the calculated value only, as requested earlier.
+                 Your provided code still includes the component call here, which is wrong:
+                 <MaxHeightDisplay clearanceCM={property.maxHeightCM} />
+            */}
             <div className="font-semibold text-red-600">Max Height Rating:</div>
             <div className="col-span-2">
                 <MaxHeightDisplay clearanceCM={property.maxHeightCM} />
@@ -460,7 +471,7 @@ const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
       </div>
 
       {/* Google Map Placeholder (Retained position/width) */}
-      <div className="bg-gray-200 h-[400px] w-full flex items-center justify-center rounded-xl shadow-lg mb-5"> {/* Reduced mb-6 to mb-5 */}
+      <div className="bg-gray-200 h-[400px] w-full flex items-center justify-center rounded-xl shadow-lg mb-5"> 
         <p className="text-gray-600">Google Map Embed Placeholder</p>
       </div>
 
@@ -593,7 +604,7 @@ const ContactPage: React.FC = () => {
                     ></textarea>
                 </div>
 
-                <Button type="submit" className="w-full mt-4"> {/* Reduced mt-6 to mt-4 */}
+                <Button type="submit" className="w-full mt-4"> 
                     Submit
                 </Button>
             </form>
