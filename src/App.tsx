@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
-import { Search, Bed, Maximize, Compass, DollarSign, CheckCircle } from 'lucide-react';
+import { Search, Bed, Maximize, Compass, DollarSign, CheckCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 
-// --- INTERFACES AND TYPE DEFINITIONS ---
+// --- INTERFACES AND TYPE DEFINITIONS (UPDATED) ---
 interface Property {
   id: number;
   name: string;
@@ -11,7 +11,8 @@ interface Property {
   mattressLengthCM: number;
   ratingMember: number; 
   affiliateLink: string;
-  image: string;
+  // image: string; // <-- REMOVED
+  images: string[]; // <-- ADDED: Now an array of URLs
   description: string;
   amenities: string[];
 }
@@ -42,12 +43,74 @@ const cmToFeetInches = (cm: number): string => {
   return `${feet} ft ${inches} in`;
 };
 
-// Mock Property Data
+// Mock Property Data (UPDATED)
 const MOCK_PROPERTIES: Property[] = [
-  { id: 1, name: "Cotswold Barn Lodge", location: "Cotswolds, UK", priceRange: 4, maxHeightCM: 220, mattressLengthCM: 215, ratingMember: 4.8, affiliateLink: AFFILIATE_BASE_LINK + "Lodge1", image: "https://placehold.co/400x250/2E8B57/FFFFFF?text=Barn+Lodge+220cm+Clearance", description: "Architecturally stunning barn conversion with vast open spaces and original vaulted ceilings. Ideal for the 7-foot traveler.", amenities: ["Vaulted Ceilings", "California King Bed", "Enclosed Garden"] },
-  { id: 2, name: "Highland Stone Cottage", location: "Scottish Highlands, UK", priceRange: 3, maxHeightCM: 195, mattressLengthCM: 205, ratingMember: 3.5, affiliateLink: AFFILIATE_BASE_LINK + "Cottage2", image: "https://placehold.co/400x250/6B8E23/FFFFFF?text=Stone+Cottage+195cm+Clearance", description: "Traditional stone cottage carefully refurbished to maximise vertical space. Low point is the kitchen beam. Features an extra-long Super King bed.", amenities: ["Extra-Long King Bed", "Open Fireplace", "Lake Views"] },
-  { id: 3, name: "Bristol Urban Loft", location: "Bristol, UK", priceRange: 5, maxHeightCM: 235, mattressLengthCM: 220, ratingMember: 5.0, affiliateLink: AFFILIATE_BASE_LINK + "Loft3", image: "https://placehold.co/400x250/A0522D/FFFFFF?text=Urban+Loft+235cm+Clearance", description: "Sleek, modern penthouse apartment with floor-to-ceiling windows and zero architectural obstructions. Absolute maximum headroom throughout.", amenities: ["24/7 Concierge", "Queen Mattresses (Extra Long)", "Gym Access"] },
-  { id: 4, name: "New Forest A-Frame", location: "New Forest, UK", priceRange: 2, maxHeightCM: 200, mattressLengthCM: 200, ratingMember: 4.1, affiliateLink: AFFILIATE_BASE_LINK + "Cabin4", image: "https://placehold.co/400x250/556B2F/FFFFFF?text=A-Frame+Cabin+200cm+Clearance", description: "Cozy cabin retreat. Watch out for the corner beams, but the main living area is spacious. Beds are standard King length.", amenities: ["Woodland Setting", "Sauna", "Hiking Trails"] },
+  { 
+    id: 1, 
+    name: "Cotswold Barn Lodge", 
+    location: "Cotswolds, UK", 
+    priceRange: 4, 
+    maxHeightCM: 220, 
+    mattressLengthCM: 215, 
+    ratingMember: 4.8, 
+    affiliateLink: AFFILIATE_BASE_LINK + "Lodge1", 
+    images: [ // Multi-images for gallery
+      "https://placehold.co/600x400/2E8B57/FFFFFF?text=Barn+Lodge+Exterior",
+      "https://placehold.co/600x400/2E8B57/FFFFFF?text=Vaulted+Ceilings",
+      "https://placehold.co/600x400/2E8B57/FFFFFF?text=Extra-Long+Bed",
+    ], 
+    description: "Architecturally stunning barn conversion with vast open spaces and original vaulted ceilings. Ideal for the 7-foot traveler.", 
+    amenities: ["Vaulted Ceilings", "California King Bed", "Enclosed Garden"] 
+  },
+  { 
+    id: 2, 
+    name: "Highland Stone Cottage", 
+    location: "Scottish Highlands, UK", 
+    priceRange: 3, 
+    maxHeightCM: 195, 
+    mattressLengthCM: 205, 
+    ratingMember: 3.5, 
+    affiliateLink: AFFILIATE_BASE_LINK + "Cottage2", 
+    images: [ // Multi-images for gallery
+      "https://placehold.co/600x400/6B8E23/FFFFFF?text=Stone+Cottage+Exterior",
+      "https://placehold.co/600x400/6B8E23/FFFFFF?text=Living+Room+Beam+195cm",
+      "https://placehold.co/600x400/6B8E23/FFFFFF?text=Kitchen+Low+Point",
+    ], 
+    description: "Traditional stone cottage carefully refurbished to maximise vertical space. Low point is the kitchen beam. Features an extra-long Super King bed.", 
+    amenities: ["Extra-Long King Bed", "Open Fireplace", "Lake Views"] 
+  },
+  { 
+    id: 3, 
+    name: "Bristol Urban Loft", 
+    location: "Bristol, UK", 
+    priceRange: 5, 
+    maxHeightCM: 235, 
+    mattressLengthCM: 220, 
+    ratingMember: 5.0, 
+    affiliateLink: AFFILIATE_BASE_LINK + "Loft3", 
+    images: [
+      "https://placehold.co/600x400/A0522D/FFFFFF?text=Urban+Loft+View",
+      "https://placehold.co/600x400/A0522D/FFFFFF?text=Floor+to+Ceiling+Window",
+    ],
+    description: "Sleek, modern penthouse apartment with floor-to-ceiling windows and zero architectural obstructions. Absolute maximum headroom throughout.", 
+    amenities: ["24/7 Concierge", "Queen Mattresses (Extra Long)", "Gym Access"] 
+  },
+  { 
+    id: 4, 
+    name: "New Forest A-Frame", 
+    location: "New Forest, UK", 
+    priceRange: 2, 
+    maxHeightCM: 200, 
+    mattressLengthCM: 200, 
+    ratingMember: 4.1, 
+    affiliateLink: AFFILIATE_BASE_LINK + "Cabin4", 
+    images: [
+      "https://placehold.co/600x400/556B2F/FFFFFF?text=A-Frame+Exterior",
+      "https://placehold.co/600x400/556B2F/FFFFFF?text=Cozy+Interior",
+    ],
+    description: "Cozy cabin retreat. Watch out for the corner beams, but the main living area is spacious. Beds are standard King length.", 
+    amenities: ["Woodland Setting", "Sauna", "Hiking Trails"] 
+  },
 ];
 
 // --- NAVIGATION & STYLED COMPONENTS ---
@@ -67,13 +130,14 @@ const Header: React.FC<HeaderProps> = ({ navigate, currentPage }) => (
   <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm shadow-md">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
       <div onClick={() => navigate("home")} className="flex items-center cursor-pointer space-x-2">
-        {/* IHI Logo Icon */}
-        <div className="relative h-6 w-6">
-          <span className="absolute top-0 h-full w-0.5 bg-black left-0.5" />
-          <span className="absolute top-0 h-full w-0.5 bg-black right-0.5" />
-          <span className="absolute top-1 h-4 w-3.5 bg-black left-1.5" />
+        {/* IHI Logo Icon (UPDATED TO MATCH REQUEST) */}
+        <div className="flex items-center">
+          <span className="h-6 w-0.5 bg-black" />
+          <span className="text-2xl font-black text-red-600 mx-1">H</span>
+          <span className="h-6 w-0.5 bg-black" />
         </div>
-        <span className="text-lg font-bold text-gray-800 tracking-wider uppercase">
+        <span className="text-lg font-bold text-gray-800 tracking-wider uppercase font-serif"> 
+          {/* Added font-serif for a more stylish font effect, assuming Tailwind is configured */}
           Headroom Havens
         </span>
       </div>
@@ -274,10 +338,11 @@ const ListingsPage: React.FC<{ navigate: (path: string, propertyId: number) => v
   );
 };
 
-// 7. Property Card Component (Used in Listings)
+// 7. Property Card Component (UPDATED to use the first image in the array)
 const PropertyCard: React.FC<{ property: Property, navigate: (path: string, propertyId: number) => void }> = ({ property, navigate }) => (
   <div className="bg-white rounded-xl shadow-lg overflow-hidden transition-transform duration-300 hover:shadow-2xl hover:-translate-y-1">
-    <img src={property.image} alt={property.name} className="w-full h-48 object-cover" />
+    {/* Use the FIRST image for the card preview */}
+    <img src={property.images[0]} alt={property.name} className="w-full h-48 object-cover" /> 
     <div className="p-5">
       <h3 className="text-xl font-bold text-gray-800">{property.name}</h3>
       <p className="text-sm text-gray-500 flex items-center mb-3">
@@ -304,22 +369,67 @@ const PropertyCard: React.FC<{ property: Property, navigate: (path: string, prop
   </div>
 );
 
-// 8. Property Detail Page
+// 8. Property Detail Page (UPDATED with image gallery)
 const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0); // <-- NEW STATE
+  
   const handleBookNow = () => {
     // Affiliate Tracking Logic
     console.log(`Tracking affiliate click for property ID: ${property.id}`);
     window.location.href = property.affiliateLink;
   };
 
+  const totalImages = property.images.length;
+  const currentImage = property.images[currentImageIndex];
+
+  // Logic to cycle images
+  const goToNext = () => setCurrentImageIndex((prev) => (prev + 1) % totalImages);
+  const goToPrev = () => setCurrentImageIndex((prev) => (prev - 1 + totalImages) % totalImages);
+
   return (
     <div className="max-w-5xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
       <h1 className="text-4xl font-bold text-gray-800 mb-2">{property.name}</h1>
       <p className="text-xl text-gray-500 mb-6">{property.location}</p>
 
-      {/* Images and Map */}
+      {/* Images and Map (UPDATED GALLERY) */}
       <div className="grid md:grid-cols-2 gap-6 mb-8">
-        <img src={property.image.replace("400x250", "600x400")} alt={property.name} className="w-full h-full object-cover rounded-xl shadow-lg" />
+        
+        {/* Image Gallery Column */}
+        <div className="relative h-[400px] rounded-xl shadow-lg overflow-hidden">
+          <img 
+            src={currentImage} 
+            alt={`${property.name} photo ${currentImageIndex + 1}`} 
+            className="w-full h-full object-cover transition-opacity duration-300" 
+          />
+          
+          {/* Gallery Controls (Only show if multiple images exist) */}
+          {totalImages > 1 && (
+            <>
+              {/* Previous Button */}
+              <button 
+                onClick={goToPrev}
+                className="absolute left-3 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/80 transition-colors z-10"
+                aria-label="Previous image"
+              >
+                <ChevronLeft size={24} />
+              </button>
+              {/* Next Button */}
+              <button 
+                onClick={goToNext}
+                className="absolute right-3 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/80 transition-colors z-10"
+                aria-label="Next image"
+              >
+                <ChevronRight size={24} />
+              </button>
+              {/* Image Counter */}
+              <div className="absolute bottom-3 right-3 text-white bg-black/50 text-xs px-3 py-1 rounded-full z-10">
+                {currentImageIndex + 1} / {totalImages}
+              </div>
+            </>
+          )}
+        </div>
+        
+        {/* Map Column (Unchanged) */}
         <div className="bg-gray-200 h-[400px] flex items-center justify-center rounded-xl shadow-lg">
           <p className="text-gray-600">Google Map Embed Placeholder</p>
         </div>
@@ -379,7 +489,7 @@ const StandardPage: React.FC = () => (
     <div className="mb-10 p-6 bg-red-50 rounded-xl border border-red-200">
         <h2 className="text-2xl font-semibold text-red-600 mb-3">1. The Safety Buffer (The 5 cm Rule)</h2>
         <p className="mb-4 text-gray-700">
-            A property must have a minimum measured clearance of **6 ft 7 in (201 cm)** for a guest to be rated at **6 ft 5 in (196 cm)**. Why?
+          A property must have a minimum measured clearance of **6 ft 7 in (201 cm)** for a guest to be rated at **6 ft 5 in (196 cm)**. Why?
         </p>
         <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
             <li>**Dynamic Movement:** When you walk, your body slightly lifts off the ground at the push-off point of your stride. This requires approximately 5 cm or 2 in of vertical clearance.</li>
@@ -428,7 +538,10 @@ const App: React.FC = () => {
   };
 
   const selectedProperty = useMemo(() => {
-    return MOCK_PROPERTIES.find(p => p.id === selectedPropertyId) || MOCK_PROPERTIES[0];
+    // Ensure this safely handles the case where selectedPropertyId is null
+    const prop = MOCK_PROPERTIES.find(p => p.id === selectedPropertyId);
+    // Use a placeholder property if ID is invalid, or the first one if null
+    return prop || MOCK_PROPERTIES[0]; 
   }, [selectedPropertyId]);
 
   let content;
