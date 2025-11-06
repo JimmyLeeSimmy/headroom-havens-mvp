@@ -1,23 +1,21 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { Search, Bed, Maximize, User, Compass, DollarSign, CheckCircle } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { Search, Bed, Maximize, Compass, DollarSign, CheckCircle } from 'lucide-react';
 
 // --- INTERFACES AND TYPE DEFINITIONS ---
-// Define the structure for a single property listing
 interface Property {
   id: number;
   name: string;
   location: string;
-  priceRange: number; // 1 to 5
-  maxHeightCM: number; // Lowest measured clearance, used for filtering (e.g., 218 cm)
+  priceRange: number; 
+  maxHeightCM: number; 
   mattressLengthCM: number;
-  ratingMember: number; // Simulated user comfort rating (1-5)
+  ratingMember: number; 
   affiliateLink: string;
   image: string;
   description: string;
   amenities: string[];
 }
 
-// Define the structure for component props
 interface HeaderProps {
   navigate: (path: string, propertyId?: number) => void;
   currentPage: string;
@@ -32,14 +30,11 @@ interface ButtonProps {
 
 // --- GLOBAL CONFIGURATION AND DATA ---
 
-// The user's safety margin (2 inches or 5 cm) subtracted from property clearance
-const SAFETY_BUFFER_CM = 5;
-// The placeholder image URL. MUST BE REPLACED with your actual hosted image.
+const SAFETY_BUFFER_CM = 5; 
 const HERO_IMAGE_URL = "https://placehold.co/1200x500/F8D4CC/333?text=Photorealistic+Cottage+Doorway+%2B+Tall+Man";
-// Affiliate link placeholder
 const AFFILIATE_BASE_LINK = "https://partner-booking-site.com/?aid=HHAVENS123&prop=";
 
-// Conversion helper function
+// Conversion helper function (now fully safe)
 const cmToFeetInches = (cm: number): string => {
   const totalInches = cm / 2.54;
   const feet = Math.floor(totalInches / 12);
@@ -116,7 +111,6 @@ const Footer: React.FC = () => (
 );
 
 // 4. Max Height Rating Logic Component
-// This component displays the max comfortable height (clearing the safety buffer)
 const MaxHeightDisplay: React.FC<{ clearanceCM: number }> = ({ clearanceCM }) => {
   const maxSafeHeightCM = clearanceCM - SAFETY_BUFFER_CM;
   const maxSafeHeightImperial = cmToFeetInches(maxSafeHeightCM);
@@ -452,7 +446,7 @@ const App: React.FC = () => {
     default:
       content = <HomePage navigate={navigate} />;
   }
-  
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header navigate={navigate} currentPage={currentPage} />
