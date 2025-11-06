@@ -32,7 +32,6 @@ interface ButtonProps {
 // --- GLOBAL CONFIGURATION AND DATA ---
 
 const SAFETY_BUFFER_CM = 5; 
-// FIX: Using correct filename and PUBLIC_URL for reliable pathing
 const HERO_IMAGE_URL = process.env.PUBLIC_URL + "/images/cottage-hero.png"; 
 const AFFILIATE_BASE_LINK = "https://partner-booking-site.com/?aid=HHAVENS123&prop=";
 
@@ -127,10 +126,10 @@ const Button: React.FC<ButtonProps> = ({ children, onClick, color = "bg-red-600"
   </button>
 );
 
-// 2. Header and Navigation (FIXED ALIGNMENT)
+// 2. Header and Navigation
 const Header: React.FC<HeaderProps> = ({ navigate, currentPage }) => (
   <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm shadow-md">
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16"> {/* ADDED justify-between */}
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
       <div onClick={() => navigate("home")} className="flex items-center cursor-pointer space-x-2">
         {/* IHI Logo Icon */}
         <div className="flex items-center">
@@ -217,7 +216,6 @@ const HomePage: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) 
         The Headroom Havens Standard
       </h2>
       <div className="grid md:grid-cols-3 gap-8">
-        {/* Cards are flex-col, but adding text-center to parent container helps align everything */}
         <div className="flex flex-col items-center text-center p-6 bg-white rounded-xl shadow-lg border-t-4 border-red-600">
           <Maximize size={48} className="text-red-600 mb-4" />
           <h3 className="text-xl font-semibold mb-2">Verified Clearance</h3>
@@ -466,11 +464,10 @@ const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
   );
 };
 
-// 9. Headroom Standard Page (Spacing Reduced & Centered)
+// 9. Headroom Standard Page (Spacing Reduced)
 const StandardPage: React.FC = () => (
   <div className="max-w-4xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
-    {/* Ensure all content within max-w-4xl is aligned */}
-    <h1 className="text-4xl font-bold text-gray-800 mb-5 text-center sm:text-left">Our Standard: Why We Certify</h1>
+    <h1 className="text-4xl font-bold text-gray-800 mb-5 text-center sm:text-left">Our Standard: Why We Certify</h1>
     <p className="text-xl text-gray-600 mb-6 text-center sm:text-left">
       We eliminate the anxiety of travel for tall guests by applying a stringent, verifiable certification process to every property.
     </p>
@@ -516,10 +513,10 @@ const StandardPage: React.FC = () => (
   </div>
 );
 
-// 10. Contact Page (Spacing Reduced & WIDER CONTAINER)
+// 10. Contact Page (NETLIFY FORM - FIXED JSX COMMENT)
 const ContactPage: React.FC = () => {
     return (
-        <div className="max-w-2xl mx-auto py-10 px-4 sm:px-6 lg:px-8"> {/* INCREASED max-w-xl to max-w-2xl */}
+        <div className="max-w-2xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
             <h1 className="text-4xl font-bold text-gray-800 mb-5 text-center">Contact Us</h1>
             <p className="text-xl text-gray-600 mb-6 text-center">We're standing up for tall travelers. Get in touch with our team.</p>
 
@@ -527,7 +524,7 @@ const ContactPage: React.FC = () => {
                 name="contact" 
                 method="POST" 
                 data-netlify="true" 
-                className="space-y-4 p-6 bg-white rounded-xl shadow-lg border-t-4 border-red-600" {/* Increased p-5 to p-6 */}
+                className="space-y-4 p-6 bg-white rounded-xl shadow-lg border-t-4 border-red-600" // <--- FIX HERE: Removed the invalid comment
             >
                 <input type="hidden" name="form-name" value="contact" />
 
@@ -574,7 +571,7 @@ const ContactPage: React.FC = () => {
                     ></textarea>
                 </div>
 
-                <Button type="submit" className="w-full mt-6"> {/* Increased vertical space to separate from fields */}
+                <Button type="submit" className="w-full mt-6">
                     Submit
                 </Button>
             </form>
