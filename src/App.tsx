@@ -29,6 +29,15 @@ interface ButtonProps {
   type?: 'submit' | 'button' | 'reset';
 }
 
+interface Review {
+  id: number;
+  propertyId: number;
+  reviewer: string;
+  date: string;
+  rating: number;
+  comment: string;
+}
+
 // --- GLOBAL CONFIGURATION AND DATA ---
 
 const SAFETY_BUFFER_CM = 5; 
@@ -130,6 +139,13 @@ const MOCK_PROPERTIES: Property[] = [
   },
 ];
 
+const MOCK_REVIEWS: Review[] = [
+  { id: 1, propertyId: 1, reviewer: "Liam M.", date: "2025-10-10", rating: 5.0, comment: "Absolutely massive headspace! I'm 6'10\" and didn't duck once. The California King was perfect. A true haven." },
+  { id: 2, propertyId: 1, reviewer: "Sarah T.", date: "2025-09-28", rating: 4.5, comment: "Beautiful barn conversion. Liam is right about the space. Only slight negative: the shower head was a tad low, but the rest was flawless." },
+  { id: 3, propertyId: 2, reviewer: "Marcus J.", date: "2025-11-01", rating: 3.0, comment: "Cozy cottage. The low kitchen beam definitely requires caution, but the extra-long bed was worth it. As advertised." },
+  { id: 4, propertyId: 3, reviewer: "Jessica V.", date: "2025-10-25", rating: 5.0, comment: "Peak luxury and space. I finally felt short! The best accommodation I've ever found for height. Worth the Elite Haven price." },
+];
+
 // --- UNIVERSAL LAYOUT COMPONENTS ---
 
 /**
@@ -192,22 +208,23 @@ const Footer: React.FC = () => (
     <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 text-center">
       <p>&copy; {new Date().getFullYear()} Headroom Havens. All rights reserved. </p>
       <p className="mt-2 text-xs text-gray-400">
-        All bookings are processed via our verified affiliate partners. Commission is paid after guest stay.
+        All bookings are processed via our verified affiliate partners.
       </p>
     </div>
   </footer>
 );
 
 // 4. Max Height Rating Logic Component
+// 4. Max Height Rating Logic Component
 const MaxHeightDisplay: React.FC<{ clearanceCM: number }> = ({ clearanceCM }) => {
   const maxSafeHeightCM = clearanceCM - SAFETY_BUFFER_CM;
   const maxSafeHeightImperial = cmToFeetInches(maxSafeHeightCM);
 
   return (
-    <div className="flex items-center text-red-600 font-semibold space-x-2">
+    <div className="flex items-center text-red-600 font-semibold space-x-2 text-left">
       <Maximize size={20} className="text-red-600" />
-      {/* ADDED translate-y-px to slightly shift the text up by 1px to align with the icon */}
-      <span>Max Height: {maxSafeHeightImperial} ({Math.round(maxSafeHeightCM)} cm)</span>
+      {/* ADD -translate-y-px to shift the text up by 1px for perfect alignment */}
+      <span className="-translate-y-px">Max Height Rating: {maxSafeHeightImperial} ({Math.round(maxSafeHeightCM)} cm)</span>
     </div>
   );
 };
@@ -225,7 +242,7 @@ const PropertyCard: React.FC<{ property: Property, navigate: (path: string, prop
     {/* Use flex-grow to push the button to the bottom */}
     <div className="p-4 flex flex-col flex-grow"> 
       <h3 className="text-xl font-bold text-gray-800">{property.name}</h3>
-      <p className="text-sm text-gray-500 flex items-center mb-2"><Compass size={16} className="mr-1" />{property.location}</p>
+      <p className="text-sm text-gray-500 flex items-center mb-1"><Compass size={16} className="mr-1" />{property.location}</p>
 
       <div className="space-y-1 mb-4 text-sm flex-grow text-left"> 
         <MaxHeightDisplay clearanceCM={property.maxHeightCM} />
@@ -290,7 +307,7 @@ const HomePage: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) 
   </div>
 );
 
-// 6. Listings Page (SYNTAX ERROR FIXED: Removed bolding from className string)
+// 6. Listings Page
 const ListingsPage: React.FC<{ navigate: (path: string, propertyId: number) => void }> = ({ navigate }) => {
   const [maxHeightFilter, setMaxHeightFilter] = useState<number>(0);
   const [priceFilter, setPriceFilter] = useState<number>(0);
@@ -302,8 +319,11 @@ const ListingsPage: React.FC<{ navigate: (path: string, propertyId: number) => v
     return MOCK_PROPERTIES.filter(property => {
       const propertySafeHeightCM = property.maxHeightCM - SAFETY_BUFFER_CM;
       const heightPass = maxHeightFilter === 0 || propertySafeHeightCM >= maxHeightFilter;
-      const pricePass = priceFilter === 0 || property.priceRange >= priceFilter;
-      return heightPass && pricePass;
+      const pricePass = priceFilter === 0 || 
+                         (priceFilter === 2 && (property.priceRange === 2 || property.priceRange === 3)) || 
+                         property.priceRange === priceFilter;
+      
+      return heightPass && pricePass; // AND logic is correctly used here
     });
   }, [maxHeightFilter, priceFilter]);
 
@@ -312,9 +332,9 @@ const ListingsPage: React.FC<{ navigate: (path: string, propertyId: number) => v
       <h1 className="text-3xl font-bold text-gray-800 mb-6">Find Your Headroom Haven</h1> 
 
       {/* Filters Section - Remains horizontally aligned */}
-      <div className="bg-gray-100 p-4 rounded-xl shadow-md mb-6 grid sm:grid-cols-3 gap-4"> 
-        <div>
-          <label htmlFor="height-filter" className="block text-sm font-medium text-gray-700 mb-1">Minimum Headroom Required:</label>
+      <div className="bg-gray-100 p-4 rounded-xl shadow-md mb-6 flex flex-wrap items-end gap-4"> 
+        <div className="w-full md:w-1/3">
+          <label htmlFor="height-filter" className="block text-sm font-medium text-gray-700 mb-0">Minimum Headroom Required:</label>
           <select
              id="height-filter"
             value={maxHeightFilter}
@@ -330,8 +350,8 @@ const ListingsPage: React.FC<{ navigate: (path: string, propertyId: number) => v
           </select>
         </div>
 
-        <div>
-          <label htmlFor="price-filter" className="block text-sm font-medium text-gray-700 mb-1">Price Range:</label>
+        <div className="w-full md:w-1/3">
+          <label htmlFor="price-filter" className="block text-sm font-medium text-gray-700 mb-0">Price Range:</label>
           <select
              id="price-filter"
             value={priceFilter}
@@ -350,11 +370,11 @@ const ListingsPage: React.FC<{ navigate: (path: string, propertyId: number) => v
 
       {/* Listings Grid (FIXED: items-stretch for equal height PropertyCards) */}
       {filteredProperties.length > 0 ? (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch"> {/* SYNTAX FIXED HERE */}
-          {filteredProperties.map(property => (
-            <PropertyCard key={property.id} property={property} navigate={navigate} />
-          ))}
-        </div>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
+        {filteredProperties.map(property => (
+            <PropertyCard key={property.id} property={property} navigate={navigate} />
+        ))}
+    </div>
       ) : (
         <div className="text-center py-10 bg-white rounded-xl shadow-lg">
           <h2 className="text-xl font-semibold text-gray-600">No Havens match your criteria.</h2>
@@ -366,7 +386,7 @@ const ListingsPage: React.FC<{ navigate: (path: string, propertyId: number) => v
 };
 
 // 8. Property Detail Page
-const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
+const DetailPage: React.FC<{ property: Property, navigate: (path: string, propertyId: number | null) => void }> = ({ property, navigate }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0); 
   
   const handleBookNow = () => {
@@ -404,14 +424,14 @@ const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
             <>
               <button 
                 onClick={goToPrev}
-                className="absolute left-3 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/80 transition-colors z-10"
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-300 hover:text-white transition-colors z-10 **drop-shadow-sm**"
                 aria-label="Previous image"
               >
                 <ChevronLeft size={24} />
               </button>
               <button 
                 onClick={goToNext}
-                className="absolute right-3 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/80 transition-colors z-10"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-300 hover:text-white transition-colors z-10 **drop-shadow-sm**"
                 aria-label="Next image"
               >
                 <ChevronRight size={24} />
@@ -425,27 +445,27 @@ const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
 
           {/* Details - Headroom Certified Dimensions (ALIGNMENT FIX: Custom grid for paired data) */}
           <div className="bg-white p-5 rounded-xl shadow-lg mb-6"> 
-            <h2 className="text-2xl font-bold text-red-600 mb-3 flex items-center"> 
-              <Maximize size={24} className="mr-2" />Headroom Certified Dimensions
-            </h2>
-            
-            <p className="text-gray-700 mb-4">{property.description}</p> 
+            <h2 className="text-2xl font-bold text-red-600 mb-3 flex items-center"><Maximize size={24} className="mr-2" />Headroom Certified Details</h2>
+<p className="text-gray-700 mb-4">{property.description}</p>
 
-            {/* ALIGNMENT FIX: Used 'sm:grid-cols-[auto_1fr]' to align labels */}
-            <div className="grid sm:grid-cols-[auto_1fr] gap-y-1 gap-x-4 text-lg"> 
-
-                <div className="font-semibold whitespace-nowrap">Actual Lowest Clearance:</div>
-                <div>{cmToFeetInches(property.maxHeightCM)} ({property.maxHeightCM} cm)</div>
-                
-                <div className="font-semibold whitespace-nowrap">Max Height Rating:</div>
-                <div>
-                  {maxSafeHeightImperial} ({Math.round(maxSafeHeightCM)} cm)
+            {/* FIX: Using simple flex column structure for flush left alignment */}
+            <div className="flex flex-col gap-y-1 text-lg text-left"> 
+                {/* Actual Lowest Clearance */}
+                <div className="flex flex-wrap">
+                    <span className="font-semibold mr-3">Actual Lowest Clearance:</span><span>{cmToFeetInches(property.maxHeightCM)} ({property.maxHeightCM} cm)</span>
                 </div>
                 
-                <div className="font-semibold whitespace-nowrap">Usable Bed Length:</div>
-                <div>{cmToFeetInches(property.mattressLengthCM)} ({property.mattressLengthCM} cm) - 2 Beds (1 footboard)</div>
+                {/* Max Height Rating */}
+                <div className="flex flex-wrap">
+                    <span className="font-semibold mr-3">Max Height Rating:</span><span>{maxSafeHeightImperial} ({Math.round(maxSafeHeightCM)} cm)</span>
+                </div>
+                
+                {/* Usable Bed Length */}
+                <div className="flex flex-wrap">
+                    <span className="font-semibold mr-3">Usable Bed Length:</span><span>{cmToFeetInches(property.mattressLengthCM)} ({property.mattressLengthCM} cm) - 2 Beds (1 footboard)</span>
+                </div>
             </div>
-          </div>
+          </div> 
 
           {/* Google Map Placeholder */}
           <div className="bg-gray-200 h-[400px] w-full flex items-center justify-center rounded-xl shadow-lg mb-6"> 
@@ -453,24 +473,34 @@ const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
           </div>
 
           {/* Member Rating & Booking (ALIGNMENT FIX: items-stretch and h-full for equal column heights) */}
-          <div className="grid md:grid-cols-3 gap-4 items-stretch">
-            {/* Added h-full to ensure both inner cards match height */}
-            <div className="md:col-span-2 bg-gray-50 p-5 rounded-xl border border-gray-200 h-full flex flex-col justify-between">
-              <h3 className="text-xl font-semibold mb-3">Member Comfort Rating</h3>
-              <p className="text-4xl font-bold text-green-600">{property.ratingMember.toFixed(1)} / 5.0</p>
-              <div>
-                <p className="text-sm text-gray-500 mt-2">
-                  Price Rating: <span className='font-bold text-gray-800'>{priceLabel}</span> | Based on feedback from verified tall guests. All ratings are admin-approved for integrity.
-                </p>
-                <button className="text-red-600 mt-3 text-sm underline hover:text-red-700">Submit Your Rating</button>
-              </div>
-            </div>
-            {/* Added h-full to ensure both inner cards match height */}
-            <div className="md:col-span-1 flex flex-col justify-center items-center p-5 bg-red-100 rounded-xl shadow-inner h-full">
+         <div className="grid md:grid-cols-3 gap-4 items-stretch">
+        <div className="md:col-span-2 bg-gray-50 p-5 rounded-xl border border-gray-200 h-full flex flex-col order-2">
+    <h3 className="text-xl font-semibold mb-1">Member Comfort Rating</h3>
+    
+    {/* Use flex to put rating number and details side-by-side (from step 1) */}
+    <div className="flex items-start justify-between gap-4 mt-1"> 
+        {/* Rating Number Stacked: */}
+        <div className="flex flex-col">
+            <p className="text-4xl font-bold text-green-600">{property.ratingMember.toFixed(1)}</p>
+            <span className="text-sm font-medium text-gray-500 self-start -mt-2">out of 5</span>
+        <button 
+            onClick={() => navigate("reviews", property.id)} 
+            className="text-red-600 text-sm underline hover:text-red-700 self-start font-semibold"
+        >
+            See Guest Reviews
+        </button>
+    </div>
+        
+        {/* Supporting Text with Submit Link */}
+        <div className="text-left text-sm text-gray-500 flex-grow">
+            <p>Based on feedback from verified tall guests. All ratings are admin-approved for integrity. <span className="font-bold text-red-600 cursor-pointer hover:underline ml-1">SUBMIT YOUR RATING</span></p>
+        </div>
+    </div>
+</div>
+        {/* Booking Box */}
+        <div className="md:col-span-1 flex flex-col justify-center items-center p-5 bg-red-100 rounded-xl shadow-inner h-full order-1">
               <p className="text-sm text-gray-700 mb-3 text-center">Ready to book your stress-free stay?</p>
-              <Button onClick={handleBookNow} className="w-full text-center">
-                <CheckCircle size={20} className="inline mr-2" />Book Now via Partner
-              </Button>
+              <Button onClick={handleBookNow} className="w-full text-center"><CheckCircle size={20} className="inline mr-2" />Book Now via Partner</Button>
               <p className="text-xs mt-2 text-gray-500 text-center">Booking handled securely by affiliate partner.</p>
             </div>
           </div>
@@ -482,56 +512,38 @@ const DetailPage: React.FC<{ property: Property }> = ({ property }) => {
 
 // Price Tiers Table Component
 const PriceTiersTable: React.FC = () => {
-    // Data structured for easy table rendering
-    const tiers = [
-        { tier: '$', name: 'Comfort', rationale: 'Simple, reliable, value-focused accommodation.' },
-        { tier: '$$', name: 'Boutique', rationale: 'The core market: high-style, verified quality, excellent value.' },
-        { tier: '$$$', name: 'Luxury', rationale: 'Exclusive service, high-end design, premium locations.' },
-        { tier: '$$$$', name: 'Elite Haven', rationale: 'Architectural masterpieces, private staff, top-tier clearance.' },
-    ];
+    const tiers = [
+        { tier: '$', name: 'Comfort', rationale: 'Simple, reliable, value-focused accommodation.' },
+        { tier: '$$', name: 'Boutique', rationale: 'Our core market: high-style, verified quality, excellent value.' },
+        { tier: '$$$', name: 'Luxury', rationale: 'Exclusive service, high-end design, premium locations.' },
+        { tier: '$$$$', name: 'Elite Haven', rationale: 'Architectural masterpieces, private staff, top-tier clearance.' },
+    ];
 
-    // Changed mb-6 to mb-8 for consistent vertical spacing between major sections 
-    return (
-        <div className="mb-8 p-5 bg-white rounded-xl shadow-lg border-t-4 border-red-600 text-left">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-3 flex items-center">
-                <DollarSign size={24} className="mr-2 text-red-600" />Price Tier Guide
-            </h2>
-            <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                        <tr>
-                            {/* Added 'text-center' to Tier heading for better alignment with the data below */}
-                            <th scope="col" className="px-3 py-3 text-center text-xs font-bold text-gray-700 uppercase tracking-wider w-1/12">
-                                Tier
-                            </th>
-                            <th scope="col" className="px-3 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider w-2/12">
-                                Name
-                            </th>
-                            <th scope="col" className="px-3 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider w-8/12">
-                                Rationale
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                        {tiers.map((tier, index) => (
-                            <tr key={index} className="hover:bg-red-50 transition-colors">
-                                {/* Added 'text-center' to align the Tier data with its header */}
-                                <td className="px-3 py-4 whitespace-nowrap text-sm font-medium text-red-600 text-center">
-                                    {tier.tier}
-                                </td>
-                                <td className="px-3 py-4 whitespace-nowrap text-sm font-semibold text-gray-800">
-                                    {tier.name}
-                                </td>
-                                <td className="px-3 py-4 text-sm text-gray-600">
-                                    {tier.rationale}
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    );
+    return (
+        <div className="mb-8 p-5 bg-white rounded-xl shadow-lg border-t-4 border-red-600 text-left">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-3 flex items-center"><DollarSign size={24} className="mr-2 text-red-600" />Price Tier Guide</h2>
+            <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                        <tr>
+                            <th scope="col" className="px-3 py-1 text-center text-xs font-bold text-gray-700 uppercase tracking-wider w-1/12">Tier</th>
+                            <th scope="col" className="px-3 py-1 text-left text-xs font-bold text-gray-700 uppercase tracking-wider w-2/12">Name</th>
+                            <th scope="col" className="px-3 py-1 text-left text-xs font-bold text-gray-700 uppercase tracking-wider w-8/12">Rationale</th>
+                        </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                        {tiers.map((tier, index) => (
+                            <tr key={index} className="hover:bg-red-50 transition-colors">
+                                <td className="px-3 py-1 whitespace-nowrap text-sm font-medium text-red-600 text-center">{tier.tier}</td>
+                                <td className="px-3 py-1 whitespace-nowrap text-sm font-semibold text-gray-800">{tier.name}</td>
+                                <td className="px-3 py-1 text-sm text-gray-600">{tier.rationale}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    );
 };
 
 
@@ -541,46 +553,33 @@ const StandardPage: React.FC = () => (
     {/* Adjusted max-w-4xl wrapper to be inside the SectionContainer for consistency */}
     <div className="max-w-4xl mx-auto">
       <h1 className="text-4xl font-bold text-gray-800 mb-4 text-left">Our Standard: Why We Certify</h1> 
-      <p className="text-xl text-gray-600 mb-8 text-left"> 
-        We eliminate the anxiety of travel for tall guests by applying a stringent, verifiable certification process to every property.
-      </p>
+      <p className="text-xl text-gray-600 mb-8 text-left">We eliminate the anxiety of travel for tall guests by applying a stringent, verifiable certification process to every property.</p>
 
       {/* 1. Section: The Safety Buffer (Use mb-8 for consistent section separation) */}
       <div className="mb-8 p-5 bg-red-50 rounded-xl border border-red-200 text-left"> 
-          <h2 className="text-2xl font-semibold text-red-600 mb-3">1. The Safety Buffer (The 5 cm Rule)</h2>
-          <p className="mb-3 text-gray-700">
-            A property must have a minimum measured clearance of <strong>6 ft 7 in (201 cm)</strong> for a guest to be rated at <strong>6 ft 5 in (196 cm)</strong>. Why?
-          </p>
+          <h2 className="text-2xl font-semibold text-red-600 mb-3">A. The Safety Buffer (The 5 cm Rule)</h2>
+          <p className="**mb-1** text-gray-700">A property must have a minimum measured clearance of <strong>6 ft 7 in (201 cm)</strong> for a guest to be rated at <strong>6 ft 5 in (196 cm)</strong>. Why?</p>
           <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
               <li><strong>Dynamic Movement:</strong> When you walk, your body slightly lifts off the ground at the push-off point of your stride. This requires approximately 5 cm or 2 in of vertical clearance.</li>
               <li><strong>Our Guarantee:</strong> We subtract a mandatory <strong>5 cm (2 in) safety buffer</strong> from the lowest measured point (door, beam, ceiling) to determine the property's true <strong>Max Height Rating</strong>.</li>
-              <li><strong>No Surprises:</strong> A property rated at <strong>6 ft 6 in (198 cm)</strong> means a 6 ft 6 in guest can walk, stretch, and jump without fear of injury.</li>
+              <li><strong>No Surprises:</strong> A property rated at <strong>6 ft 6 in (198 cm)</strong> means a 6 ft 6 in guest can walk around without fear of whacking their head on a door frame or beam.</li>
           </ul>
       </div>
       
       {/* 2. Section: The Certification Process (Consistent vertical spacing) */}
-      <h2 className="text-2xl font-semibold text-gray-800 mb-3 text-left">2. The Certification Process: Photo Proof</h2> 
-      <div className="space-y-6 mb-8"> {/* Increased space-y for better vertical separation */}
-          <div className="flex items-start space-x-4">
-              <Maximize size={32} className="text-gray-700 flex-shrink-0 mt-1" /> {/* Added mt-1 for vertical icon alignment */}
-              <div>
-                  <h3 className="text-xl font-semibold">Vetting Measurements</h3>
-                  <p className="text-gray-600">Property owners must submit the actual measurement of the lowest possible point for every area: main doors, bathroom entrances, and structural beams.</p>
-              </div>
+      <h2 className="text-2xl font-semibold text-gray-800 mb-1 text-left">B. The Certification Process: Photo Proof</h2>
+      <div className="space-y-2 mb-5">
+          <div className="flex items-start space-x-3">
+              <Maximize size={32} className="text-gray-700 flex-shrink-0 mt-1" />
+              <div><h3 className="text-xl font-semibold">Vetting Measurements</h3><p className="text-gray-600 mb-0">Property owners must submit the actual measurement of the lowest possible point for every area: main doors, bathroom entrances, and structural beams.</p></div>
           </div>
-          <div className="flex items-start space-x-4">
-              <Search size={32} className="text-gray-700 flex-shrink-0 mt-1" /> {/* Added mt-1 for vertical icon alignment */}
-              <div>
-                  <h3 className="text-xl font-semibold">The Photo Verification</h3>
-                  <p className="text-gray-600">The most important step: The owner must submit <strong>photo evidence</strong> showing a tape measure clearly documenting the full height of the low points. We require branded Headroom Havens tape (or a recognizable ruler) to verify the data's integrity.</p>
-              </div>
+          <div className="flex items-start space-x-3">
+              <Search size={32} className="text-gray-700 flex-shrink-0 mt-1" />
+              <div><h3 className="text-xl font-semibold">The Photo Verification</h3><p className="text-gray-600 mb-0">The most important step: The owner must submit <strong>photo evidence</strong> showing a tape measure clearly documenting the full height of the low points. We require branded Headroom Havens tape (or a recognizable ruler) to verify the data's integrity.</p></div>
           </div>
-          <div className="flex items-start space-x-4">
-              <Bed size={32} className="text-gray-700 flex-shrink-0 mt-1" /> {/* Added mt-1 for vertical icon alignment */}
-              <div>
-                  <h3 className="text-xl font-semibold">Bed Length Verification</h3>
-                  <p className="text-gray-600">We verify usable mattress length (excluding frames/footboards). Only mattresses over <strong>200 cm (6 ft 6 in)</strong> or longer qualify for listing on our site.</p>
-              </div>
+          <div className="flex items-start space-x-3">
+              <Bed size={32} className="text-gray-700 flex-shrink-0 mt-1" />
+              <div><h3 className="text-xl font-semibold">Bed Length Verification</h3><p className="text-gray-600 mb-0">We verify usable mattress length (excluding frames/footboards). Only mattresses over <strong>200 cm (6 ft 6 in)</strong> or longer qualify for listing on our site.</p></div>
           </div>
       </div>
       
@@ -590,13 +589,51 @@ const StandardPage: React.FC = () => (
   </SectionContainer>
 );
 
-// 10. Contact Page
+// 10. Reviews Page
+interface ReviewsPageProps {
+  property: Property;
+}
+
+const ReviewsPage: React.FC<ReviewsPageProps> = ({ property }) => {
+  const reviews = MOCK_REVIEWS.filter(r => r.propertyId === property.id);
+
+  return (
+    <SectionContainer className="py-4">
+      <div className="max-w-4xl mx-auto">
+        <h1 className="text-3xl font-bold text-gray-800 mb-2">Guest Reviews for {property.name}</h1>
+        <p className="text-xl text-gray-500 mb-6 font-semibold">{reviews.length} Verified Reviews</p>
+
+        <div className="space-y-6">
+          {reviews.length > 0 ? (
+            reviews.map(review => (
+              <div key={review.id} className="bg-white p-5 rounded-xl shadow-lg border-l-4 border-red-600">
+                <div className="flex justify-between items-center mb-2">
+                  <p className="font-semibold text-gray-800">{review.reviewer}</p>
+                  <span className="text-xs text-gray-500">{review.date}</span>
+                </div>
+                <div className="flex items-center space-x-1 mb-2">
+                  <span className="text-lg font-bold text-green-600">{review.rating.toFixed(1)} / 5.0</span>
+                </div>
+                <p className="text-gray-700 italic">"{review.comment}"</p>
+              </div>
+            ))
+          ) : (
+            <div className="text-center py-10 bg-white rounded-xl shadow-lg">
+                <p className="text-gray-600">Be the first to review this Headroom Haven!</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </SectionContainer>
+  );
+};
+
+// 11. Contact Page
 const ContactPage: React.FC = () => {
     return (
         <SectionContainer> 
             <div className="max-w-2xl mx-auto">
-                <h1 className="text-4xl font-bold text-gray-800 mb-4 text-center">Contact Us</h1> 
-                <p className="text-xl text-gray-600 mb-8 text-center">We're standing up for tall travelers. Get in touch with our team.</p> 
+                <h1 className="text-4xl font-bold text-gray-800 mb-4 text-center">Contact Us</h1><p className="text-xl text-gray-600 mb-8 text-center">We're standing up for tall travelers. Get in touch with our team.</p> 
 
                 <form 
                     name="contact" 
@@ -606,52 +643,37 @@ const ContactPage: React.FC = () => {
                 >
                     <input type="hidden" name="form-name" value="contact" />
 
-                    <div className="space-y-1">
-                        <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
-                        <input
-                            type="text"
-                            name="name"
-                            id="name"
-                            required
-                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500"
-                        />
-                    </div>
+                    <div className="space-y-1"><label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label><input
+    type="text"
+    name="name"
+    id="name"
+    required
+    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500"
+/></div>
 
-                    <div className="space-y-1">
-                        <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email Address</label>
-                        <input
-                            type="email"
-                            name="email"
-                            id="email"
-                            required
-                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500"
-                        />
-                    </div>
+                    <div className="space-y-1"><label htmlFor="email" className="block text-sm font-medium text-gray-700">Email Address</label><input
+    type="email"
+    name="email"
+    id="email"
+    required
+    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500"
+/></div>
 
-                    <div className="space-y-1">
-                        <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Phone Number</label>
-                        <input
-                            type="tel"
-                            name="phone"
-                            id="phone"
-                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500"
-                        />
-                    </div>
+                    <div className="space-y-1"><label htmlFor="phone" className="block text-sm font-medium text-gray-700">Phone Number</label><input
+    type="tel"
+    name="phone"
+    id="phone"
+    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500"
+/></div>
 
-                    <div className="space-y-1">
-                        <label htmlFor="comment" className="block text-sm font-medium text-gray-700">Comment</label>
-                        <textarea
-                            name="comment"
-                            id="comment"
-                            rows={4}
-                            required
-                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500"
-                        ></textarea>
-                    </div>
-
-                    <Button type="submit" className="w-full mt-4"> 
-                        Submit
-                    </Button>
+                    <div className="space-y-1"><label htmlFor="comment" className="block text-sm font-medium text-gray-700">Comment</label><textarea
+    name="comment"
+    id="comment"
+    rows={4}
+    required
+    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500"
+></textarea></div>
+<Button type="submit" className="w-full mt-4">Submit</Button>
                 </form>
                 <p className="text-xs text-gray-500 text-center mt-3">Submissions are processed securely by Netlify Forms.</p>
             </div>
@@ -660,7 +682,7 @@ const ContactPage: React.FC = () => {
 };
 
 
-// 11. Router and Main App Component (No Changes)
+// 12. Router and Main App Component (No Changes)
 const App: React.FC = () => {
   const [location, setLocation] = useState<{ path: string, propertyId: number | null }>({ path: "home", propertyId: null });
   const currentPage = location.path;
@@ -668,7 +690,7 @@ const App: React.FC = () => {
 
   const navigate = (path: string, propertyId: number | null = null) => {
     const newState = { path, propertyId };
-    const url = path === "detail" && propertyId !== null ? `/${path}/${propertyId}` : `/${path}`;
+    const url = (path === "detail" || path === "reviews") && propertyId !== null ? `/${path}/${propertyId}` : `/${path}`;
     window.history.pushState(newState, "", url);
     setLocation(newState);
     window.scrollTo(0, 0);
@@ -716,8 +738,12 @@ const App: React.FC = () => {
       content = <ContactPage />;
       break;
     case "detail":
-      content = selectedPropertyId !== null ? <DetailPage property={selectedProperty} /> : <HomePage navigate={navigate} />;
+  content = selectedPropertyId !== null ? <DetailPage property={selectedProperty} navigate={navigate} /> : <HomePage navigate={navigate} />;
+  break;
+case "reviews": 
+      content = selectedPropertyId !== null ? <ReviewsPage property={selectedProperty} /> : <HomePage navigate={navigate} />;
       break;
+
     case "home":
     default:
       content = <HomePage navigate={navigate} />;
