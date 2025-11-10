@@ -710,7 +710,7 @@ const DetailPage: React.FC<{ property: Property, navigate: (path: string, proper
 const PriceTiersTable: React.FC = () => {
     const tiers = [
         { tier: '$', name: 'Comfort', rationale: 'Simple, reliable, value-focused accommodation.' },
-        { tier: '$$', name: 'Boutique', rationale: 'Our core market: high-style, verified quality, excellent value.' },
+        { tier: '$$', name: 'Boutique', rationale: 'High-style, verified quality, excellent value.' },
         { tier: '$$$', name: 'Luxury', rationale: 'Exclusive service, high-end design, premium locations.' },
         { tier: '$$$$', name: 'Elite Haven', rationale: 'Architectural masterpieces, private staff, top-tier clearance.' },
     ];
