@@ -793,7 +793,7 @@ const StandardPage: React.FC = () => (
               </div>
               <div className="flex items-start space-x-4 text-white">
                   <Search size={36} className="text-white flex-shrink-0 mt-1" />
-                  <div><h3 className="text-xl font-semibold">The Photo Verification</h3><p className="text-gray-100 text-base">The most important step: The owner must submit <strong>photo evidence</strong> showing a tape measure clearly documenting the full height of the low points. We require branded Headroom Havens tape (or a recognizable ruler) to verify the data's integrity.</p></div>
+                  <div><h3 className="text-xl font-semibold">The Photo Verification</h3><p className="text-gray-100 text-base">The most important step: We personally visit each property to measure the low points or the owner must submit <strong>photo evidence</strong> showing the measured full height of them.</p></div>
               </div>
               <div className="flex items-start space-x-4 text-white">
                   <Bed size={36} className="text-white flex-shrink-0 mt-1" />
