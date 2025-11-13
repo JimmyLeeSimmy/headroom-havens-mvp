@@ -560,7 +560,6 @@ disabled={isSubmitting}
 ))}
 </select>
 </div>
-
 <div className="flex justify-end space-x-3 pt-2">
 <Button type="button" onClick={onClose} color="bg-gray-400 hover:bg-gray-500" disabled={isSubmitting}>
 Cancel
@@ -715,7 +714,7 @@ const SubmitReviewModal: React.FC<{
 
             <div className="flex justify-end space-x-3 pt-2">
               <Button type="button" onClick={onClose} color="bg-gray-400 hover:bg-gray-500" disabled={isSubmitting}>
-                Cancel
+Cancel
               </Button>
               <Button type="submit" disabled={isSubmitting} className="flex items-center justify-center">
                 {isSubmitting ? (
@@ -858,32 +857,29 @@ const DetailPage: React.FC<{ property: Property, navigate: (path: string, proper
         <button 
             onClick={() => navigate("reviews", property.id)} 
             className="text-red-600 text-sm underline hover:text-red-700 self-start font-semibold"
-        >
-            See Guest Reviews
-        </button>
+        >See Guest Reviews</button>
     </div>
         
         {/* Supporting Text with Submit Link */}
         <div className="text-left text-sm text-gray-500 flex-grow">
-            <p>Based on feedback from verified tall guests. All ratings are admin-approved for integrity. 
-    <button 
-        type="button" 
-        onClick={() => setShowReviewModal(true)} 
-        className="font-bold text-red-600 cursor-pointer hover:underline ml-1">SUBMIT YOUR RATING
-    </button>
+<p>Based on feedback from verified tall guests. All ratings are admin-approved for integrity. 
+<button 
+type="button" 
+onClick={() => setShowReviewModal(true)} 
+className="font-bold text-red-600 cursor-pointer hover:underline ml-1">SUBMIT YOUR RATING
+</button>
 </p>
-        </div>
-    </div>
 </div>
-        {/* Booking Box */}
-        <div className="md:col-span-1 flex flex-col justify-center items-center p-5 bg-red-100 rounded-xl shadow-inner h-full order-1">
-              <p className="text-sm text-gray-700 mb-3 text-center">Ready to book your stress-free stay?</p>
-              {/* Button now opens the modal */}
-              <Button onClick={handleInitialBookClick} className="w-full text-center"><CheckCircle size={20} className="inline mr-2" />Book Now via Partner</Button>
-              <p className="text-xs mt-2 text-gray-500 text-center">Booking and small commission handled securely by affiliate partner.</p>
-            </div>
-          </div>
-      </div>
+</div>
+</div>
+{/* Booking Box */}
+<div className="md:col-span-1 flex flex-col justify-center items-center p-5 bg-red-100 rounded-xl shadow-inner h-full order-1">
+<p className="text-sm text-gray-700 mb-3 text-center">Ready to book your stress-free stay?</p>
+{/* Button now opens the modal */}<Button onClick={handleInitialBookClick} className="w-full text-center"><CheckCircle size={20} className="inline mr-2" />Book Now via Partner</Button>
+<p className="text-xs mt-2 text-gray-500 text-center">Booking and small commission handled securely by affiliate partner.</p>
+</div>
+</div>
+</div>
 
     {/* NEW: Booking Modal integration */}
     {showModal && (
