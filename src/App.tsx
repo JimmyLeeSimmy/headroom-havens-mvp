@@ -27,7 +27,7 @@ interface ButtonProps {
   color?: string;
   className?: string;
   type?: 'submit' | 'button' | 'reset';
-  disabled?: boolean;
+  disabled?: boolean;
 }
 
 interface Review {
@@ -41,9 +41,17 @@ interface Review {
 
 // NEW: Data captured by the modal
 interface BookingData {
-  name: string;
-  email: string;
-  height: number; // Stored in CM
+  name: string;
+  email: string;
+  height: number; // Stored in CM
+}
+
+// NEW INTERFACE: Data captured by the review form
+interface ReviewData {
+  reviewer: string;
+  email: string;
+  rating: number;
+  comment: string;
 }
 
 // --- GLOBAL CONFIGURATION AND DATA ---
@@ -181,19 +189,19 @@ const MOCK_PROPERTIES: Property[] = [
 ];
 
 const MOCK_REVIEWS: Review[] = [
-  { id: 1, propertyId: 1, reviewer: "Liam M.", date: "2025-10-10", rating: 5.0, comment: "Absolutely massive headspace! I'm 6'10\" and didn't duck once. The California King was perfect. A true haven." },
-  { id: 2, propertyId: 1, reviewer: "Sarah T.", date: "2025-09-28", rating: 4.5, comment: "Beautiful barn conversion. Liam is right about the space. Only slight negative: the shower head was a tad low, but the rest was flawless." },
-  { id: 3, propertyId: 2, reviewer: "Marcus J.", date: "2025-11-01", rating: 3.0, comment: "Cozy cottage. The low kitchen beam definitely requires caution, but the extra-long bed was worth it. As advertised." },
-  { id: 4, propertyId: 3, reviewer: "Jessica V.", date: "2025-10-25", rating: 5.0, comment: "Peak luxury and space. I finally felt short! The best accommodation I've ever found for height. Worth the Elite Haven price." },
+  { id: 1, propertyId: 1, reviewer: "Liam M.", date: "2025-10-10", rating: 5.0, comment: "Absolutely massive headspace! I'm 6'10\" and didn't duck once. The California King was perfect. A true haven." },
+  { id: 2, propertyId: 1, reviewer: "Sarah T.", date: "2025-09-28", rating: 4.5, comment: "Beautiful barn conversion. Liam is right about the space. Only slight negative: the shower head was a tad low, but the rest was flawless." },
+  { id: 3, propertyId: 2, reviewer: "Marcus J.", date: "2025-11-01", rating: 3.0, comment: "Cozy cottage. The low kitchen beam definitely requires caution, but the extra-long bed was worth it. As advertised." },
+  { id: 4, propertyId: 3, reviewer: "Jessica V.", date: "2025-10-25", rating: 5.0, comment: "Peak luxury and space. I finally felt short! The best accommodation I've ever found for height. Worth the Elite Haven price." },
 ];
 
 // --- MOCK MAP EMBEDS ---
 // NOTE: These are static map placeholders (Google Maps 'share' embed code, simplified).
 const MOCK_MAP_EMBEDS: { [key: number]: string } = {
-  1: "https://maps.google.com/maps?q=Cotswold+Barn+Lodge&t=&z=14&ie=UTF8&iwloc=&output=embed", // Cotswold Barn Lodge
-  2: "https://maps.google.com/maps?q=Scottish+Highlands+Cottage+Loch+Ness&t=&z=12&ie=UTF8&iwloc=&output=embed", // Highland Stone Cottage
-  3: "https://maps.google.com/maps?q=Bristol+City+Centre+Loft&t=&z=15&ie=UTF8&iwloc=&output=embed", // Bristol Urban Loft
-  4: "https://maps.google.com/maps?q=New+Forest+National+Park+Cabin&t=&z=13&ie=UTF8&iwloc=&output=embed", // New Forest A-Frame
+  1: "https://maps.google.com/maps?q=Cotswold+Barn+Lodge&t=&z=14&ie=UTF8&iwloc=&output=embed", // Cotswold Barn Lodge
+  2: "https://maps.google.com/maps?q=Scottish+Highlands+Cottage+Loch+Ness&t=&z=12&ie=UTF8&iwloc=&output=embed", // Highland Stone Cottage
+  3: "https://maps.google.com/maps?q=Bristol+City+Centre+Loft&t=&z=15&ie=UTF8&iwloc=&output=embed", // Bristol Urban Loft
+  4: "https://maps.google.com/maps?q=New+Forest+National+Park+Cabin&t=&z=13&ie=UTF8&iwloc=&output=embed", // New Forest A-Frame
 };
 
 // --- UNIVERSAL LAYOUT COMPONENTS ---
@@ -225,50 +233,50 @@ const Header: React.FC<HeaderProps> = ({ navigate, currentPage }) => (
   <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm shadow-md">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
       
-      {/* Container for Logo, Nav, AND Badge */}
-      <div className="flex items-center justify-between w-full relative"> 
-          
-          {/* Logo Mark and Text */}
-          <div onClick={() => navigate("home")} className="flex items-center cursor-pointer gap-x-2">
-            <div className="flex items-center">
-              <span className="h-6 w-0.5 bg-black" /><span className="text-2xl font-bold text-red-600 font-black">H</span><span className="h-6 w-0.5 bg-black" />
-            </div>
-            <span className="text-lg font-bold text-gray-800 tracking-wider uppercase font-serif sm:whitespace-nowrap">Headroom Havens</span>
-          </div>
+      {/* Container for Logo, Nav, AND Badge */}
+      <div className="flex items-center justify-between w-full relative"> 
+          
+          {/* Logo Mark and Text */}
+          <div onClick={() => navigate("home")} className="flex items-center cursor-pointer gap-x-2">
+            <div className="flex items-center">
+              <span className="h-6 w-0.5 bg-black" /><span className="text-2xl font-bold text-red-600 font-black">H</span><span className="h-6 w-0.5 bg-black" />
+            </div>
+            <span className="text-lg font-bold text-gray-800 tracking-wider uppercase font-serif sm:whitespace-nowrap">Headroom Havens</span>
+          </div>
 
-          {/* Navigation Links */}
-          <nav className="hidden sm:flex justify-end space-x-3 md:space-x-4 lg:space-x-6">
-            {[{ path: "listings", label: "Find Havens" }, { path: "standard", label: "Our Standard" }, { path: "contact", label: "Contact Us" }]
-              .map(({ path, label }) => (
-                <button
-                  key={path}
-                  onClick={() => navigate(path)}
-                  className={`text-xs md:text-sm font-medium transition-colors whitespace-nowrap ${
-                    currentPage === path ? 'text-red-600 font-bold' : 'text-gray-600 hover:text-red-600'
-                  }`}
-                >
-                  {label}
-                </button>
-              ))}
-          </nav>
-      
-          {/* 📌 NEW: Coming Soon Badge */}
-          <div className="absolute right-0 top-0 mt-5 mr-0.5 sm:relative sm:mt-0 sm:mr-0 group">
-              <span className="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow-md cursor-help transition-all duration-300 hover:scale-105">
-                  BETA
-              </span>
-              {/* Tooltip Popup on Hover */}
-              <div className="absolute right-0 top-full mt-2 w-48 bg-gray-800 text-white text-xs p-2 rounded-lg shadow-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none sm:left-auto sm:right-0 sm:top-1/2 sm:translate-y-full sm:mt-3">
-                  This site is currently using mock data and is in the Beta phase.
-              </div>
-          </div>
-      
-          {/* Search Button (Mobile Only) */}
-          <button onClick={() => navigate("listings")} className="sm:hidden p-2 text-gray-600 hover:text-red-600 absolute right-0">
-            <Search size={24} />
-          </button>
-      
-        </div> {/* End of the inner flex container */}
+          {/* Navigation Links */}
+          <nav className="hidden sm:flex justify-end space-x-3 md:space-x-4 lg:space-x-6">
+            {[{ path: "listings", label: "Find Havens" }, { path: "standard", label: "Our Standard" }, { path: "contact", label: "Contact Us" }]
+              .map(({ path, label }) => (
+                <button
+                  key={path}
+                  onClick={() => navigate(path)}
+                  className={`text-xs md:text-sm font-medium transition-colors whitespace-nowrap ${
+                    currentPage === path ? 'text-red-600 font-bold' : 'text-gray-600 hover:text-red-600'
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+          </nav>
+      
+          {/* 📌 NEW: Coming Soon Badge */}
+          <div className="flex items-center ml-4 group">
+              <span className="bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg cursor-help transition-all duration-300 hover:scale-105 whitespace-nowrap">
+                  BETA
+              </span>
+              {/* Tooltip Popup on Hover */}
+              <div className="absolute right-0 top-full mt-2 w-48 bg-gray-800 text-white text-xs p-2 rounded-lg shadow-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none sm:left-auto sm:right-0 sm:top-1/2 sm:translate-y-full sm:mt-3">
+                  This site is currently using mock data and is in the Beta phase.
+              </div>
+          </div>
+      
+          {/* Search Button (Mobile Only) */}
+          <button onClick={() => navigate("listings")} className="sm:hidden p-2 text-gray-600 hover:text-red-600 absolute right-0">
+            <Search size={24} />
+          </button>
+      
+        </div> {/* End of the inner flex container */}
     </div>
   </header>
 );
@@ -277,11 +285,11 @@ const Header: React.FC<HeaderProps> = ({ navigate, currentPage }) => (
 const Footer: React.FC = () => (
   <footer className="bg-gray-800 text-white mt-8">
     <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 text-center">
-      <p>&copy; {new Date().getFullYear()} Headroom Havens. All rights reserved. </p>
+      <p>© {new Date().getFullYear()} Headroom Havens. All rights reserved. </p>
       <p className="mt-2 text-xs text-gray-400">
         All bookings are processed via our verified affiliate partners.
       </p>
-    </div>
+      </div>
   </footer>
 );
 
@@ -293,14 +301,14 @@ const MaxHeightDisplay: React.FC<{ clearanceCM: number }> = ({ clearanceCM }) =>
   return (
     <div className="flex items-center text-red-600 font-semibold space-x-2 text-left">
       <Maximize size={20} className="text-red-600" />
-      <span className="-translate-y-px">Max Height Rating: {maxSafeHeightImperial} ({Math.round(maxSafeHeightCM)} cm)</span>
+      <span className="-translate-y-px">Max Height Rating: {maxSafeHeightImperial} ({Math.round(maxSafeHeightCM)} cm)</span>
       </div>
   );
 };
 
 /**
- * 7. Property Card Component
- */
+ * 7. Property Card Component
+ */
 const PropertyCard: React.FC<{ property: Property, navigate: (path: string, propertyId: number) => void }> = ({ property, navigate }) => (
   <div className="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col transition-transform duration-300 hover:shadow-2xl hover:-translate-y-1 h-full w-full">
     <img src={property.images[0]} alt={property.name} className="w-full h-48 object-cover" /> 
@@ -380,8 +388,8 @@ const ListingsPage: React.FC<{ navigate: (path: string, propertyId: number) => v
       const propertySafeHeightCM = property.maxHeightCM - SAFETY_BUFFER_CM;
       const heightPass = maxHeightFilter === 0 || propertySafeHeightCM >= maxHeightFilter;
       const pricePass = priceFilter === 0 || 
-                         (priceFilter === 2 && (property.priceRange === 2 || property.priceRange === 3)) || 
-                         property.priceRange === priceFilter;
+                         (priceFilter === 2 && (property.priceRange === 2 || property.priceRange === 3)) || 
+                         property.priceRange === priceFilter;
       
       return heightPass && pricePass; // AND logic is correctly used here
     });
@@ -429,145 +437,319 @@ const ListingsPage: React.FC<{ navigate: (path: string, propertyId: number) => v
       </div>
 
       {/* Listings Grid */}
-      {filteredProperties.length > 0 ? (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
-        {filteredProperties.map(property => (
-            <PropertyCard key={property.id} property={property} navigate={navigate} />
-        ))}
-    </div>
-      ) : (
-        <div className="text-center py-10 bg-white rounded-xl shadow-lg">
-          <h2 className="text-xl font-semibold text-gray-600">No Havens match your criteria.</h2>
-          <p className="text-gray-500 mt-2">Try adjusting your minimum height or price range.</p>
-        </div>
+{filteredProperties.length > 0 ? (
+<div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
+{filteredProperties.map(property => (
+<PropertyCard key={property.id} property={property} navigate={navigate} />
+))}
+</div>
+) : (
+<div className="text-center py-10 bg-white rounded-xl shadow-lg">
+<h2 className="text-xl font-semibold text-gray-600">No Havens match your criteria.</h2>
+<p className="text-gray-500 mt-2">Try adjusting your minimum height or price range.</p>
+</div>
       )}
     </SectionContainer>
   );
 };
 
-// --- NEW COMPONENT: Booking Data Capture Modal ---
+// --- NEW COMPONENT: Booking Data Capture Modal (Must be defined before DetailPage) ---
 const BookingDataCaptureModal: React.FC<{
-  property: Property;
-  onClose: () => void;
-  onSuccess: (data: BookingData) => void;
+  property: Property;
+  onClose: () => void;
+  onSuccess: (data: BookingData) => void;
 }> = ({ property, onClose, onSuccess }) => {
-  // Use a sensible default height, e.g., 193 cm (approx 6'4")
-  const HEIGHT_DEFAULT_CM = 193; 
-  const [formData, setFormData] = useState<BookingData>({
-    name: '',
-    email: '',
-    height: HEIGHT_DEFAULT_CM,
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  // Use a sensible default height, e.g., 193 cm (approx 6'4")
+  const HEIGHT_DEFAULT_CM = 193; 
+  const [formData, setFormData] = useState<BookingData>({
+    name: '',
+    email: '',
+    height: HEIGHT_DEFAULT_CM,
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: name === 'height' ? Number(value) : value,
-    }));
-  };
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === 'height' ? Number(value) : value,
+    }));
+  };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    
-    // 1. Mock Data Capture (In a real app, this would be an API call to save the lead)
-    console.log("--- Capturing Guest Data ---");
-    console.log(`Property: ${property.name} (ID: ${property.id})`);
-    console.log("Data Captured:", formData);
-    console.log("--------------------------");
+ const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setIsSubmitting(true);
 
-    // 2. Simulate Delay and execute success callback (which redirects)
-    setTimeout(() => {
-      setIsSubmitting(false);
-      onSuccess(formData); 
-    }, 500);
-  };
+  // Helper function to encode form data for Netlify
+  const encode = (data: any) => {
+    return Object.keys(data)
+      .map(key => encodeURIComponent(key) + "=" + encodeURIComponent(data[key]))
+      .join("&");
+  }
 
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div 
-        className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all" 
-        onClick={(e) => e.stopPropagation()} 
-      >
-        <div className="p-6">
-          <h3 className="text-2xl font-bold text-gray-800 mb-1">Verify Your Booking Details</h3>
-          <p className="text-sm text-gray-600 mb-4">Just a quick step to secure your height-verified data before redirecting to our partner site.</p>
-          
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">Full Name</label>
-              <input type="text" id="name" name="name" required value={formData.name} onChange={handleChange}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-600 focus:border-red-600"
-                disabled={isSubmitting}
-              />
-            </div>
-            
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email Address</label>
-              <input type="email" id="email" name="email" required value={formData.email} onChange={handleChange}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-600 focus:border-red-600"
-                disabled={isSubmitting}
-              />
-            </div>
+  // Combine formData with Netlify-required fields
+  const netlifyFormData = {
+    "form-name": "booking-lead",
+    ...formData,
+    propertyId: property.id, // Capture the property ID too
+    propertyName: property.name, // Capture the property name
+  };
 
-            <div>
-              <label htmlFor="height" className="block text-sm font-medium text-gray-700">Your Rough Height (for recommendations)</label>
-              <select id="height" name="height" required value={formData.height} onChange={handleChange}
-                className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-600 focus:border-red-600"
-                disabled={isSubmitting}
-              >
-                {HEIGHT_OPTIONS_CM.map(cm => (
-                  <option key={cm} value={cm}>
-                    {cmToFeetInches(cm)} ({cm} cm)
-                  </option>
-                ))}
-              </select>
-            </div>
+  try {
+    const response = await fetch("/", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: encode(netlifyFormData)
+    });
 
-            <div className="flex justify-end space-x-3 pt-2">
-              <Button type="button" onClick={onClose} color="bg-gray-400 hover:bg-gray-500" disabled={isSubmitting}>
-                Cancel
-              </Button>
-              <Button type="submit" disabled={isSubmitting} className="flex items-center justify-center">
-                {isSubmitting ? (
-                    <>
-                      <svg className="animate-spin h-5 w-5 mr-3 text-white" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeDasharray="30, 200" fill="none"></circle></svg>
-                      Processing...
-                    </>
-                  ) : (
-                    <>
-                      Go to Booking Partner <ChevronRight size={18} className="ml-1" />
-                    </>
-                )}
-              </Button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  );
+    if (response.ok) {
+      console.log("Netlify Form submission successful. Redirecting.");
+      // Execute success callback (which redirects)
+      onSuccess(formData);
+    } else {
+      throw new Error(`Netlify submission failed with status: ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Form submission error:", error);
+    alert("There was an error capturing your details. Please try again.");
+    setIsSubmitting(false);
+  }
+};
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <div 
+        className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all" 
+        onClick={(e) => e.stopPropagation()} 
+      >
+        <div className="p-6">
+<h3 className="text-2xl font-bold text-gray-800 mb-1">Verify Your Booking Details</h3>
+<p className="text-sm text-gray-600 mb-4">Just a quick step to secure your height-verified data before redirecting to our partner site.</p>
+<form
+  name="booking-lead" // ⬅️ IMPORTANT: Netlify form name
+  method="POST"
+  data-netlify="true"
+  onSubmit={handleSubmit}
+  className="space-y-4"
+>
+<input type="hidden" name="form-name" value="booking-lead" /> {/* Hidden field for Netlify */}
+<div>
+<label htmlFor="name" className="block text-sm font-medium text-gray-700">Full Name</label>
+<input type="text" id="name" name="name" required value={formData.name} onChange={handleChange}
+className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-600 focus:border-red-600"
+disabled={isSubmitting}/>
+</div>
+<div>
+<label htmlFor="email" className="block text-sm font-medium text-gray-700">Email Address</label>
+<input type="email" id="email" name="email" required value={formData.email} onChange={handleChange}
+className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-600 focus:border-red-600"
+disabled={isSubmitting}/>
+</div>
+<div>
+<label htmlFor="height" className="block text-sm font-medium text-gray-700">Your Rough Height (for recommendations)</label>
+<select id="height" name="height" required value={formData.height} onChange={handleChange}
+className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-600 focus:border-red-600"
+disabled={isSubmitting}
+>
+{HEIGHT_OPTIONS_CM.map(cm => (
+<option key={cm} value={cm}>
+{cmToFeetInches(cm)} ({cm} cm)
+</option>
+))}
+</select>
+</div>
+
+<div className="flex justify-end space-x-3 pt-2">
+<Button type="button" onClick={onClose} color="bg-gray-400 hover:bg-gray-500" disabled={isSubmitting}>
+Cancel
+</Button>
+<Button type="submit" disabled={isSubmitting} className="flex items-center justify-center">
+{isSubmitting ? (
+<>
+<svg className="animate-spin h-5 w-5 mr-3 text-white" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeDasharray="30, 200" fill="none"></circle></svg>
+Processing...
+</>
+) : (
+<>
+Go to Booking Partner <ChevronRight size={18} className="ml-1" />
+</>
+)}
+</Button>
+</div>
+</form>
+</div>
+</div>
+</div>
+  );
+};
+
+// --- NEW COMPONENT: Review Submission Modal (Must be defined before DetailPage) ---
+const SubmitReviewModal: React.FC<{
+  property: Property;
+  onClose: () => void;
+}> = ({ property, onClose }) => {
+  const [formData, setFormData] = useState<ReviewData>({
+    reviewer: '',
+    email: '',
+    rating: 5, // Default to 5
+    comment: '',
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === 'rating' ? Number(value) : value,
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    const encode = (data: any) => {
+      return Object.keys(data)
+        .map(key => encodeURIComponent(key) + "=" + encodeURIComponent(data[key]))
+        .join("&");
+    }
+
+    const netlifyFormData = {
+      "form-name": "member-review", // ⬅️ IMPORTANT: Netlify form name
+      ...formData,
+      propertyId: property.id,
+      propertyName: property.name,
+      date: new Date().toISOString().slice(0, 10), // Auto-add current date
+    };
+
+    try {
+      const response = await fetch("/", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: encode(netlifyFormData)
+      });
+
+      if (response.ok) {
+        setIsSubmitted(true);
+      } else {
+        throw new Error(`Netlify submission failed with status: ${response.status}`);
+      }
+    } catch (error) {
+      console.error("Review submission error:", error);
+      alert("There was an error submitting your review. Please try again.");
+      setIsSubmitting(false);
+    }
+  };
+
+  if (isSubmitted) {
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" onClick={onClose}>
+        <div className="bg-white rounded-xl shadow-2xl w-full max-w-md p-6 text-center" onClick={(e) => e.stopPropagation()}>
+          <CheckCircle size={48} className="text-green-600 mx-auto mb-4" />
+          <h3 className="text-2xl font-bold mb-2">Review Submitted!</h3>
+          <p className="text-gray-600 mb-4">Thank you for sharing your experience. We will verify your rating and publish it soon.</p>
+          <Button onClick={onClose}>Close</Button>
+        </div>
+        </div>
+    );
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <div 
+        className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all" 
+        onClick={(e) => e.stopPropagation()} 
+      >
+        <div className="p-6">
+          <h3 className="text-2xl font-bold text-gray-800 mb-1">Submit Your Rating</h3>
+          <p className="text-sm text-gray-600 mb-4">Help the community by rating your stay at **{property.name}**.</p>
+          
+          <form 
+            name="member-review" // ⬅️ Netlify form name
+            method="POST"
+            data-netlify="true"
+            onSubmit={handleSubmit} 
+            className="space-y-4"
+          >
+            <input type="hidden" name="form-name" value="member-review" />
+
+            <div>
+              <label htmlFor="reviewer" className="block text-sm font-medium text-gray-700">Name (e.g., John D.)</label>
+              <input type="text" id="reviewer" name="reviewer" required value={formData.reviewer} onChange={handleChange}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-600 focus:border-red-600"
+                disabled={isSubmitting}
+              />
+            </div>
+            
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email (Private, for verification)</label>
+              <input type="email" id="email" name="email" required value={formData.email} onChange={handleChange}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-600 focus:border-red-600"
+                disabled={isSubmitting}
+              />
+            </div>
+
+            <div className='flex space-x-4'>
+                <div className='w-1/3'>
+                  <label htmlFor="rating" className="block text-sm font-medium text-gray-700">Rating (1-5)</label>
+                  <select id="rating" name="rating" required value={formData.rating} onChange={handleChange}
+                    className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-600 focus:border-red-600"
+                    disabled={isSubmitting}
+                  >
+                    {[5, 4, 3, 2, 1].map(r => <option key={r} value={r}>{r}</option>)}
+                  </select>
+                </div>
+                <div className='w-2/3'>
+                  <label htmlFor="comment" className="block text-sm font-medium text-gray-700">Comment</label>
+                  <textarea name="comment" id="comment" rows={3} required value={formData.comment} onChange={handleChange}
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500"
+                    disabled={isSubmitting}
+                  ></textarea>
+                </div>
+            </div>
+
+            <div className="flex justify-end space-x-3 pt-2">
+              <Button type="button" onClick={onClose} color="bg-gray-400 hover:bg-gray-500" disabled={isSubmitting}>
+                Cancel
+              </Button>
+              <Button type="submit" disabled={isSubmitting} className="flex items-center justify-center">
+                {isSubmitting ? (
+                  <>
+                    <svg className="animate-spin h-5 w-5 mr-3 text-white" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeDasharray="30, 200" fill="none"></circle></svg>
+                    Submitting...
+                  </>
+                ) : (
+                  'Submit Rating'
+                )}
+              </Button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 
 // 8. Property Detail Page
 const DetailPage: React.FC<{ property: Property, navigate: (path: string, propertyId: number | null) => void }> = ({ property, navigate }) => {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0); 
-  const [showModal, setShowModal] = useState(false); // NEW STATE: Controls the modal visibility
+  const [currentImageIndex, setCurrentImageIndex] = useState(0); 
+  const [showModal, setShowModal] = useState(false); // Controls the booking modal visibility
+  const [showReviewModal, setShowReviewModal] = useState(false); // Controls the review modal visibility
   
-  // NEW: Function to open the modal when 'Book Now' is clicked
-  const handleInitialBookClick = () => {
-    setShowModal(true);
-  };
+  // Function to open the booking modal when 'Book Now' is clicked
+  const handleInitialBookClick = () => {
+    setShowModal(true);
+  };
 
-  // NEW: Function executed after data is successfully captured in the modal
-  const handleAffiliateRedirect = (data: BookingData) => {
-      setShowModal(false);
-      // Actual redirect to the partner site
-      console.log(`Redirecting to affiliate link: ${property.affiliateLink}`);
-      window.location.href = property.affiliateLink;
-  };
+  // Function executed after data is successfully captured in the modal (redirects to partner)
+  const handleAffiliateRedirect = (data: BookingData) => {
+      setShowModal(false);
+      // Actual redirect to the partner site
+      console.log(`Redirecting to affiliate link: ${property.affiliateLink}`);
+      window.location.href = property.affiliateLink;
+  };
 
 
   const totalImages = property.images.length;
@@ -582,8 +764,8 @@ const DetailPage: React.FC<{ property: Property, navigate: (path: string, proper
   // Get Price Label for the bottom section
   const priceLabel = priceRangeToLabel(property.priceRange);
 
-  // Get the map embed URL using the property ID
-  const mapEmbedUrl = MOCK_MAP_EMBEDS[property.id];
+  // Get the map embed URL using the property ID
+  const mapEmbedUrl = MOCK_MAP_EMBEDS[property.id];
 
 
   return (
@@ -642,65 +824,79 @@ const DetailPage: React.FC<{ property: Property, navigate: (path: string, proper
                 <div className="flex flex-wrap"><span className="font-semibold mr-3">Usable Bed Length:</span><span>{cmToFeetInches(property.mattressLengthCM)} ({property.mattressLengthCM} cm) - 2 Beds (1 footboard)</span>
                 </div>
             </div>
-          </div> 
+          </div> 
 
           {/* Google Map Embed (Updated to use iframe) */}
           <div className="h-[400px] w-full rounded-xl shadow-lg mb-6 overflow-hidden border border-gray-300"> 
-            <iframe 
-                src={mapEmbedUrl}
-                width="100%" 
-                height="100%" 
-                style={{ border: 0 }} 
-                allowFullScreen={true} 
-                loading="lazy" 
-                referrerPolicy="no-referrer-when-downgrade"
-                title={`Map of ${property.name} in ${property.location}`}
-            ></iframe>
+            <iframe 
+                src={mapEmbedUrl}
+                width="100%" 
+                height="100%" 
+                style={{ border: 0 }} 
+                allowFullScreen={true} 
+                loading="lazy" 
+                referrerPolicy="no-referrer-when-downgrade"
+                title={`Map of ${property.name} in ${property.location}`}
+            ></iframe>
           </div>
 
           {/* Member Rating & Booking (ALIGNMENT FIX: items-stretch and h-full for equal column heights) */}
          <div className="grid md:grid-cols-3 gap-4 items-stretch">
         <div className="md:col-span-2 bg-gray-50 p-5 rounded-xl border border-gray-200 h-full flex flex-col order-2">
-    <h3 className="text-xl font-semibold mb-1">Member Comfort Rating</h3>
-    
-    {/* Use flex to put rating number and details side-by-side (from step 1) */}
-    <div className="flex items-start justify-between gap-4 mt-1"> 
-        {/* Rating Number Stacked: */}
-        <div className="flex flex-col">
-            <p className="text-4xl font-bold text-green-600">{property.ratingMember.toFixed(1)}</p>
-            <span className="text-sm font-medium text-gray-500 self-start -mt-2">out of 5</span>
-        <button 
-            onClick={() => navigate("reviews", property.id)} 
-            className="text-red-600 text-sm underline hover:text-red-700 self-start font-semibold"
-        >
-            See Guest Reviews
-        </button>
-    </div>
-        
-        {/* Supporting Text with Submit Link */}
-        <div className="text-left text-sm text-gray-500 flex-grow">
-            <p>Based on feedback from verified tall guests. All ratings are admin-approved for integrity. <span className="font-bold text-red-600 cursor-pointer hover:underline ml-1">SUBMIT YOUR RATING</span></p>
+    <h3 className="text-xl font-semibold mb-1">Member Comfort Rating</h3>
+    
+    {/* Use flex to put rating number and details side-by-side (from step 1) */}
+    <div className="flex items-start justify-between gap-4 mt-1"> 
+        {/* Rating Number Stacked: */}
+        <div className="flex flex-col">
+            <p className="text-4xl font-bold text-green-600">{property.ratingMember.toFixed(1)}</p>
+            <span className="text-sm font-medium text-gray-500 self-start -mt-2">out of 5</span>
+        <button 
+            onClick={() => navigate("reviews", property.id)} 
+            className="text-red-600 text-sm underline hover:text-red-700 self-start font-semibold"
+        >
+            See Guest Reviews
+        </button>
+    </div>
+        
+        {/* Supporting Text with Submit Link */}
+        <div className="text-left text-sm text-gray-500 flex-grow">
+            <p>Based on feedback from verified tall guests. All ratings are admin-approved for integrity. 
+    <button 
+        type="button" 
+        onClick={() => setShowReviewModal(true)} 
+        className="font-bold text-red-600 cursor-pointer hover:underline ml-1">SUBMIT YOUR RATING
+    </button>
+</p>
         </div>
-    </div>
+    </div>
 </div>
         {/* Booking Box */}
         <div className="md:col-span-1 flex flex-col justify-center items-center p-5 bg-red-100 rounded-xl shadow-inner h-full order-1">
               <p className="text-sm text-gray-700 mb-3 text-center">Ready to book your stress-free stay?</p>
               {/* Button now opens the modal */}
               <Button onClick={handleInitialBookClick} className="w-full text-center"><CheckCircle size={20} className="inline mr-2" />Book Now via Partner</Button>
-              <p className="text-xs mt-2 text-gray-500 text-center">Booking handled securely by affiliate partner.</p>
+              <p className="text-xs mt-2 text-gray-500 text-center">Booking and small commission handled securely by affiliate partner.</p>
             </div>
           </div>
       </div>
 
-    {/* NEW: Modal integration */}
-    {showModal && (
-        <BookingDataCaptureModal
-            property={property}
-            onClose={() => setShowModal(false)}
-            onSuccess={handleAffiliateRedirect}
-        />
-    )}
+    {/* NEW: Booking Modal integration */}
+    {showModal && (
+        <BookingDataCaptureModal
+            property={property}
+            onClose={() => setShowModal(false)}
+            onSuccess={handleAffiliateRedirect}
+        />
+    )}
+    
+    {/* NEW: Review Modal integration */}
+    {showReviewModal && (
+        <SubmitReviewModal
+            property={property}
+            onClose={() => setShowReviewModal(false)}
+        />
+    )}
     </SectionContainer>
   );
 };
@@ -708,38 +904,38 @@ const DetailPage: React.FC<{ property: Property, navigate: (path: string, proper
 
 // Price Tiers Table Component
 const PriceTiersTable: React.FC = () => {
-    const tiers = [
-        { tier: '$', name: 'Comfort', rationale: 'Simple, reliable, value-focused accommodation.' },
-        { tier: '$$', name: 'Boutique', rationale: 'High-style, verified quality, excellent value.' },
-        { tier: '$$$', name: 'Luxury', rationale: 'Exclusive service, high-end design, premium locations.' },
-        { tier: '$$$$', name: 'Elite Haven', rationale: 'Architectural masterpieces, private staff, top-tier clearance.' },
-    ];
+    const tiers = [
+        { tier: '$', name: 'Comfort', rationale: 'Simple, reliable, value-focused accommodation.' },
+        { tier: '$$', name: 'Boutique', rationale: 'High-style, verified quality, excellent value.' },
+        { tier: '$$$', name: 'Luxury', rationale: 'Exclusive service, high-end design, premium locations.' },
+        { tier: '$$$$', name: 'Elite Haven', rationale: 'Architectural masterpieces, private staff, top-tier clearance.' },
+    ];
 
-    return (
-        <div className="mb-8 p-5 bg-white rounded-xl shadow-lg border-t-4 border-red-600 text-left">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-3 flex items-center"><DollarSign size={24} className="mr-2 text-red-600" />Price Tier Guide</h2>
-            <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                        <tr>
-                            <th scope="col" className="px-3 py-1 text-center text-xs font-bold text-gray-700 uppercase tracking-wider w-1/12">Tier</th>
-                            <th scope="col" className="px-3 py-1 text-left text-xs font-bold text-gray-700 uppercase tracking-wider w-2/12">Name</th>
-                            <th scope="col" className="px-3 py-1 text-left text-xs font-bold text-gray-700 uppercase tracking-wider w-8/12">Rationale</th>
-                        </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                        {tiers.map((tier, index) => (
-                            <tr key={index} className="hover:bg-red-50 transition-colors">
-                                <td className="px-3 py-1 whitespace-nowrap text-sm font-medium text-red-600 text-center">{tier.tier}</td>
-                                <td className="px-3 py-1 whitespace-nowrap text-sm font-semibold text-gray-800">{tier.name}</td>
-                                <td className="px-3 py-1 text-sm text-gray-600">{tier.rationale}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    );
+    return (
+<div className="mb-8 p-5 bg-white rounded-xl shadow-lg border-t-4 border-red-600 text-left">
+<h2 className="text-2xl font-semibold text-gray-800 mb-3 flex items-center"><DollarSign size={24} className="mr-2 text-red-600" />Price Tier Guide</h2>
+<div className="overflow-x-auto">
+<table className="min-w-full divide-y divide-gray-200">
+<thead className="bg-gray-50">
+<tr>
+<th scope="col" className="px-3 py-1 text-center text-xs font-bold text-gray-700 uppercase tracking-wider w-1/12">Tier</th>
+<th scope="col" className="px-3 py-1 text-left text-xs font-bold text-gray-700 uppercase tracking-wider w-2/12">Name</th>
+<th scope="col" className="px-3 py-1 text-left text-xs font-bold text-gray-700 uppercase tracking-wider w-8/12">Rationale</th>
+</tr>
+</thead>
+<tbody className="bg-white divide-y divide-gray-200">
+{tiers.map((tier, index) => (
+<tr key={index} className="hover:bg-red-50 transition-colors">
+<td className="px-3 py-1 whitespace-nowrap text-sm font-medium text-red-600 text-center">{tier.tier}</td>
+<td className="px-3 py-1 whitespace-nowrap text-sm font-semibold text-gray-800">{tier.name}</td>
+<td className="px-3 py-1 text-sm text-gray-600">{tier.rationale}</td>
+</tr>
+))}
+</tbody>
+</table>
+</div>
+</div>
+);
 };
 
 
@@ -748,21 +944,21 @@ const PriceTiersTable: React.FC = () => {
 // *** No import statement is needed for public folder assets ***
 
 const StandardPage: React.FC = () => (
-  <SectionContainer>
-    <div className="max-w-4xl mx-auto">
-      <h1 className="text-4xl font-bold text-gray-800 mb-4 text-left">Our Standard: Why We Certify</h1> 
-      <p className="text-xl text-gray-600 mb-8 text-left">We eliminate the anxiety of travel for tall guests by applying a stringent, verifiable certification process to every property.</p>
+<SectionContainer>
+<div className="max-w-4xl mx-auto">
+<h1 className="text-4xl font-bold text-gray-800 mb-4 text-left">Our Standard: Why We Certify</h1> 
+<p className="text-xl text-gray-600 mb-8 text-left">We eliminate the anxiety of travel for tall guests by applying a stringent, verifiable certification process to every property.</p>
 
       {/* 1. Section: The Safety Buffer */}
-      <div className="mb-8 p-5 bg-red-50 rounded-xl border border-red-200 text-left"> 
-          <h2 className="text-2xl font-semibold text-red-600 mb-3">A. The Safety Buffer (The 5 cm Rule)</h2>
-          <p className="mb-1 text-gray-700">A property must have a minimum measured clearance of <strong>6 ft 7 in (201 cm)</strong> for a guest to be rated at <strong>6 ft 5 in (196 cm)</strong>. Why?</p>
-          <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
-              <li><strong>Dynamic Movement:</strong> When you walk, your body slightly lifts off the ground at the push-off point of your stride. This requires approximately 5 cm or 2 in of vertical clearance.</li>
-              <li><strong>Our Guarantee:</strong> We subtract a mandatory <strong>5 cm (2 in) safety buffer</strong> from the lowest measured point (door, beam, ceiling) to determine the property's true <strong>Max Height Rating</strong>.</li>
-              <li><strong>No Surprises:</strong> A property rated at <strong>6 ft 6 in (198 cm)</strong> means a 6 ft 6 in guest can walk around without fear of whacking their head on a door frame or beam.</li>
-          </ul>
-      </div>
+<div className="mb-8 p-5 bg-red-50 rounded-xl border border-red-200 text-left"> 
+<h2 className="text-2xl font-semibold text-red-600 mb-3">A. The Safety Buffer (The 5 cm Rule)</h2>
+<p className="mb-1 text-gray-700">A property must have a minimum measured clearance of <strong>6 ft 7 in (201 cm)</strong> for a guest to be rated at <strong>6 ft 5 in (196 cm)</strong>. Why?</p>
+<ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
+<li><strong>Dynamic Movement:</strong> When you walk, your body slightly lifts off the ground at the push-off point of your stride. This requires approximately 5 cm or 2 in of vertical clearance.</li>
+<li><strong>Our Guarantee:</strong> We subtract a mandatory <strong>5 cm (2 in) safety buffer</strong> from the lowest measured point (door, beam, ceiling) to determine the property's true <strong>Max Height Rating</strong>.</li>
+<li><strong>No Surprises:</strong> A property rated at <strong>6 ft 6 in (198 cm)</strong> means a 6 ft 6 in guest can walk around without fear of whacking their head on a door frame or beam.</li>
+</ul>
+</div>
       
       {/* 2. Section: The Certification Process with Image Background */}
       <div 
@@ -782,8 +978,8 @@ const StandardPage: React.FC = () => (
         {/* Content Overlay - Removed left padding (pl-0) but kept vertical and right padding */}
         <div className="relative z-10 w-full py-6 pr-6 sm:py-10 sm:pr-10 md:py-12 md:pr-12 text-left">
           
-          {/* B. The Certification Process: Heading has pl-6 to visually align it with A. heading */}
-          <h2 className="text-2xl font-bold text-white mb-6 pl-6 sm:pl-10 md:pl-12">B. The Certification Process: Photo Proof</h2>
+ {/* B. The Certification Process: Heading has pl-6 to visually align it with A. heading */}
+<h2 className="text-2xl font-bold text-white mb-6 pl-6 sm:pl-10 md:pl-12">B. The Certification Process: Photo Proof</h2>
           
           {/* Three certification items: ml-0 ensures they start right at the left edge of the content box */}
           <div className="flex flex-col space-y-6 md:space-y-8 max-w-sm ml-0">
@@ -801,7 +997,7 @@ const StandardPage: React.FC = () => (
               </div>
           </div>
         </div>
-      </div> 
+        </div> 
      
       {/* 3. Section: Price Tier Guide (The New Table) */}
       <PriceTiersTable />
@@ -835,8 +1031,8 @@ const ReviewsPage: React.FC<ReviewsPageProps> = ({ property }) => {
             ))
           ) : (
             <div className="text-center py-10 bg-white rounded-xl shadow-lg">
-                <p className="text-gray-600">Be the first to review this Headroom Haven!</p>
-            </div>
+                <p className="text-gray-600">Be the first to review this Headroom Haven!</p>
+            </div>
           )}
         </div>
                       </div>
@@ -847,53 +1043,76 @@ const ReviewsPage: React.FC<ReviewsPageProps> = ({ property }) => {
 // 11. Contact Page
 const ContactPage: React.FC = () => {
     return (
-        <SectionContainer> 
-            <div className="max-w-2xl mx-auto">
-                <h1 className="text-4xl font-bold text-gray-800 mb-4 text-center">Contact Us</h1><p className="text-xl text-gray-600 mb-8 text-center">We're standing up for tall travelers. Get in touch with our team.</p> 
+        <> {/* ⬅️ START of React Fragment to allow multiple top-level elements */}
+            <SectionContainer> 
+                <div className="max-w-2xl mx-auto">
+                    <h1 className="text-4xl font-bold text-gray-800 mb-4 text-center">Contact Us</h1><p className="text-xl text-gray-600 mb-8 text-center">We're standing up for tall travelers. Get in touch with our team, or register your interest in our future.</p> 
 
-                <form 
-                    name="contact" 
-                    method="POST" 
-                    data-netlify="true"
-                    className="space-y-4 p-5 bg-white rounded-xl shadow-lg border-t-4 border-red-600 mx-auto mb-4" 
-                >
-                    <input type="hidden" name="form-name" value="contact" />
+                    <form 
+                        name="contact" 
+                        method="POST" 
+                        data-netlify="true"
+                        className="space-y-4 p-5 bg-white rounded-xl shadow-lg border-t-4 border-red-600 mx-auto mb-4" 
+                    >
+                        <input type="hidden" name="form-name" value="contact" />
 
-                    <div className="space-y-1"><label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label><input
-    type="text"
-    name="name"
-    id="name"
-    required
-    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500"
-/></div>
+                        <div className="space-y-1"><label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label><input
+                            type="text"
+                            name="name"
+                            id="name"
+                            required
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500"
+                        /></div>
 
-                    <div className="space-y-1"><label htmlFor="email" className="block text-sm font-medium text-gray-700">Email Address</label><input
-    type="email"
-    name="email"
-    id="email"
-    required
-    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500"
-/></div>
+                        <div className="space-y-1"><label htmlFor="email" className="block text-sm font-medium text-gray-700">Email Address</label><input
+                            type="email"
+                            name="email"
+                            id="email"
+                            required
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500"
+                        /></div>
 
-                    <div className="space-y-1"><label htmlFor="phone" className="block text-sm font-medium text-gray-700">Phone Number</label><input
-    type="tel"
-    name="phone"
-    id="phone"
-    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500"
-/></div>
+                        <div className="space-y-1"><label htmlFor="phone" className="block text-sm font-medium text-gray-700">Phone Number</label><input
+                            type="tel"
+                            name="phone"
+                            id="phone"
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500"
+                        /></div>
 
-                    <div className="space-y-1"><label htmlFor="comment" className="block text-sm font-medium text-gray-700">Comment</label><textarea
-    name="comment"
-    id="comment"
-    rows={4}
-    required
-    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500"
-></textarea></div>
-<Button type="submit" className="w-full mt-4">Submit</Button>
-                </form>
-                <p className="text-xs text-gray-500 text-center mt-3">Submissions are processed securely by Netlify Forms.</p>
-            </div>
-        </SectionContainer>
+                        <div className="space-y-1"><label htmlFor="comment" className="block text-sm font-medium text-gray-700">Comment</label><textarea
+                            name="comment"
+                            id="comment"
+                            rows={4}
+                            required
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500"
+                        ></textarea></div>
+                        <Button type="submit" className="w-full mt-4">Submit</Button>
+                    </form>
+                    <p className="text-xs text-gray-500 text-center mt-3">Submissions are processed securely by Netlify Forms.</p>
+                </div>
+            </SectionContainer>
+
+            {/* 🎯 HIDDEN NETLIFY FORMS - Must be in the DOM for Netlify's build parser */}
+<form name="booking-lead" data-netlify="true" hidden>
+    <input type="hidden" name="form-name" value="booking-lead" />
+    <input type="text" name="name" />
+    <input type="email" name="email" />
+    <input type="number" name="height" />
+    <input type="number" name="propertyId" />
+    <input type="text" name="propertyName" />
+</form>
+
+<form name="member-review" data-netlify="true" hidden>
+    <input type="hidden" name="form-name" value="member-review" />
+    <input type="text" name="reviewer" />
+    <input type="email" name="email" />
+    <input type="number" name="rating" />
+    <textarea name="comment" />
+    <input type="number" name="propertyId" />
+    <input type="text" name="propertyName" />
+    <input type="text" name="date" />
+</form>
+        </> // ⬅️ END of React Fragment
     );
 };
 
