@@ -843,25 +843,24 @@ const DetailPage: React.FC<{ property: Property, navigate: (path: string, proper
             ></iframe>
           </div>
 
-          {/* Member Rating & Booking (ALIGNMENT FIX: items-stretch and h-full for equal column heights) */}
-         <div className="grid md:grid-cols-3 gap-4 items-stretch">
-        <div className="md:col-span-2 bg-gray-50 p-5 rounded-xl border border-gray-200 h-full flex flex-col order-2">
-    <h3 className="text-xl font-semibold mb-1">Member Comfort Rating</h3>
-    
-    {/* Use flex to put rating number and details side-by-side (from step 1) */}
-    <div className="flex items-start justify-between gap-4 mt-1"> 
-        {/* Rating Number Stacked: */}
-        <div className="flex flex-col">
-            <p className="text-4xl font-bold text-green-600">{property.ratingMember.toFixed(1)}</p>
-            <span className="text-sm font-medium text-gray-500 self-start -mt-2">out of 5</span>
-        <button 
-            onClick={() => navigate("reviews", property.id)} 
-            className="text-red-600 text-sm underline hover:text-red-700 self-start font-semibold"
-        >See Guest Reviews</button>
-    </div>
-        
-        {/* Supporting Text with Submit Link */}
-        <div className="text-left text-sm text-gray-500 flex-grow">
+{/* Member Rating & Booking (ALIGNMENT FIX: items-stretch and h-full for equal column heights) */}
+<div className="grid md:grid-cols-3 gap-4 items-stretch">
+<div className="md:col-span-2 bg-gray-50 p-5 rounded-xl border border-gray-200 h-full flex flex-col order-2">
+<h3 className="text-xl font-semibold mb-1">Member Comfort Rating</h3>
+{/* Use flex to put rating number and details side-by-side (from step 1) */}
+<div className="flex items-start justify-between gap-4 mt-1"> 
+{/* Rating Number Stacked: */}
+<div className="flex flex-col">
+<p className="text-4xl font-bold text-green-600">{property.ratingMember.toFixed(1)}</p>
+<span className="text-sm font-medium text-gray-500 self-start -mt-2">out of 5</span>
+<button 
+onClick={() => navigate("reviews", property.id)} 
+className="text-red-600 text-sm underline hover:text-red-700 self-start font-semibold"
+>See Guest Reviews</button>
+</div>
+
+{/* Supporting Text with Submit Link */}
+<div className="text-left text-sm text-gray-500 flex-grow">
 <p>Based on feedback from verified tall guests. All ratings are admin-approved for integrity. 
 <button 
 type="button" 
