@@ -1,11 +1,15 @@
-<form name="contact" data-netlify="true" hidden>
+<form name="contact" data-netlify="true" action="/" hidden>
+    <input type="hidden" name="form-name" value="contact" />
+    <input type="hidden" name="honeypot" />
     <input type="text" name="name" />
     <input type="email" name="email" />
     <input type="tel" name="phone" />
     <textarea name="comment"></textarea>
 </form>
 
-<form name="booking-lead" data-netlify="true" hidden>
+<form name="booking-lead" data-netlify="true" action="/" hidden>
+    <input type="hidden" name="form-name" value="booking-lead" />
+    <input type="hidden" name="honeypot" />
     <input type="text" name="name" />
     <input type="email" name="email" />
     <input type="number" name="height" />
@@ -13,7 +17,9 @@
     <input type="text" name="propertyName" />
 </form>
 
-<form name="member-review" data-netlify="true" hidden>
+<form name="member-review" data-netlify="true" action="/" hidden>
+    <input type="hidden" name="form-name" value="member-review" />
+    <input type="hidden" name="honeypot" />
     <input type="text" name="reviewer" />
     <input type="email" name="email" />
     <input type="number" name="rating" />

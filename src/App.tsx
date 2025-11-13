@@ -266,9 +266,9 @@ const Header: React.FC<HeaderProps> = ({ navigate, currentPage }) => (
                   BETA
               </span>
               {/* Tooltip Popup on Hover */}
-              <div className="absolute right-0 top-full mt-2 w-48 bg-gray-800 text-white text-xs p-2 rounded-lg shadow-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none sm:left-auto sm:right-0 sm:top-1/2 sm:translate-y-full sm:mt-3">
-                  This site is currently using mock data and is in the Beta phase.
-              </div>
+<div className="absolute right-0 top-full mt-2 w-48 bg-gray-800 text-white text-xs p-2 rounded-lg shadow-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none sm:left-auto sm:right-0 sm:top-1/2 sm:translate-y-full sm:mt-3">
+This site is currently using mock data and is in the Beta phase.
+</div>
           </div>
       
           {/* Search Button (Mobile Only) */}
@@ -526,13 +526,15 @@ const BookingDataCaptureModal: React.FC<{
 <h3 className="text-2xl font-bold text-gray-800 mb-1">Verify Your Booking Details</h3>
 <p className="text-sm text-gray-600 mb-4">Just a quick step to secure your height-verified data before redirecting to our partner site.</p>
 <form
-  name="booking-lead" // ⬅️ IMPORTANT: Netlify form name
-  method="POST"
-  data-netlify="true"
-  onSubmit={handleSubmit}
-  className="space-y-4"
+  name="booking-lead"
+  method="POST"
+  data-netlify="true"
+  action="/" // ⬅️ Directs back to the root of the site (Homepage)
+  onSubmit={handleSubmit}
+  className="space-y-4"
 >
-<input type="hidden" name="form-name" value="booking-lead" /> {/* Hidden field for Netlify */}
+  <input type="hidden" name="form-name" value="booking-lead" />
+  <input type="hidden" name="honeypot" /> {/* ⬅️ Honeypot for spam prevention */}
 <div>
 <label htmlFor="name" className="block text-sm font-medium text-gray-700">Full Name</label>
 <input type="text" id="name" name="name" required value={formData.name} onChange={handleChange}
@@ -666,13 +668,15 @@ const SubmitReviewModal: React.FC<{
           <p className="text-sm text-gray-600 mb-4">Help the community by rating your stay at **{property.name}**.</p>
           
           <form 
-            name="member-review" // ⬅️ Netlify form name
-            method="POST"
-            data-netlify="true"
-            onSubmit={handleSubmit} 
-            className="space-y-4"
-          >
-            <input type="hidden" name="form-name" value="member-review" />
+  name="member-review"
+  method="POST"
+  data-netlify="true"
+  action="/" // ⬅️ Directs back to the root of the site (Homepage)
+  onSubmit={handleSubmit} 
+  className="space-y-4"
+>
+  <input type="hidden" name="form-name" value="member-review" />
+  <input type="hidden" name="honeypot" /> {/* ⬅️ Honeypot for spam prevention */}
 
             <div>
               <label htmlFor="reviewer" className="block text-sm font-medium text-gray-700">Name (e.g., John D.)</label>
@@ -1049,12 +1053,14 @@ const ContactPage: React.FC = () => {
                     <h1 className="text-4xl font-bold text-gray-800 mb-4 text-center">Contact Us</h1><p className="text-xl text-gray-600 mb-8 text-center">We're standing up for tall travelers. Get in touch with our team, or register your interest in our future.</p> 
 
                     <form 
-                        name="contact" 
-                        method="POST" 
-                        data-netlify="true"
-                        className="space-y-4 p-5 bg-white rounded-xl shadow-lg border-t-4 border-red-600 mx-auto mb-4" 
-                    >
-                        <input type="hidden" name="form-name" value="contact" />
+    name="contact" 
+    method="POST" 
+    data-netlify="true"
+    action="/" // ⬅️ Directs back to the root of the site (Homepage)
+    className="space-y-4 p-5 bg-white rounded-xl shadow-lg border-t-4 border-red-600 mx-auto mb-4" 
+>
+    <input type="hidden" name="form-name" value="contact" />
+    <input type="hidden" name="honeypot" /> {/* ⬅️ Honeypot for spam prevention */}
 
                         <div className="space-y-1"><label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label><input
                             type="text"
