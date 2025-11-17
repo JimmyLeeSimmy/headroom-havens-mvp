@@ -57,7 +57,7 @@ interface ReviewData {
 // --- GLOBAL CONFIGURATION AND DATA ---
 
 const SAFETY_BUFFER_CM = 5; 
-const HERO_IMAGE_URL = process.env.PUBLIC_URL + "/images/cottage-hero.png"; 
+const HERO_IMAGE_URL = process.env.PUBLIC_URL + "/images/Hero_Mansion.jpg"; 
 const AFFILIATE_BASE_LINK = "https://partner-booking-site.com/?aid=HHAVENS123&prop=";
 
 // NEW: Height options for the modal select box
@@ -334,11 +334,13 @@ const PropertyCard: React.FC<{ property: Property, navigate: (path: string, prop
 const HomePage: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) => (
   <div>
     {/* Hero Section */}
-    <div className="relative bg-gray-100 shadow-xl mb-8"> 
-      <img src={HERO_IMAGE_URL} alt="Photorealistic Cottage Doorway with Tall Man" className="w-full h-[500px] object-cover" />
-      <div className="absolute inset-0 bg-black bg-opacity-30 flex flex-col justify-center items-center text-center p-4">
+    {/* NEW: Set EXPLICIT height for mobile (h-[400px]) and desktop (sm:h-[500px]) */}
+<div className="relative shadow-xl mb-8 h-[400px] sm:h-[500px] overflow-hidden">
+img
+<img src={HERO_IMAGE_URL} alt="Photorealistic Cottage Doorway with Tall Man" className="absolute inset-0 w-full h-full object-cover" />
+<div className="absolute inset-0 bg-black bg-opacity-30 flex flex-col justify-center items-center text-center p-4 z-10">
         <h1 className="text-5xl md:text-7xl font-bold text-white tracking-tight drop-shadow-lg">Holiday Cottages <span className="text-red-600">with Headroom</span></h1>
-        <p className="mt-4 text-xl md:text-2xl text-white/90 drop-shadow-md">Verified head clearance and bed length. Standing up for tall travelers.</p>
+        <p className="mt-4 text-xl md:text-2xl text-white/90 drop-shadow-md">Verified head clearance and bed length. We're standing up for tall travelers.</p>
         <Button onClick={() => navigate("listings")} className="mt-6"><Search size={20} className="inline mr-2" />Find a Place with Headroom</Button>
       </div>
       </div>
@@ -362,9 +364,9 @@ const HomePage: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) 
         </div>
       </div>
       <div className="text-center mt-6"> 
-        <Button onClick={() => navigate("standard")} color="bg-gray-700 hover:bg-gray-800"><span className="-mx-0.6">Learn How We Certify Properties</span>
+<Button onClick={() => navigate("standard")} color="bg-gray-700 hover:bg-gray-800"><span className="-mx-0.6">Learn How We Certify Properties</span>
 </Button>
-      </div>
+</div>
     </SectionContainer>
 
     {/* Featured Havens Teaser */}
@@ -379,21 +381,28 @@ const HomePage: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) 
 const ListingsPage: React.FC<{ navigate: (path: string, propertyId: number) => void }> = ({ navigate }) => {
   const [maxHeightFilter, setMaxHeightFilter] = useState<number>(0);
   const [priceFilter, setPriceFilter] = useState<number>(0);
+  const [showLowHeadroom, setShowLowHeadroom] = useState<boolean>(false); // ⬅️ NEW STATE
 
   const MAX_HEIGHT_OPTIONS = [193, 198, 203, 208, 213, 218];
   const PRICE_OPTIONS = [1, 2, 4, 5]; 
 
+  const BELOW_6_2_CM = 188; // 6 feet 2 inches
+
   const filteredProperties = useMemo(() => {
     return MOCK_PROPERTIES.filter(property => {
       const propertySafeHeightCM = property.maxHeightCM - SAFETY_BUFFER_CM;
+      
       const heightPass = maxHeightFilter === 0 || propertySafeHeightCM >= maxHeightFilter;
       const pricePass = priceFilter === 0 || 
                          (priceFilter === 2 && (property.priceRange === 2 || property.priceRange === 3)) || 
                          property.priceRange === priceFilter;
       
-      return heightPass && pricePass; // AND logic is correctly used here
+      // NEW: Filter for low headroom properties
+      const lowHeadroomPass = !showLowHeadroom || (propertySafeHeightCM < BELOW_6_2_CM);
+      
+      return heightPass && pricePass && lowHeadroomPass; // ⬅️ Must pass all conditions
     });
-  }, [maxHeightFilter, priceFilter]);
+  }, [maxHeightFilter, priceFilter, showLowHeadroom]); // ⬅️ Include new state in dependency array
 
   return (
     <SectionContainer className="py-4"> 
@@ -435,6 +444,21 @@ const ListingsPage: React.FC<{ navigate: (path: string, propertyId: number) => v
           </select>
         </div>
       </div>
+
+<div className="w-full md:w-1/3 flex items-end h-full">
+          <div className="flex items-center pt-2">
+            <input
+              id="low-headroom-filter"
+              type="checkbox"
+              checked={showLowHeadroom}
+              onChange={(e) => setShowLowHeadroom(e.target.checked)}
+              className="h-4 w-4 text-red-600 border-gray-300 rounded focus:ring-red-500"
+            />
+<label htmlFor="low-headroom-filter" className="ml-3 block text-sm font-medium text-gray-700 cursor-pointer">
+Show Havens Below 6'2" with our branded Safety Solutions
+</label>
+</div>
+</div>
 
       {/* Listings Grid */}
 {filteredProperties.length > 0 ? (
@@ -663,10 +687,9 @@ const SubmitReviewModal: React.FC<{
         onClick={(e) => e.stopPropagation()} 
       >
         <div className="p-6">
-          <h3 className="text-2xl font-bold text-gray-800 mb-1">Submit Your Rating</h3>
-          <p className="text-sm text-gray-600 mb-4">Help the community by rating your stay at **{property.name}**.</p>
-          
-          <form 
+<h3 className="text-2xl font-bold text-gray-800 mb-1">Submit Your Rating</h3>
+<p className="text-sm text-gray-600 mb-4">Help the community by rating your stay at **{property.name}**.</p>
+<form 
   name="member-review"
   method="POST"
   data-netlify="true"
@@ -677,61 +700,58 @@ const SubmitReviewModal: React.FC<{
   <input type="hidden" name="form-name" value="member-review" />
   <input type="hidden" name="honeypot" /> {/* ⬅️ Honeypot for spam prevention */}
 
-            <div>
-              <label htmlFor="reviewer" className="block text-sm font-medium text-gray-700">Name (e.g., John D.)</label>
-              <input type="text" id="reviewer" name="reviewer" required value={formData.reviewer} onChange={handleChange}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-600 focus:border-red-600"
-                disabled={isSubmitting}
-              />
-            </div>
-            
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email (Private, for verification)</label>
-              <input type="email" id="email" name="email" required value={formData.email} onChange={handleChange}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-600 focus:border-red-600"
-                disabled={isSubmitting}
-              />
-            </div>
-
-            <div className='flex space-x-4'>
-                <div className='w-1/3'>
-                  <label htmlFor="rating" className="block text-sm font-medium text-gray-700">Rating (1-5)</label>
-                  <select id="rating" name="rating" required value={formData.rating} onChange={handleChange}
-                    className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-600 focus:border-red-600"
-                    disabled={isSubmitting}
-                  >
-                    {[5, 4, 3, 2, 1].map(r => <option key={r} value={r}>{r}</option>)}
-                  </select>
-                </div>
-                <div className='w-2/3'>
-                  <label htmlFor="comment" className="block text-sm font-medium text-gray-700">Comment</label>
-                  <textarea name="comment" id="comment" rows={3} required value={formData.comment} onChange={handleChange}
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500"
-                    disabled={isSubmitting}
-                  ></textarea>
-                </div>
-            </div>
-
-            <div className="flex justify-end space-x-3 pt-2">
-              <Button type="button" onClick={onClose} color="bg-gray-400 hover:bg-gray-500" disabled={isSubmitting}>
+<div>
+<label htmlFor="reviewer" className="block text-sm font-medium text-gray-700">Name (e.g., John D.)</label>
+<input type="text" id="reviewer" name="reviewer" required value={formData.reviewer} onChange={handleChange}
+className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-600 focus:border-red-600"
+disabled={isSubmitting}
+/>
+</div>
+<div>
+<label htmlFor="email" className="block text-sm font-medium text-gray-700">Email (Private, for verification)</label>
+<input type="email" id="email" name="email" required value={formData.email} onChange={handleChange}
+className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-600 focus:border-red-600"
+disabled={isSubmitting}
+/>
+</div>
+<div className='flex space-x-4'>
+<div className='w-1/3'>
+<label htmlFor="rating" className="block text-sm font-medium text-gray-700">Rating (1-5)</label>
+<select id="rating" name="rating" required value={formData.rating} onChange={handleChange}
+className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-600 focus:border-red-600"
+disabled={isSubmitting}
+>
+{[5, 4, 3, 2, 1].map(r => <option key={r} value={r}>{r}</option>)}
+</select>
+</div>
+<div className='w-2/3'>
+<label htmlFor="comment" className="block text-sm font-medium text-gray-700">Comment</label>
+<textarea name="comment" id="comment" rows={3} required value={formData.comment} onChange={handleChange}
+className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500"
+disabled={isSubmitting}
+></textarea>
+</div>
+</div>
+<div className="flex justify-end space-x-3 pt-2">
+<Button type="button" onClick={onClose} color="bg-gray-400 hover:bg-gray-500" disabled={isSubmitting}>
 Cancel
-              </Button>
-              <Button type="submit" disabled={isSubmitting} className="flex items-center justify-center">
-                {isSubmitting ? (
-                  <>
-                    <svg className="animate-spin h-5 w-5 mr-3 text-white" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeDasharray="30, 200" fill="none"></circle></svg>
-                    Submitting...
-                  </>
-                ) : (
-                  'Submit Rating'
-                )}
-              </Button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  );
+</Button>
+<Button type="submit" disabled={isSubmitting} className="flex items-center justify-center">
+{isSubmitting ? (
+<>
+<svg className="animate-spin h-5 w-5 mr-3 text-white" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeDasharray="30, 200" fill="none"></circle></svg>
+Submitting...
+</>
+):(
+'Submit Rating'
+)}
+</Button>
+</div>
+</form>
+</div>
+</div>
+</div>
+);
 };
 
 
@@ -1001,6 +1021,32 @@ const StandardPage: React.FC = () => (
       {/* 3. Section: Price Tier Guide (The New Table) */}
       <PriceTiersTable />
     </div>
+
+{/* 4. Section: Headroom Haven Safety Solutions */}
+<div className="mb-8 p-5 bg-red-50 rounded-xl border border-red-200 text-left">
+<h2 className="text-2xl font-semibold text-red-600 mb-3 flex items-center">
+<CheckCircle size={24} className="mr-2" /> Headroom Haven Safety Assurance
+</h2>
+<p className="mb-4 text-gray-700">
+Properties certified with a Max Height Rating below 6'2" (188 cm) are valuable historic or rustic accommodations that would typically be inaccessible to tall travelers. These properties are listed on our site only after we have installed our branded Headroom Haven Safety Solutions to ensure comfortable and stress-free movement around a property.
+</p>
+<h3 className="text-xl font-bold text-gray-800 mb-2">Some of our Installed Protective Devices:</h3>
+<ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
+<li>
+<strong>Sentinel Swing:</strong>
+<span className="ml-2">Proactive warning system (luminous sphere) suspended from low-points to provide a gentle, peripheral sight/touch alert before impact.</span>
+</li>
+<li>
+<strong>Haven-Wrap™:</strong>
+<span className="ml-2">Cushioning C-channel foam professionally applied to low-hanging ceiling beams and structural elements for high-impact protection.</span>
+</li>
+<li>
+<strong>Portal-Pillow:</strong>
+<span className="ml-2">Thick, semi-circular foam strip installed on the top interior edges of low doorway frames to soften accidental contact.</span>
+</li>
+</ul>
+</div>
+
   </SectionContainer>
 );
 
@@ -1186,7 +1232,7 @@ case "reviews":
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col overflow-x-hidden"> {/* <-- Added overflow-x-hidden */}
       <Header navigate={navigate} currentPage={currentPage} />
       <main className="flex-grow">{content}</main>
       <Footer />
