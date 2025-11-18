@@ -455,7 +455,7 @@ const ListingsPage: React.FC<{ navigate: (path: string, propertyId: number) => v
               className="h-4 w-4 text-red-600 border-gray-300 rounded focus:ring-red-500"
             />
 <label htmlFor="low-headroom-filter" className="ml-3 block text-sm font-medium text-gray-700 cursor-pointer">
-Show Havens Below 6'2" with our branded Safety Solutions
+Show Lower Headroom Havens with our Safety Solutions
 </label>
 </div>
 </div>
