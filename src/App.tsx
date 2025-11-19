@@ -486,19 +486,25 @@ const BookingDataCaptureModal: React.FC<{
   // Use a sensible default height, e.g., 193 cm (approx 6'4")
   const HEIGHT_DEFAULT_CM = 193; 
   const [formData, setFormData] = useState<BookingData>({
-    name: '',
-    email: '',
-    height: HEIGHT_DEFAULT_CM,
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
+    name: '',
+    email: '',
+    height: HEIGHT_DEFAULT_CM,
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [consentGiven, setConsentGiven] = useState(false); // ⬅️ NEW STATE FOR CONSENT
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: name === 'height' ? Number(value) : value,
-    }));
-  };
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === 'height' ? Number(value) : value,
+    }));
+  };
+  
+  // ⬅️ NEW HANDLER FOR THE CONSENT CHECKBOX
+  const handleConsentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setConsentGiven(e.target.checked);
+  };
 
  const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
@@ -584,11 +590,29 @@ disabled={isSubmitting}
 ))}
 </select>
 </div>
+
+{/* ⬅️ NEW: CONSENT CHECKBOX BLOCK */}
+<div className="flex items-start pt-2">
+  <input
+    id="booking-consent"
+    type="checkbox"
+    required
+    checked={consentGiven}
+    onChange={handleConsentChange}
+    className="h-4 w-4 mt-1 text-red-600 border-gray-300 rounded focus:ring-red-500 flex-shrink-0"
+    disabled={isSubmitting}
+  />
+  <label htmlFor="booking-consent" className="ml-3 block text-sm text-gray-700 cursor-pointer">
+    I consent to Headroom Havens collecting my name, email, and height for lead generation, and I agree to the <a href="/privacy-policy" target="_blank" className="font-semibold underline text-red-600 hover:text-red-700">Privacy Policy</a>.
+  </label>
+</div>
+{/* ⬅️ END NEW CONSENT CHECKBOX BLOCK */}
+
 <div className="flex justify-end space-x-3 pt-2">
 <Button type="button" onClick={onClose} color="bg-gray-400 hover:bg-gray-500" disabled={isSubmitting}>
 Cancel
 </Button>
-<Button type="submit" disabled={isSubmitting} className="flex items-center justify-center">
+<Button type="submit" disabled={isSubmitting || !consentGiven} className="flex items-center justify-center">
 {isSubmitting ? (
 <>
 <svg className="animate-spin h-5 w-5 mr-3 text-white" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeDasharray="30, 200" fill="none"></circle></svg>
@@ -685,10 +709,10 @@ const SubmitReviewModal: React.FC<{
       <div 
         className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all" 
         onClick={(e) => e.stopPropagation()} 
-      >
-        <div className="p-6">
+>
+<div className="p-6">
 <h3 className="text-2xl font-bold text-gray-800 mb-1">Submit Your Rating</h3>
-<p className="text-sm text-gray-600 mb-4">Help the community by rating your stay at **{property.name}**.</p>
+<p className="text-sm text-gray-600 mb-4">Help the community by rating your stay at {property.name}.</p>
 <form 
   name="member-review"
   method="POST"
@@ -754,6 +778,40 @@ Submitting...
 );
 };
 
+// --- NEW COMPONENT: Cookie Consent Banner ---
+// Update props to include onReject
+const CookieConsentBanner: React.FC<{ onAccept: () => void, onReject: () => void }> = ({ onAccept, onReject }) => {
+  return (
+    // Fixed bottom position, high z-index to overlay content
+    <div className="fixed bottom-0 left-0 w-full bg-gray-900 text-white p-4 z-[1000] shadow-[0_-5px_15px_rgba(0,0,0,0.5)]">
+      <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center space-y-3 sm:space-y-0 sm:space-x-6">
+        
+        {/* Text Content */}
+        <p className="text-sm text-center sm:text-left flex-grow">
+We use essential cookies and collect form data for lead generation and analytics to improve our service. By clicking 'Accept & Continue' you consent to our use of these technologies. View our <a href="/privacy-policy" target="_blank" className="font-bold underline text-red-400 hover:text-red-500">Privacy Policy</a>.
+        </p>
+
+        {/* Buttons */}
+        <div className="flex space-x-3 flex-shrink-0">
+          <Button 
+            onClick={onAccept} 
+            color="bg-red-600 hover:bg-red-700" 
+            className="text-sm px-4 py-2"
+>
+Accept & Continue
+</Button>
+          <Button 
+            onClick={onReject} // ⬅️ UPDATED TO CALL onReject
+            color="bg-gray-700 hover:bg-gray-800" 
+            className="text-sm px-4 py-2"
+>
+Reject All
+</Button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 // 8. Property Detail Page
 const DetailPage: React.FC<{ property: Property, navigate: (path: string, propertyId: number | null) => void }> = ({ property, navigate }) => {
@@ -1050,6 +1108,92 @@ Properties certified with a Max Height Rating below 6'2" (188 cm) are valuable h
   </SectionContainer>
 );
 
+// --- NEW COMPONENT: Privacy Policy Page (Detailed & Compliant Template) ---
+const PrivacyPolicyPage: React.FC = () => (
+<SectionContainer>
+<div className="max-w-4xl mx-auto py-8">
+<h1 className="text-4xl font-bold text-gray-800 mb-2 text-center">Privacy Policy</h1>
+<p className="text-lg text-gray-600 mb-6 text-center">Last Updated: November 2025</p>
+
+            <div className="bg-white p-6 rounded-xl shadow-lg border-t-4 border-red-600 space-y-6 text-left">
+                <h2 className="text-2xl font-bold text-gray-800">1. Introduction</h2>
+                <p>
+                    Headroom Havens ("we," "us," or "our") is dedicated to protecting the privacy of tall travelers. This policy explains how we collect, use, and process your personal data in compliance with the UK General Data Protection Regulation (UK GDPR) and the EU General Data Protection Regulation (GDPR).
+                </p>
+
+                <h2 className="text-2xl font-bold text-gray-800 pt-4">2. Data We Collect and Why (Lawful Basis)</h2>
+                <div className="overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200">
+                        <thead className="bg-gray-50">
+                            <tr>
+                                <th scope="col" className="px-3 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Source / Type of Data</th>
+                                <th scope="col" className="px-3 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Purpose of Processing</th>
+                                <th scope="col" className="px-3 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Lawful Basis (UK/EU GDPR)</th>
+                            </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                            <tr className="hover:bg-red-50">
+                                <td className="px-3 py-2 text-sm font-medium">Name, Email, Phone (from Contact Form)</td>
+                                <td className="px-3 py-2 text-sm">To respond to your specific enquiries, manage partnerships, and provide customer support.</td>
+                                <td className="px-3 py-2 text-sm">Legitimate Interests (Responding to user requests)</td>
+                            </tr>
+                            <tr className="hover:bg-red-50">
+                                <td className="px-3 py-2 text-sm font-medium">Name, Email, Height (from Booking Modal)</td>
+                                <td className="px-3 py-2 text-sm">To generate a lead profile before redirecting to our affiliate partner, enabling us to track user demographics for service improvement.</td>
+                                <td className="px-3 py-2 text-sm">Consent (Given prior to submission)</td>
+                            </tr>
+                            <tr className="hover:bg-red-50">
+                                <td className="px-3 py-2 text-sm font-medium">Reviewer Name, Email, Comment, Rating (from Review Form)</td>
+                                <td className="px-3 py-2 text-sm">To verify user experience and publish the review (Name/Comment/Rating) on the website. Email is stored privately for verification purposes.</td>
+                                <td className="px-3 py-2 text-sm">Consent (Given prior to submission)</td>
+                            </tr>
+                            <tr className="hover:bg-red-50">
+                                <td className="px-3 py-2 text-sm font-medium">Cookie/Local Storage Data (Consent Flag)</td>
+                                <td className="px-3 py-2 text-sm">To remember your cookie preference, ensuring you don't see the banner on every visit.</td>
+                                <td className="px-3 py-2 text-sm">Contractual Obligation / Legitimate Interest (Service function)</td>
+                            </tr>
+                            <tr className="hover:bg-red-50">
+                                <td className="px-3 py-2 text-sm font-medium">Affiliate Tracking IDs/Cookies (by Partner)</td>
+                                <td className="px-3 py-2 text-sm">To track commission payments when you click a 'Book Now' link and proceed to book on the partner's site.</td>
+                                <td className="px-3 py-2 text-sm">Consent (Implicitly accepted by clicking 'Accept' on banner)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h2 className="text-2xl font-bold text-gray-800 pt-4">3. Data Sharing and Affiliate Links</h2>
+                <p>
+                    When you click the "Book Now via Partner" button on our Detail Pages, you are immediately redirected to a third-party affiliate booking site (e.g., <span className="font-semibold">partner-booking-site.com</span>).
+                </p>
+                <ul className="list-disc list-inside ml-4 space-y-2">
+                    <li>No PII Transfer: We do not share the Name, Email, or Height data collected in our modal with the affiliate partner.</li>
+                    <li>Affiliate Tracking: The affiliate partner will immediately place an affiliate tracking cookie on your device to record that your referral came from Headroom Havens. This cookie is governed by the affiliate partner's own privacy policy.</li>
+                    <li>Third-Party Policy: We encourage you to review the Privacy Policy of the affiliate partner before making any bookings. We are not responsible for their data handling practices.</li>
+                </ul>
+
+                <h2 className="text-2xl font-bold text-gray-800 pt-4">4. Your Rights (Data Subject Rights)</h2>
+                <p>Under GDPR/UK GDPR, you have the following rights regarding the personal data we hold about you:</p>
+                <ul className="list-disc list-inside ml-4 space-y-2">
+                    <li>The Right to Be Informed: To be informed about how your data is processed (this policy).</li>
+                    <li>The Right of Access: To request a copy of the personal data we hold about you.</li>
+                    <li>The Right to Rectification: To have inaccurate data corrected.</li>
+                    <li>The Right to Erasure ("Right to Be Forgotten"): To request the deletion of your personal data where there is no longer a necessary purpose for us to process it (e.g., lead/review data).</li>
+                    <li>The Right to Object: To object to processing based on 'Legitimate Interests' (e.g., contact form follow-up).</li>
+                    <li>The Right to Withdraw Consent: To withdraw consent for processing that is based on consent (e.g., booking lead data).</li>
+                </ul>
+                <p>To exercise any of these rights, please contact us using the details provided below.</p>
+
+                <h2 className="text-2xl font-bold text-gray-800 pt-4">5. Contact Us</h2>
+                <p>
+                    If you have any questions about this Privacy Policy or your data rights, please contact us:
+                </p>
+                <p className="font-semibold ml-4">Email: headroomhavens@gmail.com<br/>Address: Greenights Ltd. 15 Ford Park Crescent, Ulverston, England, LA12 7JR</p>
+            </div>
+        </div>
+    </SectionContainer>
+);
+
+
 // 10. Reviews Page
 interface ReviewsPageProps {
   property: Property;
@@ -1132,7 +1276,23 @@ const ContactPage: React.FC = () => {
                             rows={4}
                             required
                             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500"
-                        ></textarea></div>
+                            ></textarea></div>
+
+{/* ⬅️ NEW: CONSENT CHECKBOX BLOCK FOR CONTACT FORM */}
+<div className="flex items-start pt-2">
+  <input
+    id="contact-consent"
+    type="checkbox"
+    name="data-consent"
+    required
+    className="h-4 w-4 mt-1 text-red-600 border-gray-300 rounded focus:ring-red-500 flex-shrink-0"
+  />
+<label htmlFor="contact-consent" className="ml-3 block text-sm text-gray-700 cursor-pointer">
+I consent to Headroom Havens processing my contact details solely to respond to my enquiry, as detailed in the <a href="/privacy-policy" target="_blank" className="font-semibold underline text-red-600 hover:text-red-700">Privacy Policy</a>.
+</label>
+</div>
+{/* ⬅️ END NEW CONSENT CHECKBOX BLOCK */}
+
                         <Button type="submit" className="w-full mt-4">Submit</Button>
                     </form>
                     <p className="text-xs text-gray-500 text-center mt-3">Submissions are processed securely by Netlify Forms.</p>
@@ -1164,80 +1324,138 @@ const ContactPage: React.FC = () => {
 };
 
 
-// 12. Router and Main App Component (No Changes)
+// 12. Router and Main App Component (Final Fixed Structure)
 const App: React.FC = () => {
-  const [location, setLocation] = useState<{ path: string, propertyId: number | null }>({ path: "home", propertyId: null });
-  const currentPage = location.path;
-  const selectedPropertyId = location.propertyId;
+    // ----------------------------------------------------
+    // 1. STATE DEFINITIONS MUST COME FIRST (FULL CODE)
+    // ----------------------------------------------------
+    const [hasAcceptedCookies, setHasAcceptedCookies] = useState<boolean>(() => {
+        if (typeof window !== 'undefined') {
+            return localStorage.getItem('cookies-accepted') === 'true';
+        }
+        return false;
+    });
 
-  const navigate = (path: string, propertyId: number | null = null) => {
-    const newState = { path, propertyId };
-    const url = (path === "detail" || path === "reviews") && propertyId !== null ? `/${path}/${propertyId}` : `/${path}`;
-    window.history.pushState(newState, "", url);
-    setLocation(newState);
-    window.scrollTo(0, 0);
-  };
+    const [hasRejectedCookies, setHasRejectedCookies] = useState<boolean>(() => {
+        if (typeof window !== 'undefined') {
+            return localStorage.getItem('cookies-rejected') === 'true';
+        }
+        return false;
+    });
 
-  React.useEffect(() => {
-    const handlePopState = (event: PopStateEvent) => {
-      if (event.state) {
-        setLocation(event.state as { path: string, propertyId: number | null });
-      } else {
-        setLocation({ path: "home", propertyId: null });
-      }
-    };
+    const [location, setLocation] = useState<{ path: string, propertyId: number | null }>({ path: "home", propertyId: null });
+    const currentPage = location.path;
+    const selectedPropertyId = location.propertyId;
 
-    window.addEventListener('popstate', handlePopState);
+    // ----------------------------------------------------
+    // 2. HANDLER FUNCTIONS (FULL CODE)
+    // ----------------------------------------------------
+    const handleAcceptCookies = () => {
+        setHasAcceptedCookies(true);
+        localStorage.setItem('cookies-accepted', 'true');
+        localStorage.removeItem('cookies-rejected'); // Clear rejection flag
+    };
 
-    const initialPath = window.location.pathname.slice(1).split('/');
-    if (initialPath[0] && initialPath[0] !== '') {
-        setLocation({ 
-            path: initialPath[0],
-            propertyId: initialPath[1] ? Number(initialPath[1]) : null 
-        });
-    }
+    const handleRejectCookies = () => {
+        setHasRejectedCookies(true);
+        localStorage.setItem('cookies-rejected', 'true');
+        localStorage.removeItem('cookies-accepted'); // Clear acceptance flag
+    };
 
+    // ----------------------------------------------------
+    // 3. THE NAVIGATE FUNCTION (Needs access to state above)
+    // ----------------------------------------------------
+    const navigate = (path: string, propertyId: number | null = null) => {
+        // Define pages that are allowed regardless of cookie status
+        const allowedPaths = ["home", "standard", "contact", "privacy-policy"];
+        
+        // This check requires access to hasRejectedCookies and hasAcceptedCookies
+        if ((hasRejectedCookies || !hasAcceptedCookies) && !allowedPaths.includes(path)) {
+            alert("Please accept cookies to access our listings and booking details.");
+            return;
+        }
+        
+        const newState = { path, propertyId };
+        const url = (path === "detail" || path === "reviews") && propertyId !== null ? `/${path}/${propertyId}` : `/${path}`;
+        window.history.pushState(newState, "", url);
+        setLocation(newState);
+        window.scrollTo(0, 0);
+    };
 
-    return () => {
-      window.removeEventListener('popstate', handlePopState);
-    };
-  }, []);
+    // ----------------------------------------------------
+    // 4. EFFECTS AND RENDERING (REST OF THE COMPONENT)
+    // ----------------------------------------------------
+    React.useEffect(() => {
+        const handlePopState = (event: PopStateEvent) => {
+            if (event.state) {
+                setLocation(event.state as { path: string, propertyId: number | null });
+            } else {
+                setLocation({ path: "home", propertyId: null });
+            }
+        };
 
-  const selectedProperty = useMemo(() => {
-    const prop = MOCK_PROPERTIES.find(p => p.id === selectedPropertyId);
-    return prop || MOCK_PROPERTIES[0]; 
-  }, [selectedPropertyId]);
+        window.addEventListener('popstate', handlePopState);
 
-  let content;
-  switch (currentPage) {
-    case "listings":
-      content = <ListingsPage navigate={navigate} />;
-      break;
-    case "standard":
-      content = <StandardPage />;
-      break;
-    case "contact":
-      content = <ContactPage />;
-      break;
-    case "detail":
-  content = selectedPropertyId !== null ? <DetailPage property={selectedProperty} navigate={navigate} /> : <HomePage navigate={navigate} />;
-  break;
-case "reviews": 
-      content = selectedPropertyId !== null ? <ReviewsPage property={selectedProperty} /> : <HomePage navigate={navigate} />;
-      break;
+        const initialPath = window.location.pathname.slice(1).split('/');
+        if (initialPath[0] && initialPath[0] !== '') {
+            setLocation({ 
+                path: initialPath[0],
+                propertyId: initialPath[1] ? Number(initialPath[1]) : null 
+            });
+        }
 
-    case "home":
-    default:
-      content = <HomePage navigate={navigate} />;
-  }
+        return () => {
+            window.removeEventListener('popstate', handlePopState);
+        };
+    }, []);
 
-  return (
-    <div className="min-h-screen flex flex-col overflow-x-hidden"> {/* <-- Added overflow-x-hidden */}
-      <Header navigate={navigate} currentPage={currentPage} />
-      <main className="flex-grow">{content}</main>
-      <Footer />
-    </div>
-  );
+    const selectedProperty = useMemo(() => {
+        const prop = MOCK_PROPERTIES.find(p => p.id === selectedPropertyId);
+        return prop || MOCK_PROPERTIES[0]; 
+    }, [selectedPropertyId]);
+
+    let content;
+    switch (currentPage) {
+        case "listings":
+            content = <ListingsPage navigate={navigate} />;
+            break;
+        case "standard":
+            content = <StandardPage />;
+            break;
+        case "contact":
+            content = <ContactPage />;
+            break;
+        case "privacy-policy": 
+            content = <PrivacyPolicyPage />;
+            break;
+        case "detail":
+            content = selectedPropertyId !== null ? <DetailPage property={selectedProperty} navigate={navigate} /> : <HomePage navigate={navigate} />;
+            break;
+        case "reviews": 
+            content = selectedPropertyId !== null ? <ReviewsPage property={selectedProperty} /> : <HomePage navigate={navigate} />;
+            break;
+
+        case "home":
+        default:
+            content = <HomePage navigate={navigate} />;
+    }
+
+    return (
+        <div className="min-h-screen flex flex-col overflow-x-hidden">
+            <Header navigate={navigate} currentPage={currentPage} />
+            <main className="flex-grow">{content}</main>
+            
+            <Footer /> 
+
+            {/* Cookie Banner is only rendered if neither accepted nor rejected */}
+            {!hasAcceptedCookies && !hasRejectedCookies && (
+                <CookieConsentBanner 
+                    onAccept={handleAcceptCookies} 
+                    onReject={handleRejectCookies} 
+                />
+            )}
+        </div>
+    );
 };
 
 export default App;
