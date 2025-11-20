@@ -236,49 +236,54 @@ const Header: React.FC<HeaderProps> = ({ navigate, currentPage }) => (
       {/* Container for Logo, Nav, AND Badge */}
       <div className="flex items-center justify-between w-full relative"> 
           
-          {/* Logo Mark and Text */}
-          <div onClick={() => navigate("home")} className="flex items-center cursor-pointer gap-x-2">
-            <div className="flex items-center">
-              <span className="h-6 w-0.5 bg-black" /><span className="text-2xl font-bold text-red-600 font-black">H</span><span className="h-6 w-0.5 bg-black" />
-            </div>
-            <span className="text-lg font-bold text-gray-800 tracking-wider uppercase font-serif sm:whitespace-nowrap">Headroom Havens</span>
-          </div>
+          {/* 1. LEFT SIDE: Logo Mark and Text (Always visible) */}
+<div onClick={() => navigate("home")} className="flex items-center cursor-pointer gap-x-2 flex-shrink-0">
+<div className="flex items-center">
+<span className="h-6 w-0.5 bg-black" /><span className="text-2xl font-bold text-red-600 font-black">H</span><span className="h-6 w-0.5 bg-black" />
+</div>
+<span className="text-lg font-bold text-gray-800 tracking-wider uppercase font-serif sm:whitespace-nowrap">Headroom Havens</span>
+</div>
 
-          {/* Navigation Links */}
-          <nav className="hidden sm:flex justify-end space-x-3 md:space-x-4 lg:space-x-6">
-            {[{ path: "listings", label: "Find Havens" }, { path: "standard", label: "Our Standard" }, { path: "contact", label: "Contact Us" }]
-              .map(({ path, label }) => (
-                <button
-                  key={path}
-                  onClick={() => navigate(path)}
-                  className={`text-xs md:text-sm font-medium transition-colors whitespace-nowrap ${
-                    currentPage === path ? 'text-red-600 font-bold' : 'text-gray-600 hover:text-red-600'
-                  }`}
-                >
-                  {label}
-                </button>
-              ))}
-          </nav>
-      
-          {/* 📌 NEW: Coming Soon Badge */}
-          <div className="flex items-center ml-4 group">
-              <span className="bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg cursor-help transition-all duration-300 hover:scale-105 whitespace-nowrap">
-                  BETA
-              </span>
-              {/* Tooltip Popup on Hover */}
-<div className="absolute right-0 top-full mt-2 w-48 bg-gray-800 text-white text-xs p-2 rounded-lg shadow-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none sm:left-auto sm:right-0 sm:top-1/2 sm:translate-y-full sm:mt-3">
+          {/* 2. RIGHT SIDE CONTAINER: Nav + Search + Beta (Managed block) */}
+          <div className="flex items-center space-x-3 md:space-x-4 lg:space-x-6"> 
+            
+{/* Navigation Links */}
+{/* FIX: Changed 'hidden md:flex' to 'hidden lg:flex' to prevent overcrowding on landscape mobile */}
+<nav className="hidden lg:flex justify-end space-x-3 md:space-x-4 lg:space-x-6">
+{[{ path: "listings", label: "Find Havens" }, { path: "standard", label: "Our Standard" }, { path: "contact", label: "Contact Us" }]
+.map(({ path, label }) => (
+<button
+key={path}
+onClick={() => navigate(path)}
+className={`text-xs md:text-sm font-medium transition-colors whitespace-nowrap ${
+currentPage === path ? 'text-red-600 font-bold' : 'text-gray-600 hover:text-red-600'
+}`}
+>
+{label}
+</button>
+))}
+</nav>
+          
+            {/* BETA Badge (Always on the far right, uses small spacing from Nav) */}
+            <div className="flex items-center relative group">
+<span className="bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg cursor-help transition-all duration-300 hover:scale-105 whitespace-nowrap flex-shrink-0">
+BETA
+</span>
+                {/* Tooltip Popup on Hover */}
+<div className="absolute right-2 top-full mt-2 w-48 bg-gray-800 text-white text-xs p-2 rounded-lg shadow-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-50">
 This site is currently using mock data and is in the Beta phase.
 </div>
-          </div>
-      
-          {/* Search Button (Mobile Only) */}
-          <button onClick={() => navigate("listings")} className="sm:hidden p-2 text-gray-600 hover:text-red-600 absolute right-0">
-            <Search size={24} />
-          </button>
-      
-        </div> {/* End of the inner flex container */}
-    </div>
-  </header>
+</div>
+          
+            {/* Search Button (Mobile Only, next to BETA badge) */}
+            <button onClick={() => navigate("listings")} className="md:hidden p-2 text-gray-600 hover:text-red-600">
+              <Search size={24} />
+            </button>
+            
+          </div> {/* End of the RIGHT SIDE CONTAINER (starts at <div className="flex items-center space-x-3...") */}
+          </div> {/* End of the flex items-center justify-between w-full relative div */}
+        </div> {/* End of the max-w-7xl mx-auto px-4... div (The outer content wrapper) */}
+    </header>
 );
 
 // 3. Footer Component
@@ -341,9 +346,18 @@ img
 <div className="absolute inset-0 bg-black bg-opacity-30 flex flex-col justify-center items-center text-center p-4 z-10">
         <h1 className="text-5xl md:text-7xl font-bold text-white tracking-tight drop-shadow-lg">Holiday Cottages <span className="text-red-600">with Headroom</span></h1>
         <p className="mt-4 text-xl md:text-2xl text-white/90 drop-shadow-md">Verified head clearance and bed length. We're standing up for tall travelers.</p>
-        <Button onClick={() => navigate("listings")} className="mt-6"><Search size={20} className="inline mr-2" />Find a Place with Headroom</Button>
-      </div>
-      </div>
+        {/* NEW Container for robust centering and width control on the button */}
+        <div className="mt-6 w-11/12 max-w-sm"> 
+          <Button 
+            onClick={() => navigate("listings")} 
+// Button now fills the width of the new container, using responsive padding/text
+className="w-full text-center px-4 py-2 text-sm sm:px-6 sm:py-3 sm:text-base"
+>
+<Search size={20} className="inline mr-2"/>Find a Place with Headroom
+</Button>
+</div>
+</div>
+</div>
 
     {/* Value Proposition Section */}
     <SectionContainer className="py-6"> 
@@ -409,14 +423,14 @@ const ListingsPage: React.FC<{ navigate: (path: string, propertyId: number) => v
       <h1 className="text-3xl font-bold text-gray-800 mb-6">Find Your Headroom Haven</h1> 
 
       {/* Filters Section - Remains horizontally aligned */}
-      <div className="bg-gray-100 p-4 rounded-xl shadow-md mb-6 flex flex-wrap items-end gap-4"> 
+      <div className="bg-gray-100 p-4 rounded-xl shadow-md mb-6 flex flex-col md:flex-row md:items-end md:gap-4 space-y-4 relative z-20">
         <div className="w-full md:w-1/3">
           <label htmlFor="height-filter" className="block text-sm font-medium text-gray-700 mb-0">Minimum Headroom Required:</label>
           <select
              id="height-filter"
             value={maxHeightFilter}
             onChange={(e) => setMaxHeightFilter(Number(e.target.value))}
-            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500" 
+            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500 bg-white cursor-pointer" 
           >
             <option value={0}>Any Height</option>
             {MAX_HEIGHT_OPTIONS.map(cm => (
@@ -433,7 +447,7 @@ const ListingsPage: React.FC<{ navigate: (path: string, propertyId: number) => v
              id="price-filter"
             value={priceFilter}
             onChange={(e) => setPriceFilter(Number(e.target.value))}
-            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500"
+            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500 bg-white cursor-pointer"
           >
             <option value={0}>Any Price</option>
             {PRICE_OPTIONS.map(p => (
@@ -479,92 +493,80 @@ Show Lower Headroom Havens with our Safety Solutions
 
 // --- NEW COMPONENT: Booking Data Capture Modal (Must be defined before DetailPage) ---
 const BookingDataCaptureModal: React.FC<{
-  property: Property;
-  onClose: () => void;
-  onSuccess: (data: BookingData) => void;
+property: Property;
+onClose: () => void;
+onSuccess: (data: BookingData) => void;
 }> = ({ property, onClose, onSuccess }) => {
-  // Use a sensible default height, e.g., 193 cm (approx 6'4")
-  const HEIGHT_DEFAULT_CM = 193; 
-  const [formData, setFormData] = useState<BookingData>({
-    name: '',
-    email: '',
-    height: HEIGHT_DEFAULT_CM,
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [consentGiven, setConsentGiven] = useState(false); // ⬅️ NEW STATE FOR CONSENT
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: name === 'height' ? Number(value) : value,
-    }));
-  };
-  
-  // ⬅️ NEW HANDLER FOR THE CONSENT CHECKBOX
-  const handleConsentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setConsentGiven(e.target.checked);
-  };
-
- const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setIsSubmitting(true);
-
-  // Helper function to encode form data for Netlify
-  const encode = (data: any) => {
-    return Object.keys(data)
-      .map(key => encodeURIComponent(key) + "=" + encodeURIComponent(data[key]))
-      .join("&");
-  }
-
-  // Combine formData with Netlify-required fields
-  const netlifyFormData = {
-    "form-name": "booking-lead",
-    ...formData,
-    propertyId: property.id, // Capture the property ID too
-    propertyName: property.name, // Capture the property name
-  };
-
-  try {
-    const response = await fetch("/", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: encode(netlifyFormData)
-    });
-
-    if (response.ok) {
-      console.log("Netlify Form submission successful. Redirecting.");
-      // Execute success callback (which redirects)
-      onSuccess(formData);
-    } else {
-      throw new Error(`Netlify submission failed with status: ${response.status}`);
-    }
-  } catch (error) {
-    console.error("Form submission error:", error);
-    alert("There was an error capturing your details. Please try again.");
-    setIsSubmitting(false);
-  }
+const HEIGHT_DEFAULT_CM = 193;
+const [formData, setFormData] = useState<BookingData>({
+name: '',
+email: '',
+height: HEIGHT_DEFAULT_CM,
+});
+const [isSubmitting, setIsSubmitting] = useState(false);
+const [consentGiven, setConsentGiven] = useState(false);
+const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+const { name, value } = e.target;
+setFormData((prev) => ({
+...prev,
+[name]: name === 'height' ? Number(value) : value,
+}));
 };
-
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div 
-        className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all" 
-        onClick={(e) => e.stopPropagation()} 
-      >
-        <div className="p-6">
+const handleConsentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+setConsentGiven(e.target.checked);
+};
+const handleSubmit = async (e: React.FormEvent) => {
+e.preventDefault();
+setIsSubmitting(true);
+const encode = (data: any) => {
+return Object.keys(data)
+.map(key => encodeURIComponent(key) + "=" + encodeURIComponent(data[key]))
+.join("&");
+}
+const netlifyFormData = {
+"form-name": "booking-lead",
+...formData,
+propertyId: property.id,
+propertyName: property.name,
+};
+try {
+const response = await fetch("/", {
+method: "POST",
+headers: { "Content-Type": "application/x-www-form-urlencoded" },
+body: encode(netlifyFormData)
+});
+if (response.ok) {
+console.log("Netlify Form submission successful. Redirecting.");
+onSuccess(formData);
+} else {
+throw new Error(`Netlify submission failed with status: ${response.status}`);
+}
+} catch (error) {
+console.error("Form submission error:", error);
+alert("There was an error capturing your details. Please try again.");
+setIsSubmitting(false);
+}
+};
+return (
+<div className="fixed inset-0 bg-black bg-opacity-50 z-50 overflow-y-auto" onClick={onClose}>
+<div className="flex min-h-full items-center justify-center p-4">
+<div
+className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all relative"
+onClick={(e) => e.stopPropagation()}
+>
+<div className="p-6">
 <h3 className="text-2xl font-bold text-gray-800 mb-1">Verify Your Booking Details</h3>
 <p className="text-sm text-gray-600 mb-4">Just a quick step to secure your height-verified data before redirecting to our partner site.</p>
 <form
-  name="booking-lead"
-  method="POST"
-  data-netlify="true"
-  action="/" // ⬅️ Directs back to the root of the site (Homepage)
-  onSubmit={handleSubmit}
-  className="space-y-4"
+name="booking-lead"
+method="POST"
+data-netlify="true"
+action="/"
+onSubmit={handleSubmit}
+className="space-y-4"
 >
-  <input type="hidden" name="form-name" value="booking-lead" />
-  <input type="hidden" name="honeypot" /> {/* ⬅️ Honeypot for spam prevention */}
+<input type="hidden" name="form-name" value="booking-lead" />
+<input type="hidden" name="honeypot" />
 <div>
 <label htmlFor="name" className="block text-sm font-medium text-gray-700">Full Name</label>
 <input type="text" id="name" name="name" required value={formData.name} onChange={handleChange}
@@ -580,7 +582,7 @@ disabled={isSubmitting}/>
 <div>
 <label htmlFor="height" className="block text-sm font-medium text-gray-700">Your Rough Height (for recommendations)</label>
 <select id="height" name="height" required value={formData.height} onChange={handleChange}
-className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-600 focus:border-red-600"
+className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-600 focus:border-red-600 bg-white"
 disabled={isSubmitting}
 >
 {HEIGHT_OPTIONS_CM.map(cm => (
@@ -590,24 +592,20 @@ disabled={isSubmitting}
 ))}
 </select>
 </div>
-
-{/* ⬅️ NEW: CONSENT CHECKBOX BLOCK */}
 <div className="flex items-start pt-2">
-  <input
-    id="booking-consent"
-    type="checkbox"
-    required
-    checked={consentGiven}
-    onChange={handleConsentChange}
-    className="h-4 w-4 mt-1 text-red-600 border-gray-300 rounded focus:ring-red-500 flex-shrink-0"
-    disabled={isSubmitting}
-  />
-  <label htmlFor="booking-consent" className="ml-3 block text-sm text-gray-700 cursor-pointer">
-    I consent to Headroom Havens collecting my name, email, and height for lead generation, and I agree to the <a href="/privacy-policy" target="_blank" className="font-semibold underline text-red-600 hover:text-red-700">Privacy Policy</a>.
-  </label>
+<input
+id="booking-consent"
+type="checkbox"
+required
+checked={consentGiven}
+onChange={handleConsentChange}
+className="h-4 w-4 mt-1 text-red-600 border-gray-300 rounded focus:ring-red-500 flex-shrink-0"
+disabled={isSubmitting}
+/>
+<label htmlFor="booking-consent" className="ml-3 block text-sm text-gray-700 cursor-pointer">
+I consent to Headroom Havens collecting my name, email, and height for lead generation, and I agree to the <a href="/privacy-policy" target="_blank" className="font-semibold underline text-red-600 hover:text-red-700">Privacy Policy</a>.
+</label>
 </div>
-{/* ⬅️ END NEW CONSENT CHECKBOX BLOCK */}
-
 <div className="flex justify-end space-x-3 pt-2">
 <Button type="button" onClick={onClose} color="bg-gray-400 hover:bg-gray-500" disabled={isSubmitting}>
 Cancel
@@ -618,10 +616,10 @@ Cancel
 <svg className="animate-spin h-5 w-5 mr-3 text-white" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeDasharray="30, 200" fill="none"></circle></svg>
 Processing...
 </>
-) : (
-<>
+):(
+<span className="whitespace-nowrap">
 Go to Booking Partner <ChevronRight size={18} className="ml-1" />
-</>
+</span>
 )}
 </Button>
 </div>
@@ -629,101 +627,95 @@ Go to Booking Partner <ChevronRight size={18} className="ml-1" />
 </div>
 </div>
 </div>
-  );
+</div>
+);
 };
+
 
 // --- NEW COMPONENT: Review Submission Modal (Must be defined before DetailPage) ---
 const SubmitReviewModal: React.FC<{
-  property: Property;
-  onClose: () => void;
+property: Property;
+onClose: () => void;
 }> = ({ property, onClose }) => {
-  const [formData, setFormData] = useState<ReviewData>({
-    reviewer: '',
-    email: '',
-    rating: 5, // Default to 5
-    comment: '',
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: name === 'rating' ? Number(value) : value,
-    }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    const encode = (data: any) => {
-      return Object.keys(data)
-        .map(key => encodeURIComponent(key) + "=" + encodeURIComponent(data[key]))
-        .join("&");
-    }
-
-    const netlifyFormData = {
-      "form-name": "member-review", // ⬅️ IMPORTANT: Netlify form name
-      ...formData,
-      propertyId: property.id,
-      propertyName: property.name,
-      date: new Date().toISOString().slice(0, 10), // Auto-add current date
-    };
-
-    try {
-      const response = await fetch("/", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: encode(netlifyFormData)
-      });
-
-      if (response.ok) {
-        setIsSubmitted(true);
-      } else {
-        throw new Error(`Netlify submission failed with status: ${response.status}`);
-      }
-    } catch (error) {
-      console.error("Review submission error:", error);
-      alert("There was an error submitting your review. Please try again.");
-      setIsSubmitting(false);
-    }
-  };
-
-  if (isSubmitted) {
-    return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" onClick={onClose}>
-        <div className="bg-white rounded-xl shadow-2xl w-full max-w-md p-6 text-center" onClick={(e) => e.stopPropagation()}>
-          <CheckCircle size={48} className="text-green-600 mx-auto mb-4" />
-          <h3 className="text-2xl font-bold mb-2">Review Submitted!</h3>
-          <p className="text-gray-600 mb-4">Thank you for sharing your experience. We will verify your rating and publish it soon.</p>
-          <Button onClick={onClose}>Close</Button>
-        </div>
-        </div>
-    );
-  }
-
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div 
-        className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all" 
-        onClick={(e) => e.stopPropagation()} 
+const [formData, setFormData] = useState<ReviewData>({
+reviewer: '',
+email: '',
+rating: 5,
+comment: '',
+});
+const [isSubmitting, setIsSubmitting] = useState(false);
+const [isSubmitted, setIsSubmitted] = useState(false);
+const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+const { name, value } = e.target;
+setFormData((prev) => ({
+...prev,
+[name]: name === 'rating' ? Number(value) : value,
+}));
+};
+const handleSubmit = async (e: React.FormEvent) => {
+e.preventDefault();
+setIsSubmitting(true);
+const encode = (data: any) => {
+return Object.keys(data)
+.map(key => encodeURIComponent(key) + "=" + encodeURIComponent(data[key]))
+.join("&");
+}
+const netlifyFormData = {
+"form-name": "member-review",
+...formData,
+propertyId: property.id,
+propertyName: property.name,
+date: new Date().toISOString().slice(0, 10),
+};
+try {
+const response = await fetch("/", {
+method: "POST",
+headers: { "Content-Type": "application/x-www-form-urlencoded" },
+body: encode(netlifyFormData)
+});
+if (response.ok) {
+setIsSubmitted(true);
+} else {
+throw new Error(`Netlify submission failed with status: ${response.status}`);
+}
+} catch (error) {
+console.error("Review submission error:", error);
+alert("There was an error submitting your review. Please try again.");
+setIsSubmitting(false);
+}
+};
+if (isSubmitted) {
+return (
+<div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" onClick={onClose}>
+<div className="bg-white rounded-xl shadow-2xl w-full max-w-md p-6 text-center" onClick={(e) => e.stopPropagation()}>
+<CheckCircle size={48} className="text-green-600 mx-auto mb-4" />
+<h3 className="text-2xl font-bold mb-2">Review Submitted!</h3>
+<p className="text-gray-600 mb-4">Thank you for sharing your experience. We will verify your rating and publish it soon.</p>
+<Button onClick={onClose}>Close</Button>
+</div>
+</div>
+);
+}
+return (
+<div className="fixed inset-0 bg-black bg-opacity-50 z-50 overflow-y-auto" onClick={onClose}>
+<div className="flex min-h-full items-center justify-center p-4">
+<div
+className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all relative"
+onClick={(e) => e.stopPropagation()}
 >
 <div className="p-6">
 <h3 className="text-2xl font-bold text-gray-800 mb-1">Submit Your Rating</h3>
 <p className="text-sm text-gray-600 mb-4">Help the community by rating your stay at {property.name}.</p>
-<form 
-  name="member-review"
-  method="POST"
-  data-netlify="true"
-  action="/" // ⬅️ Directs back to the root of the site (Homepage)
-  onSubmit={handleSubmit} 
-  className="space-y-4"
+<form
+name="member-review"
+method="POST"
+data-netlify="true"
+action="/"
+onSubmit={handleSubmit}
+className="space-y-4"
 >
-  <input type="hidden" name="form-name" value="member-review" />
-  <input type="hidden" name="honeypot" /> {/* ⬅️ Honeypot for spam prevention */}
-
+<input type="hidden" name="form-name" value="member-review" />
+<input type="hidden" name="honeypot" />
 <div>
 <label htmlFor="reviewer" className="block text-sm font-medium text-gray-700">Name (e.g., John D.)</label>
 <input type="text" id="reviewer" name="reviewer" required value={formData.reviewer} onChange={handleChange}
@@ -742,7 +734,7 @@ disabled={isSubmitting}
 <div className='w-1/3'>
 <label htmlFor="rating" className="block text-sm font-medium text-gray-700">Rating (1-5)</label>
 <select id="rating" name="rating" required value={formData.rating} onChange={handleChange}
-className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-600 focus:border-red-600"
+className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-600 focus:border-red-600 bg-white"
 disabled={isSubmitting}
 >
 {[5, 4, 3, 2, 1].map(r => <option key={r} value={r}>{r}</option>)}
@@ -772,6 +764,7 @@ Submitting...
 </Button>
 </div>
 </form>
+</div>
 </div>
 </div>
 </div>
@@ -952,8 +945,8 @@ className="font-bold text-red-600 cursor-pointer hover:underline ml-1">SUBMIT YO
 {/* Booking Box */}
 <div className="md:col-span-1 flex flex-col justify-center items-center p-5 bg-red-100 rounded-xl shadow-inner h-full order-1">
 <p className="text-sm text-gray-700 mb-3 text-center">Ready to book your stress-free stay?</p>
-{/* Button now opens the modal */}<Button onClick={handleInitialBookClick} className="w-full text-center"><CheckCircle size={20} className="inline mr-2" />Book Now via Partner</Button>
-<p className="text-xs mt-2 text-gray-500 text-center">Booking and small commission handled securely by affiliate partner.</p>
+{/* Button now opens the modal */}<Button onClick={handleInitialBookClick} className="w-full text-center"><CheckCircle size={20} className="inline mr-2"/>Book Now via Partner</Button>
+<p className="text-xs mt-2 text-gray-500 text-center">Booking and commission handled securely by affiliate partner.</p>
 </div>
 </div>
 </div>
