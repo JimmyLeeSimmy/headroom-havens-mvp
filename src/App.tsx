@@ -631,6 +631,183 @@ Go to Booking Partner <ChevronRight size={18} className="ml-1" />
 );
 };
 
+// --- NEW COMPONENT: Interest Capture Modal (General Lead Gen) ---
+interface InterestCaptureData {
+  name: string;
+  email: string;
+  height: number; // Stored in CM
+}
+
+// Global flag key for local storage
+const INTEREST_CAPTURED_KEY = 'interest-captured';
+const INTEREST_CLOSED_KEY = 'interest-closed-date';
+
+const InterestCaptureModal: React.FC<{
+  onClose: () => void;
+  onSuccess: () => void;
+}> = ({ onClose, onSuccess }) => {
+  const HEIGHT_DEFAULT_CM = 193; // 6'4"
+  const [formData, setFormData] = useState<InterestCaptureData>({
+    name: '',
+    email: '',
+    height: HEIGHT_DEFAULT_CM,
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [consentGiven, setConsentGiven] = useState(false);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === 'height' ? Number(value) : value,
+    }));
+  };
+
+  const handleConsentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setConsentGiven(e.target.checked);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    const encode = (data: any) => {
+      return Object.keys(data)
+        .map(key => encodeURIComponent(key) + "=" + encodeURIComponent(data[key]))
+        .join("&");
+    }
+
+    const netlifyFormData = {
+      "form-name": "interest-capture",
+      ...formData,
+    };
+
+    try {
+      const response = await fetch("/", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: encode(netlifyFormData)
+      });
+
+      if (response.ok) {
+        console.log("Interest Capture submission successful.");
+        localStorage.setItem(INTEREST_CAPTURED_KEY, 'true');
+        onSuccess();
+      } else {
+        throw new Error(`Netlify submission failed with status: ${response.status}`);
+      }
+    } catch (error) {
+      console.error("Form submission error:", error);
+      alert("There was an error capturing your details. Please try again.");
+      setIsSubmitting(false);
+    }
+  };
+
+  // Function to handle modal closure (either by X or backdrop)
+  const handleClose = () => {
+      localStorage.setItem(INTEREST_CLOSED_KEY, new Date().toISOString());
+      onClose();
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-70 z-[1100] overflow-y-auto backdrop-blur-sm" onClick={handleClose}>
+      <div className="flex min-h-full items-center justify-center p-4">
+        <div
+          className="bg-white rounded-xl shadow-2xl w-full max-w-sm overflow-hidden transform transition-all relative border-t-8 border-red-600 animate-in fade-in zoom-in-50 duration-300"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Close Button */}
+          <button
+              onClick={handleClose}
+              className="absolute top-3 right-3 text-gray-400 hover:text-gray-700 p-1"
+              disabled={isSubmitting}
+          >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+          </button>
+
+          <div className="p-6">
+            <h3 className="text-3xl font-black text-red-600 mb-1 leading-tight">Stand Tall with Us! 📏</h3>
+            {/* CATCHY BLURB */}
+            <p className="text-lg font-semibold text-gray-800 mb-4">
+              Ever feel like Gandalf in a Hobbit hole?
+            </p>
+            <p className="text-sm text-gray-600 mb-5">
+              We're charting demand to launch our full service! If you'd use Headroom Havens, let us know and we'll keep you updated on new listings and services.
+            </p>
+            <form
+              name="interest-capture"
+              method="POST"
+              data-netlify="true"
+              action="/"
+              onSubmit={handleSubmit}
+              className="space-y-4"
+            >
+              <input type="hidden" name="form-name" value="interest-capture" />
+              <input type="hidden" name="honeypot" />
+              <div>
+                <label htmlFor="name-interest" className="block text-sm font-medium text-gray-700">Name</label>
+                <input type="text" id="name-interest" name="name" required value={formData.name} onChange={handleChange}
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-600 focus:border-red-600"
+                  disabled={isSubmitting}
+                />
+              </div>
+              <div>
+                <label htmlFor="email-interest" className="block text-sm font-medium text-gray-700">Email Address</label>
+                <input type="email" id="email-interest" name="email" required value={formData.email} onChange={handleChange}
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-600 focus:border-red-600"
+                  disabled={isSubmitting}
+                />
+              </div>
+              <div>
+                <label htmlFor="height-interest" className="block text-sm font-medium text-gray-700">Your Rough Height</label>
+                <select id="height-interest" name="height" required value={formData.height} onChange={handleChange}
+                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-600 focus:border-red-600 bg-white"
+                  disabled={isSubmitting}
+                >
+                  {HEIGHT_OPTIONS_CM.map(cm => (
+                    <option key={cm} value={cm}>
+                      {cmToFeetInches(cm)} ({cm} cm)
+                    </option>
+                  ))}
+                </select>
+              </div>
+              {/* GDPR CONSENT NOTE */}
+              <div className="flex items-start pt-2">
+                <input
+                  id="interest-consent"
+                  type="checkbox"
+                  required
+                  checked={consentGiven}
+                  onChange={handleConsentChange}
+                  className="h-4 w-4 mt-1 text-red-600 border-gray-300 rounded focus:ring-red-500 flex-shrink-0"
+                  disabled={isSubmitting}
+                />
+                <label htmlFor="interest-consent" className="ml-3 block text-xs text-gray-500 cursor-pointer">
+                  I consent to Headroom Havens collecting my data to keep me updated on future services, as detailed in the <a href="/privacy-policy" target="_blank" className="font-semibold underline text-red-600 hover:text-red-700">Privacy Policy</a>.
+                </label>
+              </div>
+              <div className="pt-2">
+                <Button type="submit" disabled={isSubmitting || !consentGiven} className="w-full flex items-center justify-center">
+                  {isSubmitting ? (
+                    <>
+                      <svg className="animate-spin h-5 w-5 mr-3 text-white" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeDasharray="30, 200" fill="none"></circle></svg>
+                      Submitting...
+                    </>
+                  ) : (
+                    'Count Me In! (Submit Interest)'
+                  )}
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 
 // --- NEW COMPONENT: Review Submission Modal (Must be defined before DetailPage) ---
 const SubmitReviewModal: React.FC<{
@@ -1294,23 +1471,31 @@ I consent to Headroom Havens processing my contact details solely to respond to 
 
             {/* 🎯 HIDDEN NETLIFY FORMS - Must be in the DOM for Netlify's build parser */}
 <form name="booking-lead" data-netlify="true" hidden>
-    <input type="hidden" name="form-name" value="booking-lead" />
-    <input type="text" name="name" />
-    <input type="email" name="email" />
-    <input type="number" name="height" />
-    <input type="number" name="propertyId" />
-    <input type="text" name="propertyName" />
+    <input type="hidden" name="form-name" value="booking-lead" />
+    <input type="text" name="name" />
+    <input type="email" name="email" />
+    <input type="number" name="height" />
+    <input type="number" name="propertyId" />
+    <input type="text" name="propertyName" />
 </form>
 
 <form name="member-review" data-netlify="true" hidden>
-    <input type="hidden" name="form-name" value="member-review" />
-    <input type="text" name="reviewer" />
-    <input type="email" name="email" />
-    <input type="number" name="rating" />
-    <textarea name="comment" />
-    <input type="number" name="propertyId" />
-    <input type="text" name="propertyName" />
-    <input type="text" name="date" />
+    <input type="hidden" name="form-name" value="member-review" />
+    <input type="text" name="reviewer" />
+    <input type="email" name="email" />
+    <input type="number" name="rating" />
+    <textarea name="comment" />
+    <input type="number" name="propertyId" />
+    <input type="text" name="propertyName" />
+    <input type="text" name="date" />
+</form>
+
+{/* 🎯 NEW HIDDEN FORM FOR INTEREST CAPTURE MODAL */}
+<form name="interest-capture" data-netlify="true" hidden>
+    <input type="hidden" name="form-name" value="interest-capture" />
+    <input type="text" name="name" />
+    <input type="email" name="email" />
+    <input type="number" name="height" />
 </form>
         </> // ⬅️ END of React Fragment
     );
@@ -1339,6 +1524,7 @@ const App: React.FC = () => {
     const [location, setLocation] = useState<{ path: string, propertyId: number | null }>({ path: "home", propertyId: null });
     const currentPage = location.path;
     const selectedPropertyId = location.propertyId;
+    const [showInterestModal, setShowInterestModal] = useState(false);
 
     // ----------------------------------------------------
     // 2. HANDLER FUNCTIONS (FULL CODE)
@@ -1354,6 +1540,16 @@ const App: React.FC = () => {
         localStorage.setItem('cookies-rejected', 'true');
         localStorage.removeItem('cookies-accepted'); // Clear acceptance flag
     };
+
+    const handleInterestModalClose = () => {
+        setShowInterestModal(false);
+        localStorage.setItem(INTEREST_CLOSED_KEY, new Date().toISOString()); // Set last closed date
+    }
+
+    const handleInterestModalSuccess = () => {
+        // Modal logic sets 'interest-captured' in local storage
+        setShowInterestModal(false);
+    }
 
     // ----------------------------------------------------
     // 3. THE NAVIGATE FUNCTION (Needs access to state above)
@@ -1378,6 +1574,35 @@ const App: React.FC = () => {
     // ----------------------------------------------------
     // 4. EFFECTS AND RENDERING (REST OF THE COMPONENT)
     // ----------------------------------------------------
+
+    React.useEffect(() => {
+    // Only run if:
+    // 1. Cookies are accepted (for GDPR compliance on data collection)
+    // 2. The form hasn't already been submitted successfully
+    // 3. The form hasn't been explicitly closed in the last 24 hours
+    if (hasAcceptedCookies &&
+        localStorage.getItem(INTEREST_CAPTURED_KEY) !== 'true') {
+
+        const lastClosed = localStorage.getItem(INTEREST_CLOSED_KEY);
+        if (lastClosed) {
+            const closedDate = new Date(lastClosed).getTime();
+            const now = new Date().getTime();
+            const twentyFourHours = 24 * 60 * 60 * 1000;
+            // If closed less than 24 hours ago, don't show it.
+            if (now - closedDate < twentyFourHours) {
+                return;
+            }
+        }
+
+        const timer = setTimeout(() => {
+            setShowInterestModal(true);
+        }, 30000); // 30 seconds
+
+        return () => clearTimeout(timer); // Cleanup
+    }
+}, [hasAcceptedCookies]); // Only re-run when cookie status changes or mounts
+
+
     React.useEffect(() => {
         const handlePopState = (event: PopStateEvent) => {
             if (event.state) {
@@ -1445,6 +1670,13 @@ const App: React.FC = () => {
                 <CookieConsentBanner 
                     onAccept={handleAcceptCookies} 
                     onReject={handleRejectCookies} 
+                />
+            )}
+
+            {showInterestModal && (
+                <InterestCaptureModal
+                    onClose={handleInterestModalClose}
+                    onSuccess={handleInterestModalSuccess}
                 />
             )}
         </div>
