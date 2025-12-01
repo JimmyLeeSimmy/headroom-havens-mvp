@@ -294,6 +294,20 @@ const Footer: React.FC = () => (
       <p className="mt-2 text-xs text-gray-400">
         All bookings are processed via our verified affiliate partners.
       </p>
+      {/* NEW: Re-open Consent Link */}
+      <p className="mt-4 text-xs text-gray-500">
+        {typeof window !== 'undefined' && localStorage.getItem('cookies-rejected') === 'true' && (
+          <button 
+            onClick={() => { 
+              localStorage.removeItem('cookies-rejected'); // Clear the rejection flag
+              window.location.reload(); // Force a full reload to re-run App state logic
+            }}
+            className="text-red-400 hover:text-red-500 underline font-semibold"
+          >
+            Re-open Cookie Consent
+          </button>
+        )}
+      </p>
       </div>
   </footer>
 );
@@ -336,16 +350,16 @@ const PropertyCard: React.FC<{ property: Property, navigate: (path: string, prop
 
 
 // 5. Home Page
-const HomePage: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) => (
+const HomePage: React.FC<{ navigate: (path: string) => void, showInterestButton: boolean, onOpenInterestModal: () => void }> = ({ navigate, showInterestButton, onOpenInterestModal }) => ( // UPDATED SIGNATURE
   <div>
     {/* Hero Section */}
     {/* NEW: Set EXPLICIT height for mobile (h-[400px]) and desktop (sm:h-[500px]) */}
 <div className="relative shadow-xl mb-8 h-[400px] sm:h-[500px] overflow-hidden">
 img
 <img src={HERO_IMAGE_URL} alt="Photorealistic Cottage Doorway with Tall Man" className="absolute inset-0 w-full h-full object-cover" />
-<div className="absolute inset-0 bg-black bg-opacity-30 flex flex-col justify-center items-center text-center p-4 z-10">
+<div className="absolute inset-0 bg-black bg-opacity-30 flex flex-col justify-center items-center text-center p-4 pb-10 z-10">
         <h1 className="text-5xl md:text-7xl font-bold text-white tracking-tight drop-shadow-lg">Holiday Cottages <span className="text-red-600">with Headroom</span></h1>
-        <p className="mt-4 text-xl md:text-2xl text-white/90 drop-shadow-md">Verified head clearance and bed length. We're standing up for tall travelers.</p>
+        <p className="mt-4 text-xl md:text-2xl text-white/90 drop-shadow-md">Verified head clearance and bed length. We're standing up for tall travelers to the UK & Europe.</p>
         {/* NEW Container for robust centering and width control on the button */}
         <div className="mt-6 w-11/12 max-w-sm"> 
           <Button 
@@ -358,6 +372,21 @@ className="w-full text-center px-4 py-2 text-sm sm:px-6 sm:py-3 sm:text-base"
 </div>
 </div>
 </div>
+
+{/* NEW: Standalone Button for Interest Registration (placed below the Hero for mobile visibility) */}
+        {showInterestButton && (
+            <div className="w-full -mt-12 sm:-mt-16 mb-6 relative z-30"> {/* Adjusted margin for mobile fit */}
+<div className="max-w-xs mx-auto px-4">
+<Button
+onClick={onOpenInterestModal}
+color="bg-red-600"
+className="w-full text-center px-6 py-3 text-lg font-bold shadow-2xl hover:bg-red-700" // Animation removed
+>
+<span className="text-xl">Register to Elevate Your Travel!</span>
+</Button>
+</div>
+</div>
+)}
 
     {/* Value Proposition Section */}
     <SectionContainer className="py-6"> 
@@ -1526,30 +1555,53 @@ const App: React.FC = () => {
     const selectedPropertyId = location.propertyId;
     const [showInterestModal, setShowInterestModal] = useState(false);
 
+const [showInterestButton, setShowInterestButton] = useState<boolean>(false); // Initialize to false, button appears after cookies are handled.
+
     // ----------------------------------------------------
     // 2. HANDLER FUNCTIONS (FULL CODE)
     // ----------------------------------------------------
     const handleAcceptCookies = () => {
-        setHasAcceptedCookies(true);
-        localStorage.setItem('cookies-accepted', 'true');
-        localStorage.removeItem('cookies-rejected'); // Clear rejection flag
-    };
+        setHasAcceptedCookies(true);
+        localStorage.setItem('cookies-accepted', 'true');
+        localStorage.removeItem('cookies-rejected'); // Clear rejection flag
+
+        // NEW: Show the interest button if the user hasn't registered yet
+        if (localStorage.getItem(INTEREST_CAPTURED_KEY) !== 'true') {
+            setShowInterestButton(true);
+        }
+    };
 
     const handleRejectCookies = () => {
-        setHasRejectedCookies(true);
-        localStorage.setItem('cookies-rejected', 'true');
-        localStorage.removeItem('cookies-accepted'); // Clear acceptance flag
+        setHasRejectedCookies(true);
+        localStorage.setItem('cookies-rejected', 'true');
+        localStorage.removeItem('cookies-accepted'); // Clear acceptance flag
+        
+        // NEW: Show the interest button if the user hasn't registered yet
+        if (localStorage.getItem(INTEREST_CAPTURED_KEY) !== 'true') {
+            setShowInterestButton(true);
+        }
+    };
+
+    // NEW HANDLER TO OPEN MODAL FROM THE PERMANENT BUTTON
+    const handleOpenInterestModal = () => {
+        setShowInterestModal(true);
     };
 
     const handleInterestModalClose = () => {
-        setShowInterestModal(false);
-        localStorage.setItem(INTEREST_CLOSED_KEY, new Date().toISOString()); // Set last closed date
-    }
+        setShowInterestModal(false);
+        localStorage.setItem(INTEREST_CLOSED_KEY, new Date().toISOString()); // Set last closed date
+        // If the user closes the modal without submitting, show the permanent button
+        if (localStorage.getItem(INTEREST_CAPTURED_KEY) !== 'true') {
+            setShowInterestButton(true);
+        }
+    }
 
     const handleInterestModalSuccess = () => {
-        // Modal logic sets 'interest-captured' in local storage
-        setShowInterestModal(false);
-    }
+        // Modal logic sets 'interest-captured' in local storage
+        setShowInterestModal(false);
+        // Hide the permanent button on success
+        setShowInterestButton(false); 
+    }
 
     // ----------------------------------------------------
     // 3. THE NAVIGATE FUNCTION (Needs access to state above)
@@ -1647,16 +1699,15 @@ const App: React.FC = () => {
             content = <PrivacyPolicyPage />;
             break;
         case "detail":
-            content = selectedPropertyId !== null ? <DetailPage property={selectedProperty} navigate={navigate} /> : <HomePage navigate={navigate} />;
-            break;
-        case "reviews": 
-            content = selectedPropertyId !== null ? <ReviewsPage property={selectedProperty} /> : <HomePage navigate={navigate} />;
-            break;
-
+            content = selectedPropertyId !== null ? <DetailPage property={selectedProperty} navigate={navigate} /> : <HomePage navigate={navigate} showInterestButton={showInterestButton} onOpenInterestModal={handleOpenInterestModal} />;
+            break;
+        case "reviews": 
+            content = selectedPropertyId !== null ? <ReviewsPage property={selectedProperty} /> : <HomePage navigate={navigate} showInterestButton={showInterestButton} onOpenInterestModal={handleOpenInterestModal} />;
+            break;
         case "home":
-        default:
-            content = <HomePage navigate={navigate} />;
-    }
+        default:
+            content = <HomePage navigate={navigate} showInterestButton={showInterestButton} onOpenInterestModal={handleOpenInterestModal} />;
+    }
 
     return (
         <div className="min-h-screen flex flex-col overflow-x-hidden">
