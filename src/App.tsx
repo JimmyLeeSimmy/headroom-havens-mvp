@@ -382,7 +382,7 @@ onClick={onOpenInterestModal}
 color="bg-red-600"
 className="w-full text-center px-6 py-3 text-lg font-bold shadow-2xl hover:bg-red-700" // Animation removed
 >
-<span className="text-xl">Register to Elevate Your Travel!</span>
+<span className="text-xl">Register Your Interest</span>
 </Button>
 </div>
 </div>
