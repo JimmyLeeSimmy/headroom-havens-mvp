@@ -14,6 +14,7 @@ interface Property {
   images: string[];
   description: string;
   amenities: string[];
+  safetySolution: string | null; // NEW FIELD: Holds safety device info for low headroom properties
 }
 
 interface HeaderProps {
@@ -123,13 +124,14 @@ const MOCK_PROPERTIES: Property[] = [
     affiliateLink: AFFILIATE_BASE_LINK + "Lodge1", 
     images: [
       // Lead Image for Card and Detail Page
-      process.env.PUBLIC_URL + "/images/cotswold-barn-1-exterior.jpg", 
+      process.env.PUBLIC_URL + "/images/cotswold-barn-1-exterior.jpg", 
       // Carousel Images
       process.env.PUBLIC_URL + "/images/cotswold-barn-2-vaulted.jpg",
       process.env.PUBLIC_URL + "/images/cotswold-barn-3-longbed.jpg",
     ], 
     description: "Architecturally stunning barn conversion with vast open spaces and original vaulted ceilings. Ideal for the 7-foot traveler.", 
-    amenities: ["Vaulted Ceilings", "California King Bed", "Enclosed Garden"] 
+    amenities: ["Vaulted Ceilings", "California King Bed", "Enclosed Garden"],
+    safetySolution: null, // NEW: No solution needed (tall clearance)
   },
   { 
     id: 2, 
@@ -148,7 +150,8 @@ const MOCK_PROPERTIES: Property[] = [
       process.env.PUBLIC_URL + "/images/highland-cottage-3-kitchen.jpg",
     ], 
     description: "Traditional stone cottage carefully refurbished to maximise vertical space. Low point is the kitchen beam. Features an extra-long Super King bed.", 
-    amenities: ["Extra-Long King Bed", "Open Fireplace", "Lake Views"] 
+    amenities: ["Extra-Long King Bed", "Open Fireplace", "Lake Views"],
+    safetySolution: "Sentinel Swing, Haven-Wrap", // TM removed
   },
   { 
     id: 3, 
@@ -166,7 +169,8 @@ const MOCK_PROPERTIES: Property[] = [
       process.env.PUBLIC_URL + "/images/bristol-loft-2-interior.jpg",
     ],
     description: "Sleek, modern penthouse apartment with floor-to-ceiling windows and zero architectural obstructions. Absolute maximum headroom throughout.", 
-    amenities: ["24/7 Concierge", "Queen Mattresses (Extra Long)", "Gym Access"] 
+    amenities: ["24/7 Concierge", "Queen Mattresses (Extra Long)", "Gym Access"],
+    safetySolution: null, // NEW: No solution needed (max clearance)
   },
   { 
     id: 4, 
@@ -184,7 +188,8 @@ const MOCK_PROPERTIES: Property[] = [
       process.env.PUBLIC_URL + "/images/aframe-cabin-2-interior.jpg",
     ],
     description: "Cozy cabin retreat. Watch out for the corner beams, but the main living area is spacious. Beds are standard King length.", 
-    amenities: ["Woodland Setting", "Sauna", "Hiking Trails"] 
+    amenities: ["Woodland Setting", "Sauna", "Hiking Trails"],
+    safetySolution: "Portal-Pillow", // NEW: Requires solution
   },
 ];
 
@@ -336,10 +341,17 @@ const PropertyCard: React.FC<{ property: Property, navigate: (path: string, prop
       <h3 className="text-xl font-bold text-gray-800">{property.name}</h3>
       <p className="text-sm text-gray-500 flex items-center mb-1"><Compass size={16} className="mr-1" />{property.location}</p>
 
-      <div className="space-y-1 mb-4 text-sm flex-grow text-left"> 
-        <MaxHeightDisplay clearanceCM={property.maxHeightCM} />
-        <div className="flex items-start text-gray-600 space-x-1"><Bed size={18} className='mt-0.5 flex-shrink-0' /><span className="flex-wrap">Usable Bed Length: {cmToFeetInches(property.mattressLengthCM)} ({property.mattressLengthCM} cm) - 2 Beds</span></div>
-        <div className="flex items-center text-gray-600 space-x-1"><DollarSign size={18} /><span>Price Rating: {priceRangeToLabel(property.priceRange)}</span></div>
+      <div className="space-y-0 mb-4 text-sm flex-grow text-left"> 
+<MaxHeightDisplay clearanceCM={property.maxHeightCM} />
+<div className="flex items-start text-gray-600 space-x-1"><Bed size={18} className='mt-0.5 flex-shrink-0' /><span className="flex-wrap">Usable Bed Length: {cmToFeetInches(property.mattressLengthCM)} ({property.mattressLengthCM} cm) - 2 Beds</span></div>
+<div className="flex items-center text-gray-600 space-x-1"><DollarSign size={18} /><span>Price Rating: {priceRangeToLabel(property.priceRange)}</span></div>
+{/* Safety Solution Display (Keeps spacing consistent with above lines) */}
+{property.safetySolution && (
+<div className="flex items-center text-red-600 font-medium space-x-1">
+<CheckCircle size={18} className='flex-shrink-0' />
+<span className="flex-wrap">Safety Solution: {property.safetySolution}</span>
+            </div>
+        )}
       </div>
 
       {/* mt-auto ensures the button sticks to the bottom */}
@@ -1091,18 +1103,21 @@ const DetailPage: React.FC<{ property: Property, navigate: (path: string, proper
 <p className="text-gray-700 mb-4">{property.description}</p>
 
             {/* FIX: Using simple flex column structure for flush left alignment */}
-            <div className="flex flex-col gap-y-1 text-lg text-left"> 
+            <div className="flex flex-col gap-y-0 text-lg text-left"> 
                 {/* Actual Lowest Clearance */}
                 <div className="flex flex-wrap"><span className="font-semibold mr-3">Actual Lowest Clearance:</span><span>{cmToFeetInches(property.maxHeightCM)} ({property.maxHeightCM} cm)</span>
                 </div>
-                
                 {/* Max Height Rating */}
                 <div className="flex flex-wrap"><span className="font-semibold mr-3">Max Height Rating:</span><span>{maxSafeHeightImperial} ({Math.round(maxSafeHeightCM)} cm)</span>
                 </div>
-                
                 {/* Usable Bed Length */}
                 <div className="flex flex-wrap"><span className="font-semibold mr-3">Usable Bed Length:</span><span>{cmToFeetInches(property.mattressLengthCM)} ({property.mattressLengthCM} cm) - 2 Beds (1 footboard)</span>
                 </div>
+                {/* Q2: Safety Solution Data Point */}
+                {property.safetySolution && (
+                    <div className="flex flex-wrap"><span className="font-semibold mr-3">Safety Solution:</span><span className='font-medium text-red-600'>{property.safetySolution}</span>
+                    </div>
+                )}
             </div>
           </div> 
 
@@ -1225,27 +1240,16 @@ const StandardPage: React.FC = () => (
 <h1 className="text-4xl font-bold text-gray-800 mb-4 text-left">Our Standard: Why We Certify</h1> 
 <p className="text-xl text-gray-600 mb-8 text-left">We eliminate the anxiety of travel for tall guests by applying a stringent, verifiable certification process to every property.</p>
 
-      {/* 1. Section: The Safety Buffer */}
-<div className="mb-8 p-5 bg-red-50 rounded-xl border border-red-200 text-left"> 
-<h2 className="text-2xl font-semibold text-red-600 mb-3">A. The Safety Buffer (The 5 cm Rule)</h2>
-<p className="mb-1 text-gray-700">A property must have a minimum measured clearance of <strong>6 ft 7 in (201 cm)</strong> for a guest to be rated at <strong>6 ft 5 in (196 cm)</strong>. Why?</p>
-<ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
-<li><strong>Dynamic Movement:</strong> When you walk, your body slightly lifts off the ground at the push-off point of your stride. This requires approximately 5 cm or 2 in of vertical clearance.</li>
-<li><strong>Our Guarantee:</strong> We subtract a mandatory <strong>5 cm (2 in) safety buffer</strong> from the lowest measured point (door, beam, ceiling) to determine the property's true <strong>Max Height Rating</strong>.</li>
-<li><strong>No Surprises:</strong> A property rated at <strong>6 ft 6 in (198 cm)</strong> means a 6 ft 6 in guest can walk around without fear of whacking their head on a door frame or beam.</li>
-</ul>
-</div>
-      
-      {/* 2. Section: The Certification Process with Image Background */}
-      <div 
+      {/* 1. Section: The Certification Process with Image Background */}
+      <div 
         className="relative flex items-center justify-start min-h-[500px] mb-8 overflow-hidden rounded-xl shadow-lg"
       >
         {/* Background Image with dark overlay */}
-        <div 
+        <div 
           className="absolute inset-0 bg-cover bg-center"
-          style={{ 
+          style={{ 
             backgroundImage: `url(${process.env.PUBLIC_URL + "/images/ManProfileImage.jpg"})`,
-            backgroundPositionX: '45%' 
+            backgroundPositionX: '45%' 
           }}
         >
           <div className="absolute inset-0 bg-black opacity-40"></div>
@@ -1253,10 +1257,10 @@ const StandardPage: React.FC = () => (
 
         {/* Content Overlay - Removed left padding (pl-0) but kept vertical and right padding */}
         <div className="relative z-10 w-full py-6 pr-6 sm:py-10 sm:pr-10 md:py-12 md:pr-12 text-left">
-          
+          
  {/* B. The Certification Process: Heading has pl-6 to visually align it with A. heading */}
-<h2 className="text-2xl font-bold text-white mb-6 pl-6 sm:pl-10 md:pl-12">B. The Certification Process: Photo Proof</h2>
-          
+<h2 className="text-2xl font-bold text-white mb-6 pl-6 sm:pl-10 md:pl-12">The Certification Process: Photo Proof</h2>
+          
           {/* Three certification items: ml-0 ensures they start right at the left edge of the content box */}
           <div className="flex flex-col space-y-6 md:space-y-8 max-w-sm ml-0">
               <div className="flex items-start space-x-4 text-white">
@@ -1273,19 +1277,30 @@ const StandardPage: React.FC = () => (
               </div>
           </div>
         </div>
-        </div> 
+        </div> 
+     
+      {/* 2. Section: The Safety Buffer (MOVED) */}
+<div className="mb-8 p-5 bg-red-50 rounded-xl border border-red-200 text-left"> 
+<h2 className="text-2xl font-semibold text-red-600 mb-3">The Safety Buffer (5cm Rule)</h2>
+<p className="mb-1 text-gray-700">A property must have a minimum measured clearance of <strong>6 ft 7 in (201 cm)</strong> for a guest to be rated at <strong>6 ft 5 in (196 cm)</strong>. Why?</p>
+<ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
+<li><strong>Dynamic Movement:</strong> When we walk, our bodies slightly lifts off the ground at the push-off point of a stride. This requires approximately 5cm or 2in of vertical clearance.</li>
+<li><strong>Our Guarantee:</strong> We subtract a mandatory <strong>5cm (2in) safety buffer</strong> from the lowest measured point (door, beam, ceiling) to determine the property's true <strong>Max Height Rating</strong>.</li>
+<li><strong>No Surprises:</strong> A property rated at <strong>6ft 6in (198 cm)</strong> means a 6ft 6in guest can walk around without fear of whacking their head on a door frame or beam.</li>
+</ul>
+</div>
      
       {/* 3. Section: Price Tier Guide (The New Table) */}
       <PriceTiersTable />
     </div>
-
-{/* 4. Section: Headroom Haven Safety Solutions */}
+{/* 4. Section: Headroom Haven Safety Solutions (Q5: Wrapped inside the max-w-4xl div) */}
+<div className="max-w-4xl mx-auto">
 <div className="mb-8 p-5 bg-red-50 rounded-xl border border-red-200 text-left">
 <h2 className="text-2xl font-semibold text-red-600 mb-3 flex items-center">
-<CheckCircle size={24} className="mr-2" /> Headroom Haven Safety Assurance
+<CheckCircle size={24} className="mr-2" /> Headroom Havens Safety Solutions
 </h2>
 <p className="mb-4 text-gray-700">
-Properties certified with a Max Height Rating below 6'2" (188 cm) are valuable historic or rustic accommodations that would typically be inaccessible to tall travelers. These properties are listed on our site only after we have installed our branded Headroom Haven Safety Solutions to ensure comfortable and stress-free movement around a property.
+Properties certified with a Max Height Rating below 6'2" (188 cm) are valuable historic or rustic accommodations that would typically be inaccessible to tall travelers. These properties are listed only after we have installed our Headroom Havens Safety Solutions to ensure comfortable and stress-free movement around a property.
 </p>
 <h3 className="text-xl font-bold text-gray-800 mb-2">Some of our Installed Protective Devices:</h3>
 <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
@@ -1294,7 +1309,7 @@ Properties certified with a Max Height Rating below 6'2" (188 cm) are valuable h
 <span className="ml-2">Proactive warning system (luminous sphere) suspended from low-points to provide a gentle, peripheral sight/touch alert before impact.</span>
 </li>
 <li>
-<strong>Haven-Wrap™:</strong>
+<strong>Haven-Wrap:</strong> {/* Q1: TM Removed */}
 <span className="ml-2">Cushioning C-channel foam professionally applied to low-hanging ceiling beams and structural elements for high-impact protection.</span>
 </li>
 <li>
@@ -1303,7 +1318,7 @@ Properties certified with a Max Height Rating below 6'2" (188 cm) are valuable h
 </li>
 </ul>
 </div>
-
+</div>
   </SectionContainer>
 );
 
