@@ -317,42 +317,54 @@ const Footer: React.FC = () => (
   </footer>
 );
 
-// 4. Max Height Rating Logic Component
+// 4. Max Height Rating Logic Component (FIXED for alignment)
 const MaxHeightDisplay: React.FC<{ clearanceCM: number }> = ({ clearanceCM }) => {
-  const maxSafeHeightCM = clearanceCM - SAFETY_BUFFER_CM;
-  const maxSafeHeightImperial = cmToFeetInches(maxSafeHeightCM);
+  const maxSafeHeightCM = clearanceCM - SAFETY_BUFFER_CM;
+  const maxSafeHeightImperial = cmToFeetInches(maxSafeHeightCM);
 
-  return (
-    <div className="flex items-center text-red-600 font-semibold space-x-2 text-left">
-      <Maximize size={20} className="text-red-600" />
-      <span className="-translate-y-px">Max Height Rating: {maxSafeHeightImperial} ({Math.round(maxSafeHeightCM)} cm)</span>
-      </div>
-  );
+  return (
+    // Changed to items-start and space-x-1 to match others
+    <div className="flex items-start text-red-600 font-semibold space-x-1 text-left">
+      <Maximize size={18} className="flex-shrink-0 mt-0.5" />
+      <span>Max Height Rating: {maxSafeHeightImperial} ({Math.round(maxSafeHeightCM)} cm)</span>
+    </div>
+  );
 };
 
 /**
- * 7. Property Card Component
- */
+ * 7. Property Card Component
+ */
 const PropertyCard: React.FC<{ property: Property, navigate: (path: string, propertyId: number) => void }> = ({ property, navigate }) => (
-  <div className="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col transition-transform duration-300 hover:shadow-2xl hover:-translate-y-1 h-full w-full">
-    <img src={property.images[0]} alt={property.name} className="w-full h-48 object-cover" /> 
-    {/* Use flex-grow to push the button to the bottom */}
-    <div className="p-4 flex flex-col flex-grow"> 
-      <h3 className="text-xl font-bold text-gray-800">{property.name}</h3>
-      <p className="text-sm text-gray-500 flex items-center mb-1"><Compass size={16} className="mr-1" />{property.location}</p>
+  <div className="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col transition-transform duration-300 hover:shadow-2xl hover:-translate-y-1 h-full w-full text-left">
+    <img src={property.images[0]} alt={property.name} className="w-full h-48 object-cover" /> 
+    
+    <div className="p-4 flex flex-col flex-grow text-left"> 
+      <h3 className="text-xl font-bold text-gray-800">{property.name}</h3>
+      <p className="text-sm text-gray-500 flex items-center mb-1">
+        <Compass size={16} className="mr-1" />{property.location}
+      </p>
 
-      <div className="space-y-0 mb-4 text-sm flex-grow text-left"> 
-<MaxHeightDisplay clearanceCM={property.maxHeightCM} />
-<div className="flex items-start text-gray-600 space-x-1"><Bed size={18} className='mt-0.5 flex-shrink-0' /><span className="flex-wrap">Usable Bed Length: {cmToFeetInches(property.mattressLengthCM)} ({property.mattressLengthCM} cm) - 2 Beds</span></div>
-<div className="flex items-center text-gray-600 space-x-1"><DollarSign size={18} /><span>Price Rating: {priceRangeToLabel(property.priceRange)}</span></div>
-{/* Safety Solution Display (Keeps spacing consistent with above lines) */}
-{property.safetySolution && (
-<div className="flex items-center text-red-600 font-medium space-x-1">
-<CheckCircle size={18} className='flex-shrink-0' />
-<span className="flex-wrap">Safety Solution: {property.safetySolution}</span>
-            </div>
+      {/* Container: space-y-0 for no gaps, text-left for safety */}
+      <div className="space-y-0 mb-4 text-sm flex-grow text-left"> 
+        <MaxHeightDisplay clearanceCM={property.maxHeightCM} />
+
+        <div className="flex items-start text-gray-600 space-x-1">
+          <Bed size={18} className='mt-0.5 flex-shrink-0' />
+          <span>Usable Bed Length: {cmToFeetInches(property.mattressLengthCM)} ({property.mattressLengthCM} cm) - 2 Beds</span>
+        </div>
+
+        <div className="flex items-start text-gray-600 space-x-1">
+          <DollarSign size={18} className='mt-0.5 flex-shrink-0' />
+          <span>Price Rating: {priceRangeToLabel(property.priceRange)}</span>
+        </div>
+
+        {property.safetySolution && (
+          <div className="flex items-start text-red-600 font-medium space-x-1">
+            <CheckCircle size={18} className='mt-0.5 flex-shrink-0' />
+            <span>Safety Solutions: {property.safetySolution}</span>
+          </div>
         )}
-      </div>
+      </div>
 
       {/* mt-auto ensures the button sticks to the bottom */}
       <Button onClick={() => navigate("detail", property.id)} className="w-full text-center mt-auto" color="bg-red-600 hover:bg-red-700">View Details & Book</Button>
@@ -644,7 +656,7 @@ className="h-4 w-4 mt-1 text-red-600 border-gray-300 rounded focus:ring-red-500 
 disabled={isSubmitting}
 />
 <label htmlFor="booking-consent" className="ml-3 block text-sm text-gray-700 cursor-pointer">
-I consent to Headroom Havens collecting my name, email, and height for lead generation, and I agree to the <a href="/privacy-policy" target="_blank" className="font-semibold underline text-red-600 hover:text-red-700">Privacy Policy</a>.
+I consent to Headroom Havens collecting my name, email, and height for their email updates, and I agree to the <a href="/privacy-policy" target="_blank" className="font-semibold underline text-red-600 hover:text-red-700">Privacy Policy</a>.
 </label>
 </div>
 <div className="flex justify-end space-x-3 pt-2">
@@ -770,13 +782,14 @@ const InterestCaptureModal: React.FC<{
 
           <div className="p-6">
             <h3 className="text-3xl font-black text-red-600 mb-1 leading-tight">Stand Tall with Us! 📏</h3>
-            {/* CATCHY BLURB */}
-            <p className="text-lg font-semibold text-gray-800 mb-4">
-              Ever feel like Gandalf in a Hobbit hole?
-            </p>
-            <p className="text-sm text-gray-600 mb-5">
-              We're charting demand to launch our full service! If you'd use Headroom Havens, let us know and we'll keep you updated on new listings and services.
-            </p>
+           {/* CATCHY BLURB */}
+<p className="text-lg font-semibold text-gray-800 mb-4">
+  Ever feel like Gandalf in a Hobbit hole?
+</p>
+<p className="text-sm text-gray-600 mb-5">
+  We're charting demand to launch our full service! If you'd use Headroom Havens, let us know and we'll keep you updated on new listings and services. 
+  {" "}Please also fill in <a href="https://forms.gle/WwW8NVZmBAxsczB39" target="_blank" rel="noopener noreferrer" className="font-bold text-red-600 underline hover:text-red-700">THIS</a> survey to help us gauge our potential market interest.
+</p>
             <form
               name="interest-capture"
               method="POST"
@@ -1097,29 +1110,46 @@ const DetailPage: React.FC<{ property: Property, navigate: (path: string, proper
           )}
         </div>
 
-          {/* Details - Headroom Certified Dimensions (ALIGNMENT FIX: Custom grid for paired data) */}
-          <div className="bg-white p-5 rounded-xl shadow-lg mb-6"> 
-            <h2 className="text-2xl font-bold text-red-600 mb-3 flex items-center"><Maximize size={24} className="mr-2" />Headroom Certified Details</h2>
-<p className="text-gray-700 mb-4">{property.description}</p>
+          {/* Details - Headroom Certified Dimensions */}
+<div className="bg-white p-5 rounded-xl shadow-lg mb-6"> 
+  <h2 className="text-2xl font-bold text-red-600 mb-3 flex items-center">
+    <Maximize size={24} className="mr-2" />
+    Headroom Certified Details
+  </h2>
+  
+  <p className="text-gray-700 mb-4">{property.description}</p>
 
-            {/* FIX: Using simple flex column structure for flush left alignment */}
-            <div className="flex flex-col gap-y-0 text-lg text-left"> 
-                {/* Actual Lowest Clearance */}
-                <div className="flex flex-wrap"><span className="font-semibold mr-3">Actual Lowest Clearance:</span><span>{cmToFeetInches(property.maxHeightCM)} ({property.maxHeightCM} cm)</span>
-                </div>
-                {/* Max Height Rating */}
-                <div className="flex flex-wrap"><span className="font-semibold mr-3">Max Height Rating:</span><span>{maxSafeHeightImperial} ({Math.round(maxSafeHeightCM)} cm)</span>
-                </div>
-                {/* Usable Bed Length */}
-                <div className="flex flex-wrap"><span className="font-semibold mr-3">Usable Bed Length:</span><span>{cmToFeetInches(property.mattressLengthCM)} ({property.mattressLengthCM} cm) - 2 Beds (1 footboard)</span>
-                </div>
-                {/* Q2: Safety Solution Data Point */}
-                {property.safetySolution && (
-                    <div className="flex flex-wrap"><span className="font-semibold mr-3">Safety Solution:</span><span className='font-medium text-red-600'>{property.safetySolution}</span>
-                    </div>
-                )}
-            </div>
-          </div> 
+  {/* FIXED: gap-0 removes spacing between rows; items-start ensures left alignment */}
+  <div className="flex flex-col gap-0 text-lg"> 
+    
+    {/* Row 1: Actual Lowest Clearance */}
+    <div className="flex items-baseline">
+      <span className="font-semibold mr-2 whitespace-nowrap">Actual Lowest Clearance:</span>
+      <span className="text-gray-800">{cmToFeetInches(property.maxHeightCM)} ({property.maxHeightCM} cm)</span>
+    </div>
+
+    {/* Row 2: Max Height Rating */}
+    <div className="flex items-baseline">
+      <span className="font-semibold mr-2 whitespace-nowrap">Max Height Rating:</span>
+      <span className="text-gray-800">{maxSafeHeightImperial} ({Math.round(maxSafeHeightCM)} cm)</span>
+    </div>
+
+    {/* Row 3: Usable Bed Length */}
+    <div className="flex items-baseline">
+      <span className="font-semibold mr-2 whitespace-nowrap">Usable Bed Length:</span>
+      <span className="text-gray-800">{cmToFeetInches(property.mattressLengthCM)} ({property.mattressLengthCM} cm) - 2 Beds (1 footboard)</span>
+    </div>
+
+    {/* Row 4: Safety Solution */}
+    {property.safetySolution && (
+      <div className="flex items-baseline">
+        <span className="font-semibold mr-2 whitespace-nowrap">Safety Solutions:</span>
+        <span className='font-medium text-red-600'>{property.safetySolution}</span>
+      </div>
+    )}
+
+  </div>
+</div>
 
           {/* Google Map Embed (Updated to use iframe) */}
           <div className="h-[400px] w-full rounded-xl shadow-lg mb-6 overflow-hidden border border-gray-300"> 
@@ -1273,7 +1303,7 @@ const StandardPage: React.FC = () => (
               </div>
               <div className="flex items-start space-x-4 text-white">
                   <Bed size={36} className="text-white flex-shrink-0 mt-1" />
-                  <div><h3 className="text-xl font-semibold">Bed Length Verification</h3><p className="text-gray-100 text-base">We verify usable mattress length (excluding frames/footboards). Only mattresses over <strong>200 cm (6 ft 6 in)</strong> or longer qualify for listing on our site.</p></div>
+                  <div><h3 className="text-xl font-semibold">Bed Length Verification</h3><p className="text-gray-100 text-base">We verify usable mattress length (excluding frames/footboards). Only mattresses of <strong>200 cm (6 ft 6 in)</strong> or longer qualify for listing on our site.</p></div>
               </div>
           </div>
         </div>
@@ -1305,15 +1335,15 @@ Properties certified with a Max Height Rating below 6'2" (188 cm) are valuable h
 <h3 className="text-xl font-bold text-gray-800 mb-2">Some of our Installed Protective Devices:</h3>
 <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
 <li>
-<strong>Sentinel Swing:</strong>
+<strong className="text-red-600">Sentinel Swing:</strong>
 <span className="ml-2">Proactive warning system (luminous sphere) suspended from low-points to provide a gentle, peripheral sight/touch alert before impact.</span>
 </li>
 <li>
-<strong>Haven-Wrap:</strong> {/* Q1: TM Removed */}
+<strong className="text-red-600">Haven-Wrap:</strong> {/* Q1: TM Removed */}
 <span className="ml-2">Cushioning C-channel foam professionally applied to low-hanging ceiling beams and structural elements for high-impact protection.</span>
 </li>
 <li>
-<strong>Portal-Pillow:</strong>
+<strong className="text-red-600">Portal-Pillow:</strong>
 <span className="ml-2">Thick, semi-circular foam strip installed on the top interior edges of low doorway frames to soften accidental contact.</span>
 </li>
 </ul>
