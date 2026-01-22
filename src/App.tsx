@@ -58,7 +58,7 @@ interface ReviewData {
 // --- GLOBAL CONFIGURATION AND DATA ---
 
 const SAFETY_BUFFER_CM = 5; 
-const HERO_IMAGE_URL = process.env.PUBLIC_URL + "/images/Man-Hobbit-Arch.jpeg"; 
+const HERO_IMAGE_URL = process.env.PUBLIC_URL + "/images/Man-Hobbit-Arch.jpg"; 
 const AFFILIATE_BASE_LINK = "https://partner-booking-site.com/?aid=HHAVENS123&prop=";
 
 // NEW: Height options for the modal select box
