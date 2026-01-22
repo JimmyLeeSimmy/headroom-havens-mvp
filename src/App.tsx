@@ -382,7 +382,7 @@ const HomePage: React.FC<{ navigate: (path: string) => void, showInterestButton:
 img
 <img src={HERO_IMAGE_URL} alt="Photorealistic Cottage Doorway with Tall Man" className="absolute inset-0 w-full h-full object-cover" />
 <div className="absolute inset-0 bg-black bg-opacity-30 flex flex-col justify-center items-center text-center p-4 pb-10 z-10">
-        <h1 className="text-5xl md:text-7xl font-bold text-white tracking-tight drop-shadow-lg">Holiday Cottages <span className="text-red-600">with Headroom</span></h1>
+        <h1 className="text-5xl md:text-7xl font-bold text-white tracking-tight drop-shadow-lg">Historical Cottages <span className="text-red-600">with Headroom</span></h1>
         <p className="mt-4 text-xl md:text-2xl text-white/90 drop-shadow-md">Verified head clearance and bed length. We're standing up for tall travelers to the UK & Europe.</p>
         {/* NEW Container for robust centering and width control on the button */}
         <div className="mt-6 w-11/12 max-w-sm"> 
